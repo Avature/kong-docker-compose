@@ -1,0 +1,5 @@
+FROM "${KONG_DOCKER_TAG:-kong:latest}"
+
+RUN apk add bash
+RUN apk add jq
+RUN apk add vim
