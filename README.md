@@ -8,7 +8,7 @@
 * install curl if not installed <pre>sudo apt-get install curl</pre>
 * install docker -> https://docs.docker.com/install/linux/docker-ce/ubuntu/
 * configure docker to execute without sudo -> https://docs.docker.com/install/linux/linux-postinstall/
-* install docker-compose -> https://docs.docker.com/compose/install/#install-compose
+* install docker-compose -> https://docs.docker.com/compose/install/#install-compose-on-linux-systems
 * Clone the repo to your $HOME with: <pre>git clone https://gitlab.xcade.net/CustomAPIs/kong-docker</pre>
 * If after installing DOCKER, your access to gitlab breakes, please follow the Julio's Magic in the wiki: https://wiki.xcade.net/wiki/Integrations_2.0:_Cells#How_to_install_Docker
 
