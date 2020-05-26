@@ -1,0 +1,8 @@
+#!/usr/bin/dh-exec
+## Indicate where your files will be deployed
+## eg:
+## bin/compiled => /opt/project/run
+## config/config.production.toml => /etc/project/config.toml
+.env opt/kong
+docker-compose.yml opt/kong
+{start,stop}.sh opt/kong

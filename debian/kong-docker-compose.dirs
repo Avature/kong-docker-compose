@@ -1,0 +1,4 @@
+# Declare a list of directories to be created
+# eg:
+# /var/log/kong-docker-compose
+/opt/kong
