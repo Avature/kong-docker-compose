@@ -18,3 +18,18 @@
 
 * To login with BASH into KONG (See logs, adjust configs: ./startBash.sh)
 
+## Building debian package:
+
+### Pre-requisites:
+
+Install this dependencies:
+
+1. fakeroot v1.22
+2. debhelper (>= 9),
+3. dh-exec
+
+```console
+cd kong-docker
+fakeroot debian/rules binary
+```
+

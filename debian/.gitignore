@@ -1,5 +1,7 @@
 kong-docker-compose
+kong-docker-compose-dev
 kong-docker-compose.substvars
+kong-docker-compose-dev.substvars
 debhelper-build-stamp
 files
 *.debhelper
