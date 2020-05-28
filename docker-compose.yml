@@ -7,43 +7,41 @@ networks:
   kong-net:
 services:
   kong-migrations:
-    image: "${KONG_DOCKER_TAG:-kong:latest}"
+    image: "${KONG_DOCKER_TAG}"
     command: kong migrations bootstrap
     depends_on:
       db:
         condition: service_healthy
     environment:
       KONG_DATABASE: postgres
-      KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
+      KONG_PG_DATABASE: ${KONG_PG_DATABASE}
       KONG_PG_HOST: db
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong}
-      KONG_PG_USER: ${KONG_PG_USER:-kong}
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
+      KONG_PG_USER: ${KONG_PG_USER}
     links:
       - db:db
     networks:
       - kong-net
     restart: on-failure
   kong-migrations-up:
-    image: "${KONG_DOCKER_TAG:-kong:latest}"
+    image: "${KONG_DOCKER_TAG}"
     command: kong migrations up
     depends_on:
       db:
         condition: service_healthy
     environment:
       KONG_DATABASE: postgres
-      KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
+      KONG_PG_DATABASE: ${KONG_PG_DATABASE}
       KONG_PG_HOST: db
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong}
-      KONG_PG_USER: ${KONG_PG_USER:-kong}
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
+      KONG_PG_USER: ${KONG_PG_USER}
     links:
       - db:db
     networks:
       - kong-net
     restart: on-failure
   kong:
-    build:
-        dockerfile: Dockerfile.kong
-        context: ./
+    image: "${KONG_DOCKER_TAG}"
     user: "${KONG_USER:-root}"
     depends_on:
       db:
@@ -54,10 +52,10 @@ services:
       KONG_ADMIN_LISTEN: '0.0.0.0:8001'
       KONG_CASSANDRA_CONTACT_POINTS: db
       KONG_DATABASE: postgres
-      KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
+      KONG_PG_DATABASE: ${KONG_PG_DATABASE}
       KONG_PG_HOST: db
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong}
-      KONG_PG_USER: ${KONG_PG_USER:-kong}
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
+      KONG_PG_USER: ${KONG_PG_USER}
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
     networks:
@@ -78,11 +76,11 @@ services:
   db:
     image: postgres:9.5
     environment:
-      POSTGRES_DB: ${KONG_PG_DATABASE:-kong}
-      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD:-kong}
-      POSTGRES_USER: ${KONG_PG_USER:-kong}
+      POSTGRES_DB: ${KONG_PG_DATABASE}
+      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD}
+      POSTGRES_USER: ${KONG_PG_USER}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${KONG_PG_USER:-kong}"]
+      test: ["CMD", "pg_isready", "-U", "${KONG_PG_USER}"]
       interval: 30s
       timeout: 30s
       retries: 3
@@ -99,7 +97,7 @@ services:
   #######################################
   konga-prepare:
     image: pantsel/konga:next
-    command: "-c prepare -a postgres -u postgresql://${KONG_PG_USER:-kong}:${KONG_PG_PASSWORD:-kong}@db:5432/konga_db"
+    command: "-c prepare -a postgres -u postgresql://${KONG_PG_USER}:${KONG_PG_PASSWORD}@db:5432/konga_db"
     networks:
       - kong-net
     restart: on-failure
@@ -119,8 +117,8 @@ services:
     environment:
       DB_ADAPTER: postgres
       DB_HOST: db
-      DB_USER: ${KONG_PG_USER:-kong}
-      DB_PASSWORD: ${KONG_PG_PASSWORD:-kong}
+      DB_USER: ${KONG_PG_USER}
+      DB_PASSWORD: ${KONG_PG_PASSWORD}
       TOKEN_SECRET: km1GUr4RkcQD7DewhJPNXrCuZwcKmqjb
       DB_DATABASE: konga_db
       NODE_ENV: production

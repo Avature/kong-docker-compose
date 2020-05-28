@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  kong:
+    image: registry.xcade.net/kong:latest
+    build:
+        dockerfile: Dockerfile.kong
+        context: ./
+    extra_hosts:
+      - "${SANDBOX_URL}:${SANDBOX_IP}"

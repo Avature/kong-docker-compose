@@ -1,0 +1,5 @@
+kong-docker-compose (0.0.1) Ubuntu; urgency=medium
+
+  * Initial release. (Closes: #446124)
+
+ -- Mariano Fresno <mariano.fresno@avature.net>  Wed, 26 May 2020 14:27:49 -0300
