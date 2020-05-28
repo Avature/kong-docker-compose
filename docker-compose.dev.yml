@@ -2,7 +2,7 @@ version: '2.1'
 
 services:
   kong:
-    image: registry.xcade.net/kong:latest
+    image: registry.xcade.net/kong-dev:${KONG_DOCKER_TAG}
     build:
         dockerfile: Dockerfile.kong
         context: ./
