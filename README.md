@@ -28,8 +28,43 @@ Install this dependencies:
 2. debhelper (>= 9),
 3. dh-exec
 
+
 ```console
 cd kong-docker
 fakeroot debian/rules binary
 ```
 
+## Installing debian-package:
+
+To install the debian package run:
+
+```console
+dpkg -i kong-docker-compose_0.0.1_all.deb
+```
+or either run this to install the dev version:
+
+```console
+dpkg -i kong-docker-compose-dev_0.0.1_all.deb
+```
+To run use this command (use start or startDev according to your needs):
+
+```console
+./{start, startDev}.sh
+```
+
+## FAQ/Troubleshooting:
+
+If when you run start this error appears:
+
+```
+Creating network "kong_kong-net" with the default driver
+ERROR: could not find an available, non-overlapping IPv4 address pool among the defaults to assign to the network
+```
+
+Issue the following *container-destructive* commands:
+
+```
+yes | docker network prune
+yes | docker system prune
+sudo ip link delete tun0
+```

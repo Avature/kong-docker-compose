@@ -2,9 +2,8 @@ version: '2.1'
 
 services:
   kong:
-    image: registry.xcade.net/kong-dev:${KONG_DOCKER_TAG}
+    image: "${KONG_DOCKER_IMAGE}${KONG_DOCKER_TAG}"
     build:
-        dockerfile: Dockerfile.kong
-        context: ./
+        context: ./kong
     extra_hosts:
       - "${SANDBOX_URL}:${SANDBOX_IP}"

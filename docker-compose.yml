@@ -114,7 +114,10 @@ services:
     restart: always
     networks:
         - kong-net
+    volumes:
+        - ./konga/kong_node.data:/run/kong_node.data
     environment:
+      KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data 
       DB_ADAPTER: postgres
       DB_HOST: db
       DB_USER: ${KONG_PG_USER}
