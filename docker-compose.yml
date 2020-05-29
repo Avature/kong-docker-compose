@@ -5,6 +5,9 @@ volumes:
 
 networks:
   kong-net:
+    ipam:
+      config:
+        - subnet: 192.168.44.0/24
 services:
   kong-migrations:
     image: "${KONG_DOCKER_TAG}"
@@ -60,8 +63,6 @@ services:
       KONG_PROXY_ERROR_LOG: /dev/stderr
     networks:
       - kong-net
-    extra_hosts:
-      - "iats-sb3.local:10.0.6.156"
     ports:
       - "8000:8000/tcp"
       - "8001:8001/tcp"
