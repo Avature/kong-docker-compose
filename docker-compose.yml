@@ -9,6 +9,9 @@ networks:
       config:
         - subnet: 192.168.44.0/24
 services:
+  #######################################
+  # Kong database preparation
+  #######################################
   kong-migrations:
     image: "${KONG_DOCKER_TAG}"
     command: kong migrations bootstrap
@@ -26,6 +29,9 @@ services:
     networks:
       - kong-net
     restart: on-failure
+  #######################################
+  # Kong migrations runner
+  #######################################
   kong-migrations-up:
     image: "${KONG_DOCKER_TAG}"
     command: kong migrations up
@@ -43,6 +49,9 @@ services:
     networks:
       - kong-net
     restart: on-failure
+  #######################################
+  # Kong service
+  #######################################
   kong:
     image: "${KONG_DOCKER_TAG}"
     user: "${KONG_USER:-root}"
@@ -74,6 +83,9 @@ services:
       timeout: 10s
       retries: 10
     restart: on-failure
+  #######################################
+  # PostgreSQL database
+  #######################################
   db:
     image: postgres:9.5
     environment:
@@ -92,7 +104,6 @@ services:
       - kong-net
     volumes:
       - kong_data:/var/lib/postgresql/data
-
   #######################################
   # Konga database prepare
   #######################################
@@ -106,7 +117,6 @@ services:
       - db 
     depends_on:
       - db
-
   #######################################
   # Konga: Kong GUI
   #######################################
