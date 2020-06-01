@@ -93,7 +93,7 @@ services:
       POSTGRES_PASSWORD: ${KONG_PG_PASSWORD}
       POSTGRES_USER: ${KONG_PG_USER}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${KONG_PG_USER}"]
+      test: ["CMD", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
       interval: 30s
       timeout: 30s
       retries: 3

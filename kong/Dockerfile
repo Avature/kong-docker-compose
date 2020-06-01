@@ -1,4 +1,5 @@
-FROM kong:2.0.4
+ARG KONG_DOCKER_TAG
+FROM ${KONG_DOCKER_TAG}
 USER root
 RUN apk add bash
 RUN apk add jq

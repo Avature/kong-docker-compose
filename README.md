@@ -68,3 +68,13 @@ yes | docker network prune
 yes | docker system prune
 sudo ip link delete tun0
 ```
+
+## TODO:
+
+There are some pending tasks but for this beta version we need deploy a dev/qa server that doesn't need this features.
+
+1. The connection between the iATS instances (either sandbox or productive/qa) and Kong and ALSO the connection between Konga and Kong admin interface are unencrypted and unprotected. We need to implement a sort of API key or some other authentication scheme.
+
+2. The active boolean flag in the konga_kong_nodes table of the Konga DB isn't true by default which forces the user to manually "activate" the connection to the Kong server after setup (this could be automated some way)
+
+3. Implement LDAP login on Konga UI
