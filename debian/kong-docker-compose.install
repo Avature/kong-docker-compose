@@ -3,7 +3,7 @@
 ## eg:
 ## bin/compiled => /opt/project/run
 ## config/config.production.toml => /etc/project/config.toml
-.env opt/kong
+.env.example => opt/kong/.env
 docker-compose.yml opt/kong
 {start,stop}.sh opt/kong
 startKongBash.sh opt/kong

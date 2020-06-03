@@ -1,2 +1,2 @@
 #!/bin/bash
-fakeroot debian/rules binary
+dpkg-buildpackage -us -uc -b
