@@ -31,7 +31,7 @@ Install this dependencies:
 
 ```console
 cd kong-docker-compose
-fakeroot debian/rules binary
+./buildDebian.sh
 ```
 
 ## Installing debian-package:
