@@ -9,7 +9,7 @@
 * install docker -> https://docs.docker.com/install/linux/docker-ce/ubuntu/
 * configure docker to execute without sudo -> https://docs.docker.com/install/linux/linux-postinstall/
 * install docker-compose -> https://docs.docker.com/compose/install/#install-compose-on-linux-systems
-* Clone the repo to your $HOME with: <pre>git clone https://gitlab.xcade.net/CustomAPIs/kong-docker</pre>
+* Clone the repo to your $HOME with: <pre>git clone https://gitlab.xcade.net/CustomAPIs/kong-docker-compose</pre>
 * If after installing DOCKER, your access to gitlab breakes, please follow the Julio's Magic in the wiki: https://wiki.xcade.net/wiki/Integrations_2.0:_Cells#How_to_install_Docker
 
 ## Usage:
@@ -30,8 +30,8 @@ Install this dependencies:
 
 
 ```console
-cd kong-docker
-fakeroot debian/rules binary
+cd kong-docker-compose
+./buildDebian.sh
 ```
 
 ## Installing debian-package:
