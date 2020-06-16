@@ -1,4 +1,7 @@
-kong-docker-compose (0.0.1) Ubuntu; urgency=medium
+# Changelog
+
+
+### 0.0.1 (2020-06-16)
 
   * [0cb10b28] Add dev docker-compose file * Add environment variables to .env * Start kong dev environment script * Specify kong-dev package file copying instructions * Update README.md
   * [5375a46a] Add kong tag to the image * Add docker dependencies to the deb package
@@ -10,10 +13,7 @@ kong-docker-compose (0.0.1) Ubuntu; urgency=medium
   * [453485d1] Add  plugins volume and base config
   * [95b20958] Add example kong file with plugins added and remove plugins of default config file
 
- -- Mariano Fresno <mariano@02249-mfresno>  Tue, 16 Jun 2020 11:56:17 -0300
-
-kong-docker-compose (0.0.1) Ubuntu; urgency=medium
+### 0.0.1 (2020-05-26)
 
   * Initial release. (Closes: #446124)
 
- -- Mariano Fresno <mariano.fresno@avature.net>  Wed, 26 May 2020 14:27:49 -0300
