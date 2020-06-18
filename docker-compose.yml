@@ -55,6 +55,9 @@ services:
   kong:
     image: "${KONG_DOCKER_TAG}"
     user: "${KONG_USER:-root}"
+    volumes:
+      - ./plugins/:/usr/local/custom/kong/plugins/
+      - ./kong/conf/:/etc/kong/
     depends_on:
       db:
         condition: service_healthy
@@ -81,7 +84,7 @@ services:
       test: ["CMD", "kong", "health"]
       interval: 10s
       timeout: 10s
-      retries: 10
+      retries: 99999999
     restart: on-failure
   #######################################
   # PostgreSQL database
@@ -126,9 +129,11 @@ services:
     networks:
         - kong-net
     volumes:
-        - ./konga/kong_node.data:/run/kong_node.data
+      - ./konga/kong_node.data:/run/kong_node.data:ro
+      - ./konga/kong_user.data:/run/kong_user.data:ro
     environment:
-      KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data 
+      KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
+      KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
       DB_ADAPTER: postgres
       DB_HOST: db
       DB_USER: ${KONG_PG_USER}

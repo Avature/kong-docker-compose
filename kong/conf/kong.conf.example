@@ -1,0 +1,4 @@
+# enabled plugins
+plugins = bundled, simple-plugin, proxy-cache-custom
+
+lua_package_path = /usr/local/custom/?.lua;;
