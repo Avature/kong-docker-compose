@@ -2,7 +2,7 @@ version: '2.1'
 
 volumes:
     kong_data: {}
-
+    nginx_config: /nginx
 networks:
   kong-net:
     ipam:
@@ -144,4 +144,18 @@ services:
     depends_on:
       - db
     ports:
-      - "1337:1337"    
+      - "localhost:1337:1337"
+  #######################################
+  # NGINX: Webserver
+  #######################################
+  nginx: 
+    image: nginx
+    networks:
+      - kong-net
+    volumes:
+      - nginx_config:/etc/nginx
+    environment: 
+      base_server_url: ${BASE_SERVER_URL}
+    ports:
+      - "80:80"
+      - "443:443"
