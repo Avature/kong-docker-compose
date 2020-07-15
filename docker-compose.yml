@@ -2,7 +2,6 @@ version: '2.1'
 
 volumes:
     kong_data: {}
-    nginx_config: /nginx
 networks:
   kong-net:
     ipam:
@@ -117,7 +116,7 @@ services:
       - kong-net
     restart: on-failure
     links:
-      - db 
+      - db
     depends_on:
       - db
   #######################################
@@ -127,7 +126,7 @@ services:
     image: pantsel/konga:next
     restart: always
     networks:
-        - kong-net
+      - kong-net
     volumes:
       - ./konga/kong_node.data:/run/kong_node.data:ro
       - ./konga/kong_user.data:/run/kong_user.data:ro
@@ -144,18 +143,35 @@ services:
     depends_on:
       - db
     ports:
-      - "localhost:1337:1337"
+      - "1337:1337"
   #######################################
   # NGINX: Webserver
   #######################################
-  nginx: 
+  nginx:
     image: nginx
     networks:
       - kong-net
     volumes:
-      - nginx_config:/etc/nginx
-    environment: 
+      - ./nginx/:/etc/nginx/conf.d/
+    environment:
       base_server_url: ${BASE_SERVER_URL}
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - kong
+      - konga
+  #######################################
+  # Python Startup
+  #######################################
+  startup:
+    build:
+      context: ./startup
+      dockerfile: Dockerfile
+    networks:
+      - kong-net
+    volumes:
+      - ./startup/:/app/
+    command: createAdmin.py
+    depends_on:
+      - kong
