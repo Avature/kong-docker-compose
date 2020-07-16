@@ -17,7 +17,8 @@ def createAdminRoute():
 
 def getApiKey():
     config = configparser.ConfigParser()
-    config.read('secrets.ini')
+    apikeyfile = os.environ["kong_apikey_file"]
+    config.read(apikeyfile)
     return config['kong-apikey']['apikey']
 
 def createConsumer():
