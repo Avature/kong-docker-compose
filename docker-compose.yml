@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.1'
 
 volumes:
     kong_data: {}
@@ -15,8 +15,7 @@ services:
     image: "${KONG_DOCKER_TAG}"
     command: kong migrations bootstrap
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     environment:
       KONG_DATABASE: postgres
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
@@ -35,8 +34,7 @@ services:
     image: "${KONG_DOCKER_TAG}"
     command: kong migrations up
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     environment:
       KONG_DATABASE: postgres
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
@@ -58,8 +56,7 @@ services:
       - ./plugins/:/usr/local/custom/kong/plugins/
       - ./kong/conf/:/etc/kong/
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     environment:
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ERROR_LOG: /dev/stderr
@@ -172,6 +169,14 @@ services:
       - kong-net
     volumes:
       - ./startup/:/app/
+      - ./startup/secrets.ini:/opt/kong/secrets.ini:ro
+    environment:
+      kong_apikey_file: /run/secrets/kong_apikey
+    secrets:
+      - kong_apikey
     command: createAdmin.py
     depends_on:
       - kong
+secrets:
+  kong_apikey:
+    file: ./startup/secrets.ini
