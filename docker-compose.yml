@@ -150,8 +150,6 @@ services:
       - kong-net
     volumes:
       - ./nginx/:/etc/nginx/conf.d/
-    environment:
-      base_server_url: ${BASE_SERVER_URL}
     ports:
       - "80:80"
       - "443:443"
@@ -169,7 +167,6 @@ services:
       - kong-net
     volumes:
       - ./startup/:/app/
-      - ./startup/secrets.ini:/opt/kong/secrets.ini:ro
     environment:
       kong_apikey_file: /run/secrets/kong_apikey
     secrets:
@@ -179,4 +176,4 @@ services:
       - kong
 secrets:
   kong_apikey:
-    file: ./startup/secrets.ini
+    file: /opt/kong/secrets.ini
