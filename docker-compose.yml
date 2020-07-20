@@ -167,6 +167,7 @@ services:
       - kong-net
     volumes:
       - ./startup/:/app/
+      - ./secrets.ini:/opt/kong/secrets.ini:ro
     environment:
       kong_apikey_file: /run/secrets/kong_apikey
     secrets:
@@ -176,4 +177,4 @@ services:
       - kong
 secrets:
   kong_apikey:
-    file: /opt/kong/secrets.ini
+    file: ./secrets.ini
