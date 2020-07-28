@@ -4,6 +4,7 @@
 ## bin/compiled => /opt/project/run
 ## config/config.production.toml => /etc/project/config.toml
 .env.example => opt/kong/.env
+secrets.ini.example => opt/kong/secrets.ini
 docker-compose.yml opt/kong
 {start,stop}.sh opt/kong
 startKongBash.sh opt/kong
