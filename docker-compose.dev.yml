@@ -9,3 +9,5 @@ services:
         KONG_DOCKER_TAG: $KONG_DOCKER_TAG
     extra_hosts:
       - "${SANDBOX_URL}:${SANDBOX_IP}"
+  nginx:
+    command: ./etc/nginx/conf.d/server_hosts/create-urls.sh kong-server.com
