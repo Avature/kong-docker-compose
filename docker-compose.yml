@@ -157,11 +157,7 @@ services:
       - konga
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
-    command: >
-      /bin/bash -c "envsubst '$${BASE_HOST_DOMAIN}' < /etc/nginx/conf.d/server_hosts/admin-url.conf.template > /etc/nginx/conf.d/server_hosts/admin-url.conf
-      && envsubst '$${BASE_HOST_DOMAIN}' < /etc/nginx/conf.d/server_hosts/gateway-url.conf.template > /etc/nginx/conf.d/server_hosts/gateway-url.conf
-      && envsubst '$${BASE_HOST_DOMAIN}' < /etc/nginx/conf.d/server_hosts/konga-url.conf.template > /etc/nginx/conf.d/server_hosts/konga-url.conf
-      && nginx -g 'daemon off;'"
+    command: ./etc/nginx/conf.d/server_hosts/create-urls.sh
   #######################################
   # Python Startup
   #######################################
