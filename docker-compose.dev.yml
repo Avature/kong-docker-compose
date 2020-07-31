@@ -10,4 +10,6 @@ services:
     extra_hosts:
       - "${SANDBOX_URL}:${SANDBOX_IP}"
   nginx:
-    command: ./etc/nginx/conf.d/server_hosts/create-urls.sh kong-server.com
+    environment:
+      BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
+    command: bash -c  "./etc/nginx/conf.d/server_hosts/create-urls.sh && nginx -g 'daemon off;'"
