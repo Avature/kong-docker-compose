@@ -139,7 +139,7 @@ services:
     depends_on:
       - db
     ports:
-      - "1337:1337"
+      - "127.0.0.1:1337:1337"
   #######################################
   # NGINX: Webserver
   #######################################
@@ -159,19 +159,16 @@ services:
   # Python Startup
   #######################################
   startup:
-    build:
-      context: ./startup
-      dockerfile: Dockerfile
+    image: python:alpine
     networks:
       - kong-net
     volumes:
       - ./startup/:/app/
-      - ./secrets.ini:/opt/kong/secrets.ini:ro
     environment:
       kong_apikey_file: /run/secrets/kong_apikey
     secrets:
       - kong_apikey
-    command: createAdmin.py
+    command: /app/init.sh
     depends_on:
       - kong
 secrets:
