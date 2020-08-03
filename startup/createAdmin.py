@@ -1,6 +1,7 @@
 import requests
 import os
 import configparser
+import json
 
 admin_base_url = 'http://kong:8001'
 
@@ -8,6 +9,18 @@ def create_admin_service():
   admin_api_payload = {"name": "adminApi", "protocol": "http", "port": 8001, "host": "127.0.0.1"}
   requests.post(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
   requests.post(url=admin_base_url + '/services/adminApi/plugins', data={"name": "key-auth"}, verify=False)
+
+def create_cn_pre_function():
+  script_file_path = os.path.dirname(__file__) + "/read-cn-header.lua"
+  script_file = open(script_file_path, "r")
+  read_cn_script = script_file.read()
+  payload = {
+    "name": "pre-function",
+    "config.functions": [
+      read_cn_script
+    ]
+  }
+  requests.post(url=adminBaseUrl + '/services/adminApi/plugins', data = payload, verify=False)
 
 def create_admin_route():
   create_admin_service()
@@ -37,6 +50,7 @@ def create_admin():
   admin_route_response = requests.get(admin_base_url + '/services/adminApi')
   if admin_route_response.status_code == 404:
     create_admin_route()
+    create_cn_pre_function()
 
 if __name__ == "__main__":
   create_admin()
