@@ -2,41 +2,41 @@ import requests
 import os
 import configparser
 
-adminBaseUrl = 'http://kong:8001'
+admin_base_url = 'http://kong:8001'
 
+def create_admin_service():
+  admin_api_payload = {"name": "adminApi", "protocol": "http", "port": 8001, "host": "127.0.0.1"}
+  requests.post(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
+  requests.post(url=admin_base_url + '/services/adminApi/plugins', data={"name": "key-auth"}, verify=False)
 
-def createAdminService():
-  adminApiPayload = {"name": "adminApi", "protocol": "http", "port": 8001, "host": "127.0.0.1"}
-  requests.post(url=adminBaseUrl + '/services', data=adminApiPayload, verify=False)
-  requests.post(url=adminBaseUrl + '/services/adminApi/plugins', data={"name": "key-auth"}, verify=False)
-
-def createAdminRoute():
-  createAdminService()
+def create_admin_route():
+  create_admin_service()
   payload = {"name": "adminApi", "protocols": ["http", "https"], "paths": ["/admin-api"]}
-  response = requests.post(adminBaseUrl + '/services/adminApi/routes', data=payload, verify=False)
+  response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
 
-def getApiKey():
+def get_api_key():
   config = configparser.ConfigParser()
-  apikeyfile = os.environ["kong_apikey_file"]
-  config.read(apikeyfile)
+  api_key_file = os.environ["kong_apikey_file"]
+  config.read(api_key_file)
   return config['kong-apikey']['apikey']
 
-def createConsumer():
-  apikey = getApiKey()
-  keyAuthUrl = adminBaseUrl + '/consumers/admin/key-auth'
-  adminConsumerResponse = requests.get(keyAuthUrl)
-  if adminConsumerResponse.status_code == 200:
-    if adminConsumerResponse.json()["data"][0]["key"] != apikey:
-      requests.delete(keyAuthUrl + '/' + adminConsumerResponse.json()["data"][0]["id"])
-      requests.post(keyAuthUrl, data={"key": apikey}, verify=False)
+def create_consumer():
+  api_key = get_api_key()
+  key_auth_url = admin_base_url + '/consumers/admin/key-auth'
+  admin_consumer_response = requests.get(key_auth_url)
+  if admin_consumer_response.status_code == 200:
+    if admin_consumer_response.json()["data"][0]["key"] != api_key:
+      requests.delete(key_auth_url + '/' + admin_consumer_response.json()["data"][0]["id"])
+      requests.post(key_auth_url, data={"key": api_key}, verify=False)
   else:
-    requests.post(adminBaseUrl + '/consumers', data={"username": "admin"}, verify=False)
-    requests.post(keyAuthUrl, data={"key": apikey}, verify=False)
+    requests.post(admin_base_url + '/consumers', data={"username": "admin"}, verify=False)
+    requests.post(key_auth_url, data={"key": api_key}, verify=False)
 
-def createAdmin():
-  createConsumer()
-  adminRouteResponse = requests.get(adminBaseUrl + '/services/adminApi')
-  if adminRouteResponse.status_code == 404:
-    createAdminRoute()
+def create_admin():
+  create_consumer()
+  admin_route_response = requests.get(admin_base_url + '/services/adminApi')
+  if admin_route_response.status_code == 404:
+    create_admin_route()
 
-createAdmin()
+if __name__ == "__main__":
+  create_admin()
