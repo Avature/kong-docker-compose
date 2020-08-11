@@ -1,5 +1,6 @@
 #!/bin/sh
 
-pip install requests
+python3 -m venv venv
 
-python ./app/createAdmin.py
+venv/bin/pip install requests==2.24.0
+venv/bin/python ./app/createAdmin.py
