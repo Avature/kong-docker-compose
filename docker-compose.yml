@@ -134,6 +134,21 @@ services:
     environment:
       KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
       KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
+      KONGA_AUTH_PROVIDER: "ldap"
+      KONGA_LDAP_HOST: /run/secrets/ldap_host
+      KONGA_LDAP_BIND_DN:	"cn=AppReader,dc=avature,dc=net"
+      KONGA_LDAP_BIND_PASSWORD: /run/secrets/ldap_password
+      KONGA_LDAP_USER_SEARCH_BASE: "ou=People,dc=avature,dc=net"
+      KONGA_LDAP_USER_SEARCH_FILTER: "(&(|(objectclass=inetOrgPerson))(|(uid={{username}})(|(mailPrimaryAddress={{username}})(mail={{username}}))(|(uid={{username}}))))"
+      KONGA_LDAP_USER_ATTRS: "uid,givenname,sn,mail"
+      KONGA_LDAP_GROUP_SEARCH_BASE: "ou=Role,dc=avature,dc=net"
+      KONGA_LDAP_GROUP_SEARCH_FILTER: "(|(cn=accessToKongQA-admin)(cn=accessToKongQA))"
+      KONGA_LDAP_GROUP_ATTRS: "cn"
+      KONGA_ADMIN_GROUP_REG: "^(admin|accessToKongQA-admin)$"
+      KONGA_LDAP_ATTR_USERNAME: "uid"
+      KONGA_LDAP_ATTR_FIRSTNAME: "givenname"
+      KONGA_LDAP_ATTR_LASTNAME: "sn"
+      KONGA_LDAP_ATTR_EMAIL: "mail"
       DB_ADAPTER: postgres
       DB_HOST: db
       DB_USER: ${KONG_PG_USER}
@@ -144,4 +159,12 @@ services:
     depends_on:
       - db
     ports:
-      - "1337:1337"    
+      - "1337:1337"
+    secrets:
+      - ldap_host
+      - ldap_password
+secrets:
+  ldap_host:
+    file: ./ldap_host.txt
+  ldap_password:
+    file: ./ldap_password.txt
