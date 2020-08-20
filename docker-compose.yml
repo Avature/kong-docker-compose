@@ -132,9 +132,9 @@ services:
       KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
       KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
       KONGA_AUTH_PROVIDER: "ldap"
-      KONGA_LDAP_HOST: /run/secrets/ldap_host
+      KONGA_LDAP_HOST: ${LDAP_HOST}
       KONGA_LDAP_BIND_DN: "cn=AppReader,dc=avature,dc=net"
-      KONGA_LDAP_BIND_PASSWORD: /run/secrets/ldap_password
+      KONGA_LDAP_BIND_PASSWORD: ${LDAP_PASSWORD}
       KONGA_LDAP_USER_SEARCH_BASE: "ou=People,dc=avature,dc=net"
       KONGA_LDAP_USER_SEARCH_FILTER: "(&(objectclass=inetOrgPerson)(uid={{username}}))"
       KONGA_LDAP_USER_ATTRS: "uid,givenname,sn,mail"
@@ -157,11 +157,3 @@ services:
       - db
     ports:
       - "1337:1337"
-    secrets:
-      - ldap_host
-      - ldap_password
-secrets:
-  ldap_host:
-    file: ./ldap_host.txt
-  ldap_password:
-    file: ./ldap_password.txt
