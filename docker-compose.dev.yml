@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.1'
 
 services:
   kong:
@@ -9,3 +9,6 @@ services:
         KONG_DOCKER_TAG: $KONG_DOCKER_TAG
     extra_hosts:
       - "${SANDBOX_URL}:${SANDBOX_IP}"
+  konga:
+    environment:
+      KONGA_AUTH_PROVIDER: "local"
