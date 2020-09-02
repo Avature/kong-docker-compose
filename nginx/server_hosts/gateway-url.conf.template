@@ -1,1 +1,1 @@
-server_name gateway.${BASE_HOST_DOMAIN};
+server_name gateway-${BASE_HOST_DOMAIN};
