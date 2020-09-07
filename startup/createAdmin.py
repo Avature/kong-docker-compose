@@ -7,7 +7,8 @@ admin_base_url = 'http://kong:8001'
 def create_admin_service():
   admin_api_payload = {"name": "adminApi", "protocol": "http", "port": 8001, "host": "127.0.0.1"}
   requests.post(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
-  requests.post(url=admin_base_url + '/services/adminApi/plugins', data={"name": "key-auth"}, verify=False)
+  add_plugin({"name": "key-auth"})
+  add_plugin({"name": "file-log", "config.path":"/var/log/file.log", "config.reopen": "true"})
 
 def create_admin_route():
   create_admin_service()
@@ -37,6 +38,9 @@ def create_admin():
   admin_route_response = requests.get(admin_base_url + '/services/adminApi')
   if admin_route_response.status_code == 404:
     create_admin_route()
+
+def add_plugin(pluginConfig):
+  requests.post(url=admin_base_url + '/services/adminApi/plugins', data=pluginConfig, verify=False)
 
 if __name__ == "__main__":
   create_admin()
