@@ -9,3 +9,6 @@ services:
         KONG_DOCKER_TAG: $KONG_DOCKER_TAG
     extra_hosts:
       - "${SANDBOX_URL}:${SANDBOX_IP}"
+  konga:
+    environment:
+      KONGA_AUTH_PROVIDER: "local"

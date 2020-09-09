@@ -129,6 +129,21 @@ services:
     environment:
       KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
       KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
+      KONGA_AUTH_PROVIDER: "ldap"
+      KONGA_LDAP_HOST: ${LDAP_HOST}
+      KONGA_LDAP_BIND_DN: "cn=AppReader,dc=avature,dc=net"
+      KONGA_LDAP_BIND_PASSWORD: ${LDAP_PASSWORD}
+      KONGA_LDAP_USER_SEARCH_BASE: "ou=People,dc=avature,dc=net"
+      KONGA_LDAP_USER_SEARCH_FILTER: "(&(objectclass=inetOrgPerson)(uid={{username}}))"
+      KONGA_LDAP_USER_ATTRS: "uid,givenName,sn,mail"
+      KONGA_LDAP_GROUP_SEARCH_BASE: "ou=Permission,dc=avature,dc=net"
+      KONGA_LDAP_GROUP_SEARCH_FILTER: ${LDAP_GROUP_SEARCH_FILTER}
+      KONGA_LDAP_GROUP_ATTRS: "cn"
+      KONGA_ADMIN_GROUP_REG: ${LDAP_ADMIN_GROUP_REG}
+      KONGA_LDAP_ATTR_USERNAME: "uid"
+      KONGA_LDAP_ATTR_FIRSTNAME: "givenName"
+      KONGA_LDAP_ATTR_LASTNAME: "sn"
+      KONGA_LDAP_ATTR_EMAIL: "mail"
       DB_ADAPTER: postgres
       DB_HOST: db
       DB_USER: ${KONG_PG_USER}
