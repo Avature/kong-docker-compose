@@ -25,7 +25,7 @@ def create_consumer():
   api_key = get_api_key()
   key_auth_url = admin_base_url + '/consumers/admin/key-auth'
   admin_consumer_response = requests.get(key_auth_url)
-  if admin_consumer_response.status_code == 200:
+  if admin_consumer_response.status_code == 200 and admin_consumer_response.json()["data"]:
     if admin_consumer_response.json()["data"][0]["key"] != api_key:
       requests.delete(key_auth_url + '/' + admin_consumer_response.json()["data"][0]["id"])
       requests.post(key_auth_url, data={"key": api_key}, verify=False)
