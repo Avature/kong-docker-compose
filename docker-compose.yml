@@ -55,7 +55,7 @@ services:
     volumes:
       - ./plugins/:/usr/local/custom/kong/plugins/
       - ./kong/conf/:/etc/kong/
-      - /var/log/avature/kong/:/var/log/
+      - /var/log/avature/kong/:/home/kong/log/
     depends_on:
       - db
     environment:
