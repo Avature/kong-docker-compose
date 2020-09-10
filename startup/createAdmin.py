@@ -3,12 +3,14 @@ import os
 import configparser
 
 admin_base_url = 'http://kong:8001'
+admin_api_plugins = [
+  {"name": "key-auth"},
+  {"name": "file-log", "config.path":"/home/kong/log/admin-api.log", "config.reopen": "true"}
+]
 
 def create_admin_service():
   admin_api_payload = {"name": "adminApi", "protocol": "http", "port": 8001, "host": "127.0.0.1"}
   requests.post(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
-  add_plugin({"name": "key-auth"})
-  add_plugin({"name": "file-log", "config.path":"/var/log/file.log", "config.reopen": "true"})
 
 def create_admin_route():
   create_admin_service()
@@ -38,9 +40,19 @@ def create_admin():
   admin_route_response = requests.get(admin_base_url + '/services/adminApi')
   if admin_route_response.status_code == 404:
     create_admin_route()
+  add_plugins()
 
-def add_plugin(pluginConfig):
-  requests.post(url=admin_base_url + '/services/adminApi/plugins', data=pluginConfig, verify=False)
+def add_plugins():
+  admin_plugins_response = requests.get(admin_base_url + '/services/adminApi/plugins').json()["data"]
+  for plugin in admin_api_plugins:
+    add_plugin(plugin, admin_plugins_response)
+
+def add_plugin(plugin_config, admin_plugins):
+  if (has_not_plugin(plugin_config["name"], admin_plugins)):
+    requests.post(url=admin_base_url + '/services/adminApi/plugins', data=plugin_config, verify=False)
+
+def has_not_plugin(plugin_name, plugins):
+  return not any(plugin["name"] == plugin_name for plugin in plugins)
 
 if __name__ == "__main__":
   create_admin()
