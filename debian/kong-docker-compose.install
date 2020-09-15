@@ -22,3 +22,4 @@ nginx/server_hosts/gateway-url.conf.template opt/kong/nginx/server_hosts
 nginx/server_hosts/admin-url.conf.template opt/kong/nginx/server_hosts
 nginx/server_hosts/create-urls.sh opt/kong/nginx/server_hosts
 nginx/certs opt/kong/nginx
+createDevCerts.sh opt/kong
