@@ -8,7 +8,6 @@ secrets.ini.example => opt/kong/secrets.ini
 docker-compose.yml opt/kong
 {start,stop}.sh opt/kong
 startKongBash.sh opt/kong
-createDevCerts.sh opt/kong
 kong/connectToDB.sh opt/kong/kong
 konga/connectToDB.sh opt/kong/konga
 konga/kong_node.data opt/kong/konga
