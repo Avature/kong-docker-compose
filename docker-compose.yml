@@ -129,7 +129,7 @@ services:
     environment:
       KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
       KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
-      KONGA_AUTH_PROVIDER: "ldap"
+      KONGA_AUTH_PROVIDER: ${KONGA_AUTH_PROVIDER}
       KONGA_LDAP_HOST: ${LDAP_HOST}
       KONGA_LDAP_BIND_DN: "cn=AppReader,dc=avature,dc=net"
       KONGA_LDAP_BIND_PASSWORD: ${LDAP_PASSWORD}
