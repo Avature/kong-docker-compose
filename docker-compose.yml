@@ -2,7 +2,6 @@ version: '3.1'
 
 volumes:
     kong_data: {}
-
 networks:
   kong-net:
     ipam:
@@ -74,9 +73,8 @@ services:
       - kong-net
     ports:
       - "8000:8000/tcp"
-      - "8001:8001/tcp"
-      - "8445:8443/tcp"
-      - "8444:8444/tcp"
+    expose:
+      - "8001"
     healthcheck:
       test: ["CMD", "kong", "health"]
       interval: 10s
@@ -114,7 +112,7 @@ services:
       - kong-net
     restart: on-failure
     links:
-      - db 
+      - db
     depends_on:
       - db
   #######################################
@@ -124,14 +122,14 @@ services:
     image: pantsel/konga:next
     restart: always
     networks:
-        - kong-net
+      - kong-net
     volumes:
       - ./konga/kong_node.data:/run/kong_node.data:ro
       - ./konga/kong_user.data:/run/kong_user.data:ro
     environment:
       KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
       KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
-      KONGA_AUTH_PROVIDER: "ldap"
+      KONGA_AUTH_PROVIDER: ${KONGA_AUTH_PROVIDER}
       KONGA_LDAP_HOST: ${LDAP_HOST}
       KONGA_LDAP_BIND_DN: "cn=AppReader,dc=avature,dc=net"
       KONGA_LDAP_BIND_PASSWORD: ${LDAP_PASSWORD}
@@ -156,4 +154,41 @@ services:
     depends_on:
       - db
     ports:
-      - "1337:1337"
+      - "127.0.0.1:1337:1337"
+  #######################################
+  # NGINX: Webserver
+  #######################################
+  nginx:
+    image: nginx
+    networks:
+      - kong-net
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d/
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - kong
+      - konga
+    environment:
+      BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
+    command: bash -c  "./etc/nginx/conf.d/server_hosts/create-urls.sh && nginx -g 'daemon off;'"
+  #######################################
+  # Python Startup
+  #######################################
+  startup:
+    image: python:alpine
+    networks:
+      - kong-net
+    volumes:
+      - ./startup/:/app/
+    environment:
+      kong_apikey_file: /run/secrets/kong_apikey
+    secrets:
+      - kong_apikey
+    command: /app/init.sh
+    depends_on:
+      - kong
+secrets:
+  kong_apikey:
+    file: ./secrets.ini

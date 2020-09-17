@@ -1,0 +1,1 @@
+server_name admin-${BASE_HOST_DOMAIN};

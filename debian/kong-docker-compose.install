@@ -4,9 +4,22 @@
 ## bin/compiled => /opt/project/run
 ## config/config.production.toml => /etc/project/config.toml
 .env.example => opt/kong/.env
+secrets.ini.example => opt/kong/secrets.ini
 docker-compose.yml opt/kong
 {start,stop}.sh opt/kong
 startKongBash.sh opt/kong
 kong/connectToDB.sh opt/kong/kong
 konga/connectToDB.sh opt/kong/konga
 konga/kong_node.data opt/kong/konga
+startup/createAdmin.py opt/kong/startup
+startup/init.sh opt/kong/startup
+nginx/sslCertificates.conf opt/kong/nginx
+nginx/konga.conf opt/kong/nginx
+nginx/gateway.conf opt/kong/nginx
+nginx/admin.conf opt/kong/nginx
+nginx/server_hosts/konga-url.conf.template opt/kong/nginx/server_hosts
+nginx/server_hosts/gateway-url.conf.template opt/kong/nginx/server_hosts
+nginx/server_hosts/admin-url.conf.template opt/kong/nginx/server_hosts
+nginx/server_hosts/create-urls.sh opt/kong/nginx/server_hosts
+nginx/certs opt/kong/nginx
+createDevCerts.sh opt/kong
