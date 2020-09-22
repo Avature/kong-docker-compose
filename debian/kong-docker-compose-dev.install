@@ -7,4 +7,3 @@ dev.env opt/kong
 docker-compose.dev.yml opt/kong
 kong/Dockerfile opt/kong/kong
 startDev.sh opt/kong
-createDevCerts.sh opt/kong
