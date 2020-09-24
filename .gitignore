@@ -2,3 +2,5 @@
 plugins
 nginx/certs
 secrets.ini
+venv
+startup/venv
