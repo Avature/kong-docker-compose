@@ -1,4 +1,7 @@
-kong-docker-compose (0.0.2) Ubuntu; urgency=medium
+# Changelog
+
+
+### 0.0.2 (2020-09-24)
 
   * Author: Juan Vincenti <juan.vincenti@avature.net>
   * Add nginx proxy pass.
@@ -7,10 +10,7 @@ kong-docker-compose (0.0.2) Ubuntu; urgency=medium
   * Add virtual hosts for gateway, konga, and admin-api
   * Add LDAP support to Konga login
 
- -- Mariano Fresno <mariano@02249-mfresno>  Thu, 24 Sep 2020 11:33:17 -0300
-
-kong-docker-compose (0.0.1) Ubuntu; urgency=medium
+### 0.0.1 (2020-05-26)
 
   * Initial release. (Closes: #446124)
 
- -- Mariano Fresno <mariano.fresno@avature.net>  Wed, 26 May 2020 14:27:49 -0300
