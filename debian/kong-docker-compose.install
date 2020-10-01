@@ -23,3 +23,5 @@ nginx/server_hosts/admin-url.conf.template opt/kong/nginx/server_hosts
 nginx/server_hosts/create-urls.sh opt/kong/nginx/server_hosts
 nginx/certs opt/kong/nginx
 createDevCerts.sh opt/kong
+kong/conf/custom-nginx.conf opt/kong/conf
+kong/conf/custom-entrypoint.sh opt/kong/conf
