@@ -16,6 +16,15 @@ def create_admin_route():
   create_admin_service()
   payload = {"name": "adminApi", "protocols": ["http", "https"], "paths": ["/admin-api"]}
   response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
+  requests.post(url=admin_base_url + '/routes/adminApi/plugins', data={"name": "key-auth"}, verify=False)
+
+def create_register_instance_route():
+  create_admin_service()
+  payload = {"name": "adminApiRegisterInstance", "protocols": ["http", "https"], "paths": ["/admin-api/instances/register"], "methods": ["POST"]}
+  response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
+  requests.post(
+    url=admin_base_url + '/routes/adminApiRegisterInstance/plugins',
+    data={"name": "mtls-certs", "config": {"ca_private_key_path": "/usr/local/custom/kong/plugins/mtls-certs/certs/CA-key.pem"}}, verify=False)
 
 def get_api_key():
   config = configparser.ConfigParser()
@@ -40,6 +49,7 @@ def create_admin():
   admin_route_response = requests.get(admin_base_url + '/services/adminApi')
   if admin_route_response.status_code == 404:
     create_admin_route()
+    create_register_instance_route()
   add_plugins()
 
 def add_plugins():
