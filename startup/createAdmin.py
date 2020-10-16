@@ -1,11 +1,15 @@
+import json
 import requests
 import os
 import configparser
 
+previously_installed_plugins = {}
+
 admin_base_url = 'http://kong:8001'
 admin_api_plugins = [
-  {"name": "key-auth"},
-  {"name": "file-log", "config.path":"/home/kong/log/admin-api.log", "config.reopen": "true"}
+  {"target":"routes/adminApi", "payload": {"name": "key-auth"}},
+  {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
+  {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls-certs", "config": {"ca_private_key_path": "/usr/local/custom/kong/plugins/mtls-certs/certs/CA-key.pem"}}}
 ]
 
 def create_admin_service():
@@ -16,15 +20,11 @@ def create_admin_route():
   create_admin_service()
   payload = {"name": "adminApi", "protocols": ["http", "https"], "paths": ["/admin-api"]}
   response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
-  requests.post(url=admin_base_url + '/routes/adminApi/plugins', data={"name": "key-auth"}, verify=False)
 
 def create_register_instance_route():
   create_admin_service()
   payload = {"name": "adminApiRegisterInstance", "protocols": ["http", "https"], "paths": ["/admin-api/instances/register"], "methods": ["POST"]}
   response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
-  requests.post(
-    url=admin_base_url + '/routes/adminApiRegisterInstance/plugins',
-    data={"name": "mtls-certs", "config": {"ca_private_key_path": "/usr/local/custom/kong/plugins/mtls-certs/certs/CA-key.pem"}}, verify=False)
 
 def get_api_key():
   config = configparser.ConfigParser()
@@ -52,17 +52,29 @@ def create_admin():
     create_register_instance_route()
   add_plugins()
 
+def get_previous_plugins_for_target(target):
+  if target not in previously_installed_plugins:
+    previous_plugins = requests.get(admin_base_url + '/' + target + '/plugins').json()["data"]
+    previously_installed_plugins[target] = list(map(lambda plugin: plugin["name"], previous_plugins))
+  return previously_installed_plugins[target]
+
+def target_has_plugin(plugin_name, target):
+  return plugin_name in get_previous_plugins_for_target(target)
+
 def add_plugins():
-  admin_plugins_response = requests.get(admin_base_url + '/services/adminApi/plugins').json()["data"]
-  for plugin in admin_api_plugins:
-    add_plugin(plugin, admin_plugins_response)
+  for plugin_config in admin_api_plugins:
+    add_plugin(plugin_config)
 
-def add_plugin(plugin_config, admin_plugins):
-  if (has_not_plugin(plugin_config["name"], admin_plugins)):
-    requests.post(url=admin_base_url + '/services/adminApi/plugins', data=plugin_config, verify=False)
-
-def has_not_plugin(plugin_name, plugins):
-  return not any(plugin["name"] == plugin_name for plugin in plugins)
+def add_plugin(plugin_config):
+  target = plugin_config["target"]
+  payload = plugin_config["payload"]
+  plugin_name = payload["name"]
+  if (not target_has_plugin(plugin_name, target)):
+    post_plugin_response = requests.post(url=admin_base_url + '/' + target + '/plugins', data=json.dumps(payload), verify=False, headers={"Content-Type": "application/json"})
+    if (post_plugin_response.status_code == 201):
+          previously_installed_plugins[target].append(plugin_name)
+    else:
+      exit(1)
 
 if __name__ == "__main__":
   create_admin()

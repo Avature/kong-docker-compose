@@ -1,5 +1,5 @@
 package = "mtls-certs"
-version = "0.0.1"
+version = "0.0.1-1"
 source = {
    url = "..." -- We don't have one yet
 }
@@ -12,9 +12,13 @@ description = {
    license = "MIT/X11" -- or whatever you like
 }
 dependencies = {
-   "lua >= 5.1, < 5.4"
+   "lua >= 5.1",
+   "lua-resty-openssl",
+   "busted",
+   "luaffi"
    -- If you depend on other rocks, add them here
 }
 build = {
-   -- We'll start here.
+    type = 'builtin',
+    modules = {}
 }
