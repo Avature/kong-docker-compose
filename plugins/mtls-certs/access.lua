@@ -1,20 +1,12 @@
 local _M = {}
 
-local consumers = kong.db.consumers
--- local x509 = require("resty.openssl.x509")
-local req = require("resty.openssl.x509.csr")
--- local pkey = require("resty.openssl.pkey")
+local name_helper = require("kong.plugins.mtls-certs.x509_name_helper")
 
-function os.capture(cmd, raw)
-  local f = assert(io.popen(cmd, 'r'))
-  local s = assert(f:read('*a'))
-  local exit_code = f:close()
-  if raw then return s end
-  s = string.gsub(s, '^%s+', '')
-  s = string.gsub(s, '%s+$', '')
-  s = string.gsub(s, '[\n\r]+', ' ')
-  return s, exit_code
-end
+local consumers = kong.db.consumers
+local x509 = require("resty.openssl.x509")
+local csr = require("resty.openssl.x509.csr")
+local pkey = require("resty.openssl.pkey")
+local bn = require("resty.openssl.bn")
 
 function _M.read_file(file)
   local f = assert(io.open(file, "rb"))
@@ -40,86 +32,89 @@ function _M.check_instance_exists(instance_name)
   return consumer ~= nil
 end
 
+function _M.respond(statusCode, message, errorDescription)
+  local output = {
+    message = message
+  }
+  if errorDescription then
+    output.error_description = errorDescription
+  end
+  return kong.response.exit(statusCode, output)
+end
+
 function _M.execute(conf)
+  local request_body = kong.request.get_body()
+  local instance_name = request_body.instance.name
+  local instance_description = request_body.instance.description
+  local csr_content = request_body.csr
+  local ca_passphrase  = conf.ca_private_key_passphrase
+  if conf.csr_path ~= nil then
+    csr_content = _M.read_file(conf.csr_path)
+  end
+  if _M.check_instance_exists(instance_name) then
+    return _M.respond(401, "Instance already exists")
+  end
   local private_key_path = conf.ca_private_key_path
   local certificate_path = conf.ca_certificate_path
-  local csr_path = conf.csr_path
-  local csr_contents = _M.read_file(csr_path)
-  local csr_parsed, csr_new_error = req.new(csr_contents, "*")
-
-  if csr_new_error ~= nil then
-    return kong.response.exit(500, "Error parsing csr: " .. csr_new_error)
+  local ca_private_key_content = _M.read_file(private_key_path)
+  local ca_certificate_content = _M.read_file(certificate_path)
+  if not csr_content then
+    return _M.respond(400, "CSR Contents are empty")
   end
-
-  local ca_key_contents = _M.read_file(private_key_path)
-  local ca_parsed_key, new_ca_pkey_error = pkey.new(ca_key_contents, {passphrase="1234"})
-  local sign_ok, sign_error = csr_parsed:sign(ca_parsed_key)
-
-  if sign_error ~= nil then
-    return kong.response.exit(500, "Error signing csr: " .. sign_error)
+  local parsed_csr, err = csr.new(csr_content)
+  if err then
+    return _M.respond(400, "CSR Contents are invalid", err)
   end
-
-  local verify_ok, verify_error = csr_parsed:verify(ca_parsed_key)
-
-  if verify_error ~= nil then
-    return kong.response.exit(500, "Error verifying: " .. verify_error)
+  local subject, err = parsed_csr:get_subject_name()
+  if err then
+    return _M.respond(400, "Cannot get subject from CSR", err)
   end
-
-  local private_key_to_string, error3 = ca_parsed_key:tostring("private")
-
-  local crt_to_string, crt_error = csr_parsed:tostring()
-
-  if crt_error ~= nil then
-    return kong.response.exit(500, "Error parsing pkey")
+  local csr_pubkey, err = parsed_csr:get_pubkey()
+  if err then
+    return _M.respond(400, "Cannot get public key from CSR", err)
   end
-
-
-
-  local subject_name, subject_name_error = csr_parsed:get_subject_name()
-
-
-
-  if subject_name_error ~= nil then
-    return kong.response.exit(500, "Error with CN: " .. subject_name_error)
+  local csr_verified_ok, err = parsed_csr:verify(csr_pubkey)
+  if not csr_verified_ok then
+    return _M.respond(400, "Cannot get subject from CSR", err)
   end
+  local subject_name = name_helper.tostring(subject)
+  local subject_common_name = string.match( subject_name, conf.common_name_regex);
 
+  if subject_common_name ~= instance_name then
+    return _M.respond(401, "Instance name does not match CSR's subject",
+      "distinguished name is: " .. subject_name .. " but the instance_name given was: " .. instance_name
+    )
+  end
+  local crt_output = x509.new()
+  crt_output:set_subject_name(subject)
+  crt_output:set_pubkey(csr_pubkey)
+  local seconds_of_validity = conf.days_of_validity * 60 * 60 * 24
+  crt_output:set_not_after(ngx.time() + seconds_of_validity)
+  crt_output:set_not_before(ngx.time())
+  local serial_number, err = bn.new(ngx.time())
+  if err then
+    return _M.respond(400, "Error creating serial number", err)
+  end
+  crt_output:set_serial_number(serial_number)
+  local ca_pkey_config = nil
+  if ca_passphrase ~= nil then
+    ca_pkey_config = {  passphrase = ca_passphrase }
+  end
+  local parsed_private_key = pkey.new(ca_private_key_content, ca_pkey_config)
+  crt_output:sign(parsed_private_key)
+  local parsed_ca_certificate, err = x509.new(ca_certificate_content)
+  if err then
+    return _M.respond(500, "Cannot load CA certificate", err)
+  end
+  local ok, err = crt_output:verify(parsed_ca_certificate:get_pubkey())
+  if err or not ok then
+    return _M.respond(500, "Cannot validate generated certificate", tostring(err))
+  end
+  _M.create_consumer(instance_name, instance_description)
 
-
-
-
-
-
-
-
-
-
-  -- local csr_ok, csr_error_2 = parsed_req:sign(ca_parsed_key)
-
-
-  -- local result, error2 = csr_parsed:get_subject_name()
-
-  -- if error2 ~= nil then
-  --   return kong.response.exit(500, "Error getting version: " .. error2)
-  -- end
-  -- if result == nil then
-  --   return kong.response.exit(500, "Error with result nil")
-  -- end
-
-  -- if _M.check_instance_exists(instance_name) then
-  --   return kong.response.exit(401, "Instance already exists")
-  -- end
-
-  -- local parsed_req, csr_error = req.new(csr, "*")
-  -- kong.log.err("Error parsing CSR:", csr_error)
-  -- local ca_key_contents = _M.read_file(private_key_path)
-  -- local ca_parsed_key = pkey.new(ca_key_contents, {passphrase="1234"})
-  -- local csr_ok, csr_error_2 = parsed_req:sign(ca_parsed_key)
-  -- kong.log.debug("CSR sign OK:", csr_ok)
-  -- kong.log.err("Error signing CSR:", csr_error_2)
-  -- local result = parsed_req:tostring()
-
-  -- _M.create_consumer(instance_name, instance_description)
-  return kong.response.exit(201, "Private Key: " .. private_key_to_string .. " CRT: " .. crt_to_string .. " SUBJECT: " .. subject_name:tostring())
+  return _M.respond(201, {
+    crt = crt_output:to_PEM()
+  })
 end
 
 return _M

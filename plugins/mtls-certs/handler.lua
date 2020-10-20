@@ -1,5 +1,5 @@
 
-local access = require "kong.plugins.mtls-certs.access"
+local access = require("kong.plugins.mtls-certs.access")
 
 local MtlsCertsHandler = {
   PRIORITY = 1,

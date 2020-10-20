@@ -10,16 +10,11 @@ _G.kong = {
 }
 
 
-local subject = require('access')
+-- local subject = require('access')
 
 
 it("only run this test #only", function()
 
-    local conf = {
-      ca_private_key_path = '',
-      ca_certificate_path = '',
-      csr_path = './certs/mydomain.com.csr'
-    }
-    subject.execute(conf)
-    print("prueba")
+    local dn = "C=US/CN=domain.com/O=MyOrg, Inc./ST=C"
+    print(string.match(dn, "CN=(.*)/O="))
 end)
