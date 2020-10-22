@@ -1,4 +1,4 @@
-package = "mtls-certs"
+package = "mtls_certs_manager"
 version = "0.0.1-1"
 source = {
    url = "..." -- We don't have one yet

@@ -1,7 +1,5 @@
 local _M = {}
 
-_G.mocked_values = {}
-
 local function split_string(input, split_by)
   local output = {}
   for word in input:gmatch('[^' .. split_by .. '%s]+') do
@@ -20,8 +18,7 @@ _M.mock_return = function(object_path, method_name, return_what)
     end
   end)
   local dashed_method_name = object_path:gsub("%.", "_") .. '_' .. method_name
-  _G.mocked_values[dashed_method_name] = return_what
-  local mocked_function_code = "_G" .. last_key .. "." .. method_name .. " = function() return mocked_values['" .. dashed_method_name .."'] end"
+  local mocked_function_code = "_G" .. last_key .. "." .. method_name .. " = function() return " .. return_what .. " end"
   loadstring(mocked_function_code)()
   return loadstring("return _G." .. object_path)()
 end

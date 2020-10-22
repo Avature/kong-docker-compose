@@ -9,7 +9,7 @@ admin_base_url = 'http://kong:8001'
 admin_api_plugins = [
   {"target":"routes/adminApi", "payload": {"name": "key-auth"}},
   {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
-  {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls-certs", "config": {"ca_private_key_path": "/usr/local/custom/kong/plugins/mtls-certs/certs/CA-key.pem"}}}
+  {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {}}}
 ]
 
 def create_admin_service():
