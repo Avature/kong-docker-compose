@@ -9,6 +9,9 @@ local function split_string(input, split_by)
 end
 
 _M.mock_return = function(object_path, method_name, return_what)
+  if return_what == nil then
+    return_what = 'nil'
+  end
   local object_path_parts = split_string(object_path, '.')
   local last_key = ''
   table.foreach(object_path_parts, function (_, key)
@@ -17,7 +20,6 @@ _M.mock_return = function(object_path, method_name, return_what)
       loadstring("_G" .. last_key .. " = {}")()
     end
   end)
-  local dashed_method_name = object_path:gsub("%.", "_") .. '_' .. method_name
   local mocked_function_code = "_G" .. last_key .. "." .. method_name .. " = function() return " .. return_what .. " end"
   loadstring(mocked_function_code)()
   return loadstring("return _G." .. object_path)()
