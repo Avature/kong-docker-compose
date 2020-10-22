@@ -100,11 +100,11 @@ function _M.execute(conf)
     ca_pkey_config = {  passphrase = ca_passphrase }
   end
   local parsed_private_key = pkey.new(ca_private_key_content, ca_pkey_config)
-  crt_output:sign(parsed_private_key)
   local parsed_ca_certificate, err = x509.new(ca_certificate_content)
   if err then
     return _M.respond(500, "Cannot load CA certificate", tostring(err))
   end
+  crt_output:sign(parsed_private_key)
   local ok, err = crt_output:verify(parsed_ca_certificate:get_pubkey())
   if err or not ok then
     return _M.respond(500, "Cannot validate generated certificate", tostring(err))
