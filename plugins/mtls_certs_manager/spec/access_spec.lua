@@ -287,4 +287,106 @@ describe("mtls_certs_manager access hook feature", function()
     subject.execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(500, {message = "Cannot load CA certificate", error_description = "error parsing ca"})
   end)
+
+  it("should reject request if cannot verify the certificate", function()
+    helper.mock_return('kong.db.consumers', 'select_by_username', 'nil')
+    helper.mock_return('kong.request', 'get_body', '{ instance = { name = "mydomain.com", description = "test_description"}, csr = "valid-csr-pubkey-not-matches-signature" }')
+    helper.mock_return('kong.response', 'exit', '{}')
+    helper.mock_return('parsed_csr_mock', 'get_subject_name', '{}, nil')
+    helper.mock_return('parsed_csr_mock', 'get_pubkey', '{}, nil')
+    local mocked_bn = helper.mock_return('resty.openssl.bn', 'new', '{}, nil')
+    helper.mock_return('mocked_file_resource', 'read', '\'contents\'')
+    helper.mock_return('mocked_file_resource', 'close')
+    helper.mock_return('io', 'open', 'mocked_file_resource')
+    helper.mock_return('parsed_csr_mock', 'verify', 'true, nil')
+    local name_helper_mock = helper.mock_return('kong.plugins.mtls_certs_manager.x509_name_helper', 'tostring', '\'C=US, ST=CA, CN=mydomain.com/O="MyOrg, Inc."\'')
+    local csr_mock = helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
+    helper.mock_return('mocked_crt_object', 'set_subject_name')
+    helper.mock_return('mocked_crt_object', 'set_pubkey')
+    helper.mock_return('mocked_crt_object', 'set_not_after')
+    helper.mock_return('mocked_crt_object', 'set_not_before')
+    helper.mock_return('mocked_crt_object', 'set_serial_number')
+    helper.mock_return('mocked_crt_object', 'sign')
+    helper.mock_return('mocked_crt_object', 'verify', 'nil, "impossible to verify output crt"')
+    helper.mock_return('ca_mocked_crt_object', 'get_pubkey', '{}')
+    helper.mock_return('ngx', 'time', '1111111')
+    local mocked_pkey = helper.mock_return('resty.openssl.pkey', 'new', '{}')
+
+    helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
+    local mocked_x509 = helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
+
+    _G.package.loaded["resty.openssl.x509.csr"] = csr_mock
+    _G.package.loaded["resty.openssl.x509"] = mocked_x509
+    _G.package.loaded['kong.plugins.mtls_certs_manager.x509_name_helper'] = name_helper_mock
+    _G.package.loaded["resty.openssl.bn"] = mocked_bn
+    _G.package.loaded["resty.openssl.pkey"] = mocked_pkey
+    _G.package.loaded["access"] = nil
+
+    local subject = require('access')
+
+    local conf = {
+      ca_private_key_path = "./example_certs/CA-key.pem",
+      ca_certificate_path = "",
+      ca_private_key_passphrase = "test_passphrase",
+      common_name_regex = "CN=(.*)/O=",
+      days_of_validity = 60
+    }
+
+    spy.on(_G.kong.response, "exit")
+
+    subject.execute(conf)
+    assert.spy(_G.kong.response.exit).was_called_with(500, {message = "Cannot validate generated certificate", error_description = "impossible to verify output crt"})
+  end)
+
+  it("should accept request and create new instance consumer", function()
+    helper.mock_return('kong.db.consumers', 'select_by_username', 'nil')
+    helper.mock_return('kong.db.consumers', 'insert')
+    helper.mock_return('kong.request', 'get_body', '{ instance = { name = "mydomain.com", description = "test_description"}, csr = "valid-csr-pubkey-not-matches-signature" }')
+    helper.mock_return('kong.response', 'exit', '{}')
+    helper.mock_return('parsed_csr_mock', 'get_subject_name', '{}, nil')
+    helper.mock_return('parsed_csr_mock', 'get_pubkey', '{}, nil')
+    local mocked_bn = helper.mock_return('resty.openssl.bn', 'new', '{}, nil')
+    helper.mock_return('mocked_file_resource', 'read', '\'contents\'')
+    helper.mock_return('mocked_file_resource', 'close')
+    helper.mock_return('io', 'open', 'mocked_file_resource')
+    helper.mock_return('parsed_csr_mock', 'verify', 'true, nil')
+    local name_helper_mock = helper.mock_return('kong.plugins.mtls_certs_manager.x509_name_helper', 'tostring', '\'C=US, ST=CA, CN=mydomain.com/O="MyOrg, Inc."\'')
+    local csr_mock = helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
+    helper.mock_return('mocked_crt_object', 'set_subject_name')
+    helper.mock_return('mocked_crt_object', 'set_pubkey')
+    helper.mock_return('mocked_crt_object', 'set_not_after')
+    helper.mock_return('mocked_crt_object', 'set_not_before')
+    helper.mock_return('mocked_crt_object', 'set_serial_number')
+    helper.mock_return('mocked_crt_object', 'sign')
+    helper.mock_return('mocked_crt_object', 'to_PEM', '"valid crt contents"')
+    helper.mock_return('mocked_crt_object', 'verify', 'true, nil')
+    helper.mock_return('ca_mocked_crt_object', 'get_pubkey', '{}')
+    helper.mock_return('ngx', 'time', '1111111')
+    local mocked_pkey = helper.mock_return('resty.openssl.pkey', 'new', '{}')
+
+    helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
+    local mocked_x509 = helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
+
+    _G.package.loaded["resty.openssl.x509.csr"] = csr_mock
+    _G.package.loaded["resty.openssl.x509"] = mocked_x509
+    _G.package.loaded['kong.plugins.mtls_certs_manager.x509_name_helper'] = name_helper_mock
+    _G.package.loaded["resty.openssl.bn"] = mocked_bn
+    _G.package.loaded["resty.openssl.pkey"] = mocked_pkey
+    _G.package.loaded["access"] = nil
+
+    local subject = require('access')
+
+    local conf = {
+      ca_private_key_path = "./example_certs/CA-key.pem",
+      ca_certificate_path = "",
+      ca_private_key_passphrase = "test_passphrase",
+      common_name_regex = "CN=(.*)/O=",
+      days_of_validity = 60
+    }
+
+    spy.on(_G.kong.response, "exit")
+
+    subject.execute(conf)
+    assert.spy(_G.kong.response.exit).was_called_with(201, {message = { crt = "valid crt contents" } })
+  end)
 end)
