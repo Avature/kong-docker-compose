@@ -1,33 +1,40 @@
+import json
 import requests
 import os
 import configparser
 import json
 
+previously_installed_plugins = {}
+
 admin_base_url = 'http://kong:8001'
-admin_api_plugins = [
-  {"name": "key-auth"},
-  {"name": "file-log", "config.path":"/home/kong/log/admin-api.log", "config.reopen": "true"}
-]
+
+def get_admin_plugins():
+  read_cn_script = get_cn_pre_function_contents()
+  return admin_api_plugins = [
+    {"target":"routes/adminApi", "payload": {"name": "key-auth"}},
+    {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
+    {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {}}},
+    {"target":"services/adminApi", "payload": {"name": "pre-function", "config": {"functions": [read_cn_script]}}}
+  ]
 
 def create_admin_service():
   admin_api_payload = {"name": "adminApi", "protocol": "http", "port": 8001, "host": "127.0.0.1"}
   requests.post(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
 
-def create_cn_pre_function():
+def get_cn_pre_function_contents():
   script_file_path = os.path.dirname(__file__) + "/read-cn-header.lua"
   script_file = open(script_file_path, "r")
   read_cn_script = script_file.read()
-  payload = {
-    "name": "pre-function",
-    "config.functions": [
-      read_cn_script
-    ]
-  }
-  requests.post(url=adminBaseUrl + '/services/adminApi/plugins', data = payload, verify=False)
+  return read_cn_script
 
 def create_admin_route():
   create_admin_service()
   payload = {"name": "adminApi", "protocols": ["http", "https"], "paths": ["/admin-api"]}
+  response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
+
+def create_register_instance_route():
+  create_admin_service()
+  payload = {"name": "adminApiRegisterInstance", "protocols": ["http", "https"], "paths": ["/admin-api/instances/register"], "methods": ["POST"]}
   response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
 
 def get_api_key():
@@ -53,20 +60,32 @@ def create_admin():
   admin_route_response = requests.get(admin_base_url + '/services/adminApi')
   if admin_route_response.status_code == 404:
     create_admin_route()
-    create_cn_pre_function()
+    create_register_instance_route()
   add_plugins()
 
+def get_previous_plugins_for_target(target):
+  if target not in previously_installed_plugins:
+    previous_plugins = requests.get(admin_base_url + '/' + target + '/plugins').json()["data"]
+    previously_installed_plugins[target] = list(map(lambda plugin: plugin["name"], previous_plugins))
+  return previously_installed_plugins[target]
+
+def target_has_plugin(plugin_name, target):
+  return plugin_name in get_previous_plugins_for_target(target)
+
 def add_plugins():
-  admin_plugins_response = requests.get(admin_base_url + '/services/adminApi/plugins').json()["data"]
-  for plugin in admin_api_plugins:
-    add_plugin(plugin, admin_plugins_response)
+  for plugin_config in get_admin_plugins():
+    add_plugin(plugin_config)
 
-def add_plugin(plugin_config, admin_plugins):
-  if (has_not_plugin(plugin_config["name"], admin_plugins)):
-    requests.post(url=admin_base_url + '/services/adminApi/plugins', data=plugin_config, verify=False)
-
-def has_not_plugin(plugin_name, plugins):
-  return not any(plugin["name"] == plugin_name for plugin in plugins)
+def add_plugin(plugin_config):
+  target = plugin_config["target"]
+  payload = plugin_config["payload"]
+  plugin_name = payload["name"]
+  if (not target_has_plugin(plugin_name, target)):
+    post_plugin_response = requests.post(url=admin_base_url + '/' + target + '/plugins', data=json.dumps(payload), verify=False, headers={"Content-Type": "application/json"})
+    if (post_plugin_response.status_code == 201):
+          previously_installed_plugins[target].append(plugin_name)
+    else:
+      exit(1)
 
 if __name__ == "__main__":
   create_admin()
