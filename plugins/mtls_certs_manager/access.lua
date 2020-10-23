@@ -7,6 +7,7 @@ local x509 = require("resty.openssl.x509")
 local csr = require("resty.openssl.x509.csr")
 local pkey = require("resty.openssl.pkey")
 local bn = require("resty.openssl.bn")
+local openssl_rand = require("resty.openssl.rand")
 
 function _M.read_file(file)
   local f = assert(io.open(file, "rb"))
@@ -89,7 +90,7 @@ function _M.execute(conf)
   local seconds_of_validity = conf.days_of_validity * 60 * 60 * 24
   crt_output:set_not_after(ngx.time() + seconds_of_validity)
   crt_output:set_not_before(ngx.time())
-  local serial_number, err = bn.new(ngx.time())
+  local serial_number, err = bn.from_binary(openssl_rand.bytes(16))
   if err then
     return _M.respond(400, "Error creating serial number", tostring(err))
   end
@@ -104,6 +105,7 @@ function _M.execute(conf)
   if err then
     return _M.respond(500, "Cannot load CA certificate", tostring(err))
   end
+  crt_output:set_issuer_name(parsed_ca_certificate:get_subject_name())
   crt_output:sign(parsed_private_key)
   local ok, err = crt_output:verify(parsed_ca_certificate:get_pubkey())
   if err or not ok then
