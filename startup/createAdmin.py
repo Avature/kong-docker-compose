@@ -10,11 +10,11 @@ admin_base_url = 'http://kong:8001'
 
 def get_admin_plugins():
   read_cn_script = get_cn_pre_function_contents()
-  return admin_api_plugins = [
+  return [
     {"target":"routes/adminApi", "payload": {"name": "key-auth"}},
     {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
     {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {}}},
-    {"target":"services/adminApi", "payload": {"name": "pre-function", "config": {"functions": [read_cn_script]}}}
+    {"target":"routes/adminApi", "payload": {"name": "pre-function", "config": {"functions": [read_cn_script]}}}
   ]
 
 def create_admin_service():
