@@ -1,5 +1,7 @@
 local _M = {}
 
+local _mockery_data = {}
+
 local function split_string(input, split_by)
   local output = {}
   for word in input:gmatch('[^' .. split_by .. '%s]+') do
@@ -8,21 +10,44 @@ local function split_string(input, split_by)
   return output
 end
 
-_M.mock_return = function(object_path, method_name, return_what)
+_M.mock_return = function(object_path, method_name, return_what, run_number)
+  if run_number == nil then
+    run_number = 0
+  end
   if return_what == nil then
     return_what = 'nil'
   end
   local object_path_parts = split_string(object_path, '.')
-  local last_key = ''
+  local last_key = _G
   table.foreach(object_path_parts, function (_, key)
-    last_key = last_key .. '.' .. key
-    if loadstring("return _G" .. last_key)() == nil then
-      loadstring("_G" .. last_key .. " = {}")()
+    if last_key[key] == nil then
+      last_key[key] = {}
     end
+    last_key = last_key[key]
   end)
-  local mocked_function_code = "_G" .. last_key .. "." .. method_name .. " = function() return " .. return_what .. " end"
-  loadstring(mocked_function_code)()
-  return loadstring("return _G." .. object_path)()
+  local method_and_run_key = object_path:gsub("%.", "_") .. '_' .. method_name
+  if _mockery_data[method_and_run_key] == nil then
+    _mockery_data[method_and_run_key] = {
+      executions = 0,
+      responses = {}
+    }
+  end
+  _mockery_data[method_and_run_key].responses[run_number] = return_what
+  last_key[method_name] = function()
+    local executions = _mockery_data[method_and_run_key].executions
+    local output = _mockery_data[method_and_run_key].responses[executions]
+    if output == nil then
+      output =  _mockery_data[method_and_run_key].responses[0]
+    end
+    _mockery_data[method_and_run_key].executions = executions + 1
+    return loadstring('return ' .. output)()
+  end
+
+  return last_key
+end
+
+_M.clear_runs = function()
+  _mockery_data = {}
 end
 
 return _M
