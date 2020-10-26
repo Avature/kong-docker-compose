@@ -80,9 +80,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.db.consumers', 'select_by_username', 'nil')
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "test_instance", description = "test_description"}, csr = "something-invalid-for-csr" }')
     helper.mock_return('kong.response', 'exit', '{}')
-    local csr_mock = helper.mock_return('resty.openssl.x509.csr', 'new', 'nil, "impossible to parse csr"')
+    helper.mock_return('resty.openssl.x509.csr', 'new', 'nil, "impossible to parse csr"')
 
-    _G.package.loaded["resty.openssl.x509.csr"] = csr_mock
     _G.package.loaded["access"] = nil
     local subject = require('access')
 
@@ -103,9 +102,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "test_instance", description = "test_description"}, csr = "valid-csr-but-contains-no-subject" }')
     helper.mock_return('kong.response', 'exit', '{}')
     helper.mock_return('parsed_csr_mock', 'get_subject_name', 'nil, "cannot get subject name"')
-    local csr_mock = helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
+    helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["resty.openssl.x509.csr"] = csr_mock
     _G.package.loaded["access"] = nil
     local subject = require('access')
 
@@ -127,9 +125,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.response', 'exit', '{}')
     helper.mock_return('parsed_csr_mock', 'get_subject_name', '{}, nil')
     helper.mock_return('parsed_csr_mock', 'get_pubkey', 'nil, "invalid public key"')
-    local csr_mock = helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
+    helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["resty.openssl.x509.csr"] = csr_mock
     _G.package.loaded["access"] = nil
     local subject = require('access')
 
@@ -152,9 +149,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('parsed_csr_mock', 'get_subject_name', '{}, nil')
     helper.mock_return('parsed_csr_mock', 'get_pubkey', '{}, nil')
     helper.mock_return('parsed_csr_mock', 'verify', 'nil, "cannot verify the csr with pubkey"')
-    local csr_mock = helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
+    helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["resty.openssl.x509.csr"] = csr_mock
     _G.package.loaded["access"] = nil
     local subject = require('access')
 
@@ -181,7 +177,6 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
     _G.package.loaded["access"] = nil
-
     local subject = require('access')
 
     local conf = {
@@ -219,7 +214,6 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
 
     _G.package.loaded["access"] = nil
-
     local subject = require('access')
 
     local conf = {
@@ -260,7 +254,6 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'nil, "error parsing ca"', 1)
 
     _G.package.loaded["access"] = nil
-
     local subject = require('access')
 
     local conf = {
@@ -306,7 +299,6 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
     _G.package.loaded["access"] = nil
-
     local subject = require('access')
 
     local conf = {
@@ -354,7 +346,6 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
     _G.package.loaded["access"] = nil
-
     local subject = require('access')
 
     local conf = {

@@ -14,8 +14,8 @@ return {
           { ca_certificate_path = { type = "string", default = "/usr/local/custom/kong/plugins/mtls_certs_manager/example_certs/CA-cert.pem" }, },
           { common_name_regex = { type = "string", default = "CN=(.*)/O=" }, },
           { days_of_validity = { type = "integer", default = 60 }, }
-          -- ,{ csr_path = { type = "string" } }
         },
-    }, },
+      },
+    },
   }
 }
