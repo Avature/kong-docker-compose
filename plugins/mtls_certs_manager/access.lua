@@ -9,10 +9,10 @@ local pkey = require("resty.openssl.pkey")
 local bn = require("resty.openssl.bn")
 local openssl_rand = require("resty.openssl.rand")
 
-function _M.read_file(file)
-  local f = assert(io.open(file, "rb"))
-  local content = f:read("*all")
-  f:close()
+function _M.read_file(file_name)
+  local file_resource = assert(io.open(file_name, "rb"))
+  local content = file_resource:read("*all")
+  file_resource:close()
   return content
 end
 
@@ -77,7 +77,7 @@ function _M.execute(conf)
   local subject_common_name = string.match(subject_name, conf.common_name_regex);
   if subject_common_name ~= instance_name then
     return _M.respond(401, "Instance name does not match CSR's subject",
-      "distinguished name is: " .. subject_name .. " but the instance_name given was: " .. instance_name
+      "distinguished name is: " .. subject_name .. " but the instance name given was: " .. instance_name
     )
   end
   local private_key_path = conf.ca_private_key_path
