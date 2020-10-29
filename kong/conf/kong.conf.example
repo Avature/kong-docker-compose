@@ -1,4 +1,4 @@
 # enabled plugins
-plugins = bundled, simple-plugin, proxy-cache-custom
+plugins = bundled,mtls_certs_manager
 
 lua_package_path = /usr/local/custom/?.lua;;
