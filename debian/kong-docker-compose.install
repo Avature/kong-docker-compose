@@ -25,3 +25,6 @@ nginx/certs opt/kong/nginx
 createDevCerts.sh opt/kong
 kong/conf/custom-nginx.conf opt/kong/kong/conf
 kong/conf/custom-entrypoint.sh opt/kong/kong/conf
+plugins/mtls_certs_manager/access.lua opt/kong/plugins/mtls_certs_manager
+plugins/mtls_certs_manager/handler.lua opt/kong/plugins/mtls_certs_manager
+plugins/mtls_certs_manager/schema.lua opt/kong/plugins/mtls_certs_manager
