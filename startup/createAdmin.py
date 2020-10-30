@@ -21,15 +21,15 @@ def create_admin_service():
       exit(1)
 
 def create_admin_route():
-  create_route('/admin-api', 'adminApi')
+  create_route('/admin-api', 'adminApi', [])
 
 def create_register_instance_route():
-  create_route('/admin-api/instances/register', 'adminApiRegisterInstance')
+  create_route('/admin-api/instances/register', 'adminApiRegisterInstance', ["POST"])
 
-def create_route(route_path, route_name):
+def create_route(route_path, route_name, methods):
   route_response = requests.get(admin_base_url + '/services/adminApi/routes' + route_name)
   if route_response.status_code == 404:
-    payload = {"name": route_name, "protocols": ["http", "https"], "paths": [route_path], "methods": ["POST"]}
+    payload = {"name": route_name, "protocols": ["http", "https"], "paths": [route_path], "methods": methods}
     response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
     if response.status_code != 201:
       exit(1)
