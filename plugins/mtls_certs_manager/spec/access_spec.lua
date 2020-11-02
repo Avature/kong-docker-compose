@@ -11,6 +11,7 @@ local load_default_dependencies = function ()
   _G.package.loaded["resty.openssl.pkey"    ] = {}
   _G.package.loaded["resty.openssl.bn"      ] = {}
   helper.mock_return('resty.openssl.rand', 'bytes', '9999999999999999')
+  helper.mock_return('ngx', 'encode_base64', '\"base64_encoded_key\"')
 end
 
 describe("mtls_certs_manager access hook feature", function()
@@ -189,7 +190,7 @@ describe("mtls_certs_manager access hook feature", function()
     spy.on(_G.kong.response, "exit")
 
     subject.execute(conf)
-    assert.spy(_G.kong.response.exit).was_called_with(401, {message = "Instance name does not match CSR's subject", error_description = "distinguished name is: C=US, ST=CA, CN=mydomain.com/O=\"MyOrg, Inc.\" but the instance_name given was: this_test_instance_name"})
+    assert.spy(_G.kong.response.exit).was_called_with(401, {message = "Instance name does not match CSR subject's CN", error_description = "distinguished name is: C=US, ST=CA, CN=mydomain.com/O=\"MyOrg, Inc.\" but the instance name given was: this_test_instance_name"})
   end)
 
   it("should reject registration because failed in serial number creation", function()
@@ -316,8 +317,10 @@ describe("mtls_certs_manager access hook feature", function()
   end)
 
   it("should accept request and create new instance consumer", function()
-    helper.mock_return('kong.db.consumers', 'select_by_username', 'nil')
-    helper.mock_return('kong.db.consumers', 'insert')
+    assert:register("matcher", "is_json_like", helper.is_json_like)
+    helper.mock_return('kong.db.keyauth_credentials', 'insert')
+    helper.mock_return('kong.db.consumers', 'select_by_username')
+    helper.mock_return('kong.db.consumers', 'insert', '{id = 5}')
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "mydomain.com", description = "test_description"}, csr = "valid-csr-pubkey-not-matches-signature" }')
     helper.mock_return('kong.response', 'exit', '{}')
     helper.mock_return('parsed_csr_mock', 'get_subject_name', '{}, nil')
@@ -357,8 +360,17 @@ describe("mtls_certs_manager access hook feature", function()
     }
 
     spy.on(_G.kong.response, "exit")
+    spy.on(_G.kong.db.consumers, 'insert')
+    spy.on(_G.kong.db.keyauth_credentials, 'insert')
 
     subject.execute(conf)
-    assert.spy(_G.kong.response.exit).was_called_with(201, {message = { crt = "valid crt contents" } })
+
+    assert.spy(_G.kong.response.exit).was_called_with(201, {certificate = "valid crt contents", token = "base64_encoded_key"})
+    assert.spy(_G.kong.db.consumers.insert).was_called_with(match.is_table(), match.is_json_like(
+      {tags = {"instance-admin-client", "description-test_description"}, username = "mydomain.com"}
+    ))
+    assert.spy(_G.kong.db.keyauth_credentials.insert).was_called_with(match.is_table(), match.is_json_like(
+      {key = "base64_encoded_key", consumer = {id = 5}}
+    ))
   end)
 end)

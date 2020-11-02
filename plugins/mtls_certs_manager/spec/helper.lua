@@ -1,4 +1,6 @@
 local _M = {}
+local assert = require('luassert')
+local cjson = require('cjson')
 
 local _mockery_data = {}
 
@@ -48,6 +50,16 @@ end
 
 _M.clear_runs = function()
   _mockery_data = {}
+end
+
+function _M.is_json_like(state, arguments)
+  local expected = arguments[1]
+  return function(value)
+    local received_value = cjson.encode(value)
+    local expected_value = cjson.encode(expected)
+    assert.equal(received_value, expected_value)
+    return received_value == expected_value
+  end
 end
 
 return _M

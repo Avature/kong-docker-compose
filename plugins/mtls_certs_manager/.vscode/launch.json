@@ -6,7 +6,7 @@
       "type": "lua-local",
       "request": "launch",
       "program": {
-        "command": "busted"
+        "command": "$HOME/.luarocks/bin/busted"
       },
       "args": [
         "spec/access_spec.lua"
