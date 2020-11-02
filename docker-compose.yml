@@ -74,9 +74,8 @@ services:
       KONG_PROXY_ERROR_LOG: /dev/stderr
     networks:
       - kong-net
-    ports:
-      - "8000:8000/tcp"
     expose:
+      - "8000"
       - "8001"
     healthcheck:
       test: ["CMD", "kong", "health"]

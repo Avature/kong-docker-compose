@@ -1,5 +1,4 @@
 .env
-plugins
 nginx/certs
 secrets.ini
 venv
