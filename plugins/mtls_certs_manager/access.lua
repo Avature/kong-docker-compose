@@ -1,8 +1,9 @@
 local _M = {}
 
 local name_helper = require("kong.plugins.mtls_certs_manager.x509_name_helper")
-
+local encode_base64 = ngx.encode_base64
 local consumers = kong.db.consumers
+local keyauth_credentials = kong.db.keyauth_credentials
 local x509 = require("resty.openssl.x509")
 local csr = require("resty.openssl.x509.csr")
 local pkey = require("resty.openssl.pkey")
@@ -21,11 +22,14 @@ function _M.create_consumer(name, description)
   if description ~= nil and description:match("%S") ~= nil then
     table.insert(_tags, "description-" .. description:gsub("%s+", "_"))
   end
-  local consumer = {
+  local consumer_data = {
     username = name,
     tags = _tags
   }
-  consumers:insert(consumer)
+  local inserted_consumer = consumers:insert(consumer_data)
+  local token = encode_base64(openssl_rand.bytes(64))
+  keyauth_credentials:insert({key = token, consumer = {id = inserted_consumer.id}})
+  return token
 end
 
 function _M.check_instance_exists(instance_name)
@@ -76,7 +80,7 @@ function _M.execute(conf)
   local subject_name = name_helper.tostring(subject)
   local subject_common_name = string.match(subject_name, conf.common_name_regex);
   if subject_common_name ~= instance_name then
-    return _M.respond(401, "Instance name does not match CSR's subject",
+    return _M.respond(401, "Instance name does not match CSR subject's CN",
       "distinguished name is: " .. subject_name .. " but the instance name given was: " .. instance_name
     )
   end
@@ -111,10 +115,11 @@ function _M.execute(conf)
   if err or not ok then
     return _M.respond(500, "Cannot validate generated certificate", tostring(err))
   end
-  _M.create_consumer(instance_name, instance_description)
+  local token = _M.create_consumer(instance_name, instance_description)
 
-  return _M.respond(201, {
-    crt = crt_output:to_PEM()
+  return kong.response.exit(201, {
+    certificate = crt_output:to_PEM(),
+    token = token
   })
 end
 
