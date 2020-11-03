@@ -1,6 +1,13 @@
 # Changelog
 
 
+### 0.0.3 (2020-10-13)
+
+  * Add file-log plugin to Admin API service (Closes: #522205)
+  * Add volume to kong service to access logs from outside the container
+  * Modify how python startup script adds plugins
+  * Add kong user to avoid permission issues
+
 ### 0.0.2 (2020-09-24)
 
   * Author: Juan Vincenti <juan.vincenti@avature.net>
