@@ -1,3 +1,12 @@
+kong-docker-compose (0.0.3) Ubuntu; urgency=medium
+
+  * Add file-log plugin to Admin API service (Closes: #522205)
+  * Add volume to kong service to access logs from outside the container
+  * Modify how python startup script adds plugins
+  * Add kong user to avoid permission issues
+
+ -- Juan Cruz Vincenti <juan@02078-jvincenti>  Tue, 13 Oct 2020 12:32:45 -0300
+
 kong-docker-compose (0.0.2) Ubuntu; urgency=medium
 
   * Author: Juan Vincenti <juan.vincenti@avature.net>

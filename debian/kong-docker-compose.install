@@ -29,3 +29,4 @@ kong/conf/kong.conf.example => opt/kong/kong/conf/kong.conf
 plugins/mtls_certs_manager/access.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/handler.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/schema.lua opt/kong/plugins/mtls_certs_manager
+plugins/mtls_certs_manager/x509_name_helper.lua opt/kong/plugins/mtls_certs_manager
