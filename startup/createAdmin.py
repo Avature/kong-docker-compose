@@ -27,7 +27,7 @@ def create_register_instance_route():
   create_route('/admin-api/instances/register', 'adminApiRegisterInstance', ["POST"])
 
 def create_route(route_path, route_name, methods):
-  route_response = requests.get(admin_base_url + '/services/adminApi/routes' + route_name)
+  route_response = requests.get(admin_base_url + '/services/adminApi/routes/' + route_name)
   if route_response.status_code == 404:
     payload = {"name": route_name, "protocols": ["http", "https"], "paths": [route_path], "methods": methods}
     response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
