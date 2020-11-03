@@ -1,6 +1,10 @@
 # Changelog
 
 
+### 0.0.4 (2020-11-03)
+
+  * Add MTLS certs manager Plugin
+
 ### 0.0.3 (2020-10-13)
 
   * Add file-log plugin to Admin API service (Closes: #522205)
