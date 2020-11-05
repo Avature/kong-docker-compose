@@ -1,4 +1,3 @@
-
 local access = require("kong.plugins.mtls_certs_manager.access")
 
 local MtlsCertsHandler = {

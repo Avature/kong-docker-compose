@@ -1,6 +1,4 @@
-# This folder contains only Demo certs to prove the mutual TLS works
-
-## I will explain the role of each file:
+## This file tries to explain the role of each file involved in Client Certificate authentication workflow
 
 
 ### CA-key.pem
@@ -34,7 +32,7 @@ Is the sign request used to request a signed certificate from the CA.
 
 It was created using this:
 
-`openssl req -new -sha256 -key each-client.key -subj "/C=US/ST=CA/O=MyOrg, Inc./CN=mydomain.com" -out mydomain.com.csr`
+`openssl req -new -sha256 -key kong-iats-key.pem -subj "/C=US/ST=CA/O=Avature, Inc./CN=iats-sb0.local" -out iats-sb0.local.csr`
 
 ### mydomain.com.crt
 

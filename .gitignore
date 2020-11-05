@@ -1,5 +1,5 @@
 .env
-nginx/certs
 secrets.ini
 venv
 startup/venv
+certs/
