@@ -10,5 +10,8 @@ services:
     extra_hosts:
       - "${SANDBOX_URL}:${SANDBOX_IP}"
   konga:
+    volumes:
+      - ./konga/kong_user.data:/run/kong_user.data:ro
     environment:
       KONGA_AUTH_PROVIDER: "local"
+      KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
