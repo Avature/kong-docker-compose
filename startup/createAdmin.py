@@ -11,11 +11,11 @@ admin_base_url = 'http://kong:8001'
 def get_admin_plugins():
   read_cn_script = get_cn_pre_function_contents()
   return [
-    {"target":"routes/adminApi", "payload": {"name": "key-auth"}},
+    {"target":"routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
     {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
     {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {
-      "ca_private_key_path": "/home/kong/certs/server-ca-key.pem",
-      "ca_certificate_path": "/home/kong/certs/server-ca-cert.pem"
+      "ca_private_key_path": "/home/kong/certs/server-ca-key.key",
+      "ca_certificate_path": "/home/kong/certs/server-ca-cert.crt"
     }}},
     {"target":"routes/adminApi", "payload": {"name": "pre-function", "config": {"functions": [read_cn_script]}}}
   ]

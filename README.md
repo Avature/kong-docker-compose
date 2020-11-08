@@ -9,8 +9,7 @@
 * install docker -> https://docs.docker.com/install/linux/docker-ce/ubuntu/
 * configure docker to execute without sudo -> https://docs.docker.com/install/linux/linux-postinstall/
 * install docker-compose -> https://docs.docker.com/compose/install/#install-compose-on-linux-systems
-* Clone the repo to your $HOME with: <pre>git clone https://gitlab.xcade.net/CustomAPIs/kong-docker-compose</pre>
-* If after installing DOCKER, your access to gitlab breakes, please follow the Julio's Magic in the wiki: https://wiki.xcade.net/wiki/Integrations_2.0:_Cells#How_to_install_Docker
+* Clone the repo to your $HOME with: <pre>git clone https://this-repo-url/CustomAPIs/kong-docker-compose</pre>
 
 ## Usage:
 
@@ -69,11 +68,15 @@ yes | docker system prune
 sudo ip link delete tun0
 ```
 
+## Client Authentication with mutual TLS
+
+[Client auth workflow](CLIENT_AUTH.md)
+
 ## TODO:
 
 There are some pending tasks but for this beta version we need deploy a dev/qa server that doesn't need this features.
 
-1. The connection between the iATS instances (either sandbox or productive/qa) and Kong and ALSO the connection between Konga and Kong admin interface are unencrypted and unprotected. We need to implement a sort of API key or some other authentication scheme.
+1. The connection between the client instances (either sandbox or productive/qa) and Kong and ALSO the connection between Konga and Kong admin interface are unencrypted and unprotected. We need to implement a sort of API key or some other authentication scheme.
 
 2. The active boolean flag in the konga_kong_nodes table of the Konga DB isn't true by default which forces the user to manually "activate" the connection to the Kong server after setup (this could be automated some way)
 
