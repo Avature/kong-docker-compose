@@ -32,7 +32,7 @@ Is the sign request used to request a signed certificate from the CA.
 
 It was created using this:
 
-`openssl req -new -sha256 -key kong-iats-key.pem -subj "/C=US/ST=CA/O=Avature, Inc./CN=iats-sb0.local" -out iats-sb0.local.csr`
+`openssl req -new -sha256 -key kong-devapp-key.pem -subj "/C=US/ST=CA/O=Avature, Inc./CN=devapp-sb0.local" -out devapp-sb0.local.csr`
 
 ### mydomain.com.crt
 
