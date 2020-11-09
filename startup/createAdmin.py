@@ -17,7 +17,24 @@ def get_admin_plugins():
       "ca_private_key_path": "/home/kong/certs/server-ca-key.key",
       "ca_certificate_path": "/home/kong/certs/server-ca-cert.crt"
     }}},
-    {"target":"routes/adminApi", "payload": {"name": "pre-function", "config": {"functions": [read_cn_script]}}}
+    {"target":"routes/adminApi", "payload": {"name": "pre-function", "config": {"access": [read_cn_script]}}},
+    {"target":"services/adminApi", "payload": {"name": "client_consumer_validator", "config": {
+      "consumer_identifier":"username",
+      "rules": {
+        "rule_1": {
+          "request_path_activation_regex": "(.*)",
+          "search_in_header": "X-Certificate-CN-Header",
+          "expected_consumer_identifier_regex": "(.*)",
+          "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "TRACE", "CONNECT"]
+        },
+        "rule_2": {
+          "request_path_activation_regex": "/services/(.*)/plugins",
+          "search_in_json_payload": "config.replace.headers[1]",
+          "expected_consumer_identifier_regex": "Host:(.*)",
+          "methods": ["POST", "PUT", "PATCH"]
+        }
+      }
+    }}}
   ]
 
 def create_admin_service():
@@ -92,8 +109,9 @@ def add_plugin(plugin_config):
   if (not target_has_plugin(plugin_name, target)):
     post_plugin_response = requests.post(url=admin_base_url + '/' + target + '/plugins', data=json.dumps(payload), verify=False, headers={"Content-Type": "application/json"})
     if (post_plugin_response.status_code == 201):
-          previously_installed_plugins[target].append(plugin_name)
+      previously_installed_plugins[target].append(plugin_name)
     else:
+      print(post_plugin_response.json())
       exit(1)
 
 if __name__ == "__main__":
