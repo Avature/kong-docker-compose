@@ -4,7 +4,7 @@ This is the Avature's Kong API Gateway docker-compose distribution
 
 ## What it includes?
 
-### It includes the following docker-compose services services:
+### It includes the following docker-compose services:
 
 * kong: Kong 2.1.4 API Gateway
 * konga: Konga Kong's UI (latest version)

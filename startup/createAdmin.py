@@ -9,7 +9,6 @@ previously_installed_plugins = {}
 admin_base_url = 'http://kong:8001'
 
 def get_admin_plugins():
-  read_cn_script = get_cn_pre_function_contents()
   return [
     {"target":"routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
     {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
@@ -17,8 +16,7 @@ def get_admin_plugins():
       "ca_private_key_path": "/home/kong/certs/server-ca-key.key",
       "ca_certificate_path": "/home/kong/certs/server-ca-cert.crt"
     }}},
-    {"target":"routes/adminApi", "payload": {"name": "pre-function", "config": {"access": [read_cn_script]}}},
-    {"target":"services/adminApi", "payload": {"name": "client_consumer_validator", "config": {
+    {"target":"routes/adminApi", "payload": {"name": "client_consumer_validator", "config": {
       "consumer_identifier":"username",
       "rules": {
         "rule_1": {
@@ -29,7 +27,7 @@ def get_admin_plugins():
         },
         "rule_2": {
           "request_path_activation_regex": "/services/(.*)/plugins",
-          "search_in_json_payload": "config.replace.headers[1]",
+          "search_in_json_payload": "config.replace.headers.1",
           "expected_consumer_identifier_regex": "Host:(.*)",
           "methods": ["POST", "PUT", "PATCH"]
         }
@@ -44,12 +42,6 @@ def create_admin_service():
     response = requests.post(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
     if response.status_code != 201:
       exit(1)
-
-def get_cn_pre_function_contents():
-  script_file_path = os.path.dirname(__file__) + "/read-cn-header.lua"
-  script_file = open(script_file_path, "r")
-  read_cn_script = script_file.read()
-  return read_cn_script
 
 def create_admin_route():
   create_route('/admin-api', 'adminApi', [])
