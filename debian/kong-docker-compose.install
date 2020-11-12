@@ -29,3 +29,6 @@ plugins/mtls_certs_manager/access.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/handler.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/schema.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/x509_name_helper.lua opt/kong/plugins/mtls_certs_manager
+plugins/client_consumer_validator/schema.lua opt/kong/plugins/client_consumer_validator
+plugins/client_consumer_validator/access.lua opt/kong/plugins/client_consumer_validator
+plugins/client_consumer_validator/handler.lua opt/kong/plugins/client_consumer_validator
