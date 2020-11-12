@@ -2,15 +2,38 @@ import json
 import requests
 import os
 import configparser
+import json
 
 previously_installed_plugins = {}
 
 admin_base_url = 'http://kong:8001'
-admin_api_plugins = [
-  {"target":"routes/adminApi", "payload": {"name": "key-auth"}},
-  {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
-  {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {}}}
-]
+
+def get_admin_plugins():
+  return [
+    {"target":"routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
+    {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
+    {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {
+      "ca_private_key_path": "/home/kong/certs/server-ca-key.key",
+      "ca_certificate_path": "/home/kong/certs/server-ca-cert.crt"
+    }}},
+    {"target":"routes/adminApi", "payload": {"name": "client_consumer_validator", "config": {
+      "consumer_identifier":"username",
+      "rules": {
+        "rule_1": {
+          "request_path_activation_regex": "(.*)",
+          "search_in_header": "X-Certificate-CN-Header",
+          "expected_consumer_identifier_regex": "(.*)",
+          "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "TRACE", "CONNECT"]
+        },
+        "rule_2": {
+          "request_path_activation_regex": "/services/(.*)/plugins",
+          "search_in_json_payload": "config.replace.headers.1",
+          "expected_consumer_identifier_regex": "Host:(.*)",
+          "methods": ["POST", "PUT", "PATCH"]
+        }
+      }
+    }}}
+  ]
 
 def create_admin_service():
   admin_api_response = requests.get(admin_base_url + '/services/adminApi')
@@ -68,7 +91,7 @@ def target_has_plugin(plugin_name, target):
   return plugin_name in get_previous_plugins_for_target(target)
 
 def add_plugins():
-  for plugin_config in admin_api_plugins:
+  for plugin_config in get_admin_plugins():
     add_plugin(plugin_config)
 
 def add_plugin(plugin_config):
@@ -78,8 +101,9 @@ def add_plugin(plugin_config):
   if (not target_has_plugin(plugin_name, target)):
     post_plugin_response = requests.post(url=admin_base_url + '/' + target + '/plugins', data=json.dumps(payload), verify=False, headers={"Content-Type": "application/json"})
     if (post_plugin_response.status_code == 201):
-          previously_installed_plugins[target].append(plugin_name)
+      previously_installed_plugins[target].append(plugin_name)
     else:
+      print(post_plugin_response.json())
       exit(1)
 
 if __name__ == "__main__":

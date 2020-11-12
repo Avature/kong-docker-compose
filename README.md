@@ -1,4 +1,27 @@
-# Custom APIs KONG Distro
+# Avature's KONG Distro
+
+This is the Avature's Kong API Gateway docker-compose distribution
+
+## What it includes?
+
+### It includes the following docker-compose services:
+
+* kong: Kong 2.1.4 API Gateway
+* konga: Konga Kong's UI (latest version)
+* db: PostgreSQL 9.5 Databse
+* nginx: Nginx (latest nginx docker image version) Proxy pass that exposes gateway, admin, and konga subdomains in a secured and unified way.
+* startup: Startup script that setups the admin API loopback and plugins configuration in an automated way
+
+### It also includes the following custom Kong plugins, pre-built and included in the docker-compose project:
+
+- [MTLS Certificates Manager](plugins/mtls_certs_manager/README.md)
+
+  This plugin allows the server to emit x509 certificates signed off by the server's CA certificate.
+
+- [Client Consumer Validator](plugins/client_consumer_validator/README.md)
+
+  This plugin allows the server to validate headers and json payload information agains authenticated consumer
+  This helps in use cases where we need to assure some configurations done to services and routes are only done by a particular consumer.
 
 ## Preconditions:
 
@@ -9,8 +32,7 @@
 * install docker -> https://docs.docker.com/install/linux/docker-ce/ubuntu/
 * configure docker to execute without sudo -> https://docs.docker.com/install/linux/linux-postinstall/
 * install docker-compose -> https://docs.docker.com/compose/install/#install-compose-on-linux-systems
-* Clone the repo to your $HOME with: <pre>git clone https://gitlab.xcade.net/CustomAPIs/kong-docker-compose</pre>
-* If after installing DOCKER, your access to gitlab breakes, please follow the Julio's Magic in the wiki: https://wiki.xcade.net/wiki/Integrations_2.0:_Cells#How_to_install_Docker
+* Clone the repo to your $HOME with: <pre>git clone https://this-repo-url/CustomAPIs/kong-docker-compose</pre>
 
 ## Usage:
 
@@ -69,12 +91,14 @@ yes | docker system prune
 sudo ip link delete tun0
 ```
 
+## Client Authentication with mutual TLS
+
+The connection between Kong's admin API and its clients must be done via mutual TLS client authentication using client certificates signed by the kong distribution server's CA.
+
+The certificates can be signed off by the mtls certs manager kong plugin via instances/register API endpoint.
+
+For more details about client auth workflow [click here](CLIENT_AUTH.md)
+
 ## TODO:
 
-There are some pending tasks but for this beta version we need deploy a dev/qa server that doesn't need this features.
-
-1. The connection between the iATS instances (either sandbox or productive/qa) and Kong and ALSO the connection between Konga and Kong admin interface are unencrypted and unprotected. We need to implement a sort of API key or some other authentication scheme.
-
-2. The active boolean flag in the konga_kong_nodes table of the Konga DB isn't true by default which forces the user to manually "activate" the connection to the Kong server after setup (this could be automated some way)
-
-3. Implement LDAP login on Konga UI
+1. The active boolean flag in the konga_kong_nodes table of the Konga DB isn't true by default which forces the user to manually "activate" the connection to the Kong server after setup (this could be automated some way)

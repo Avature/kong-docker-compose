@@ -51,12 +51,13 @@ services:
   #######################################
   kong:
     image: "${KONG_DOCKER_TAG}"
-    user: "${KONG_USER:-root}"
+    user: "root"
     volumes:
       - ./plugins/:/usr/local/custom/kong/plugins/
       - ./kong/conf/:/etc/kong/
       - /var/log/avature/kong/:/home/kong/log/
       - ./kong/conf/custom-nginx.conf:/usr/local/kong/custom-nginx.conf:ro
+      - ./certs/:/home/kong/certs/
     command: /etc/kong/custom-entrypoint.sh
     depends_on:
       - db
@@ -127,10 +128,8 @@ services:
       - kong-net
     volumes:
       - ./konga/kong_node.data:/run/kong_node.data:ro
-      - ./konga/kong_user.data:/run/kong_user.data:ro
     environment:
       KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
-      KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
       KONGA_AUTH_PROVIDER: ${KONGA_AUTH_PROVIDER}
       KONGA_LDAP_HOST: ${LDAP_HOST}
       KONGA_LDAP_BIND_DN: "cn=AppReader,dc=avature,dc=net"
@@ -166,6 +165,7 @@ services:
       - kong-net
     volumes:
       - ./nginx/:/etc/nginx/conf.d/
+      - ./certs/:/etc/ssl/certs/
     ports:
       - "80:80"
       - "443:443"
