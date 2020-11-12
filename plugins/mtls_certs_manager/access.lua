@@ -26,9 +26,12 @@ function _M.create_consumer(name, description)
     username = name,
     tags = _tags
   }
-  local inserted_consumer = consumers:insert(consumer_data)
+  return consumers:insert(consumer_data)
+end
+
+function _M.create_credential(consumer_id)
   local token = encode_base64(openssl_rand.bytes(64))
-  keyauth_credentials:insert({key = token, consumer = {id = inserted_consumer.id}})
+  keyauth_credentials:insert({key = token, consumer = {id = consumer_id}})
   return token
 end
 
@@ -115,8 +118,11 @@ function _M.execute(conf)
   if err or not ok then
     return _M.respond(500, "Cannot validate generated certificate", tostring(err))
   end
-  local token = _M.create_consumer(instance_name, instance_description)
-
+  local inserted_consumer = _M.create_consumer(instance_name, instance_description)
+  if inserted_consumer == nil then
+    return _M.respond(400, 'Unable to create consumer', 'Verify instance name and description for invalid characters')
+  end
+  local token = _M.create_credential(inserted_consumer.id)
   return kong.response.exit(201, {
     certificate = crt_output:to_PEM(),
     token = token
