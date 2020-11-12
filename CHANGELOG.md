@@ -1,6 +1,12 @@
 # Changelog
 
 
+### 0.0.5 (2020-11-12)
+
+  * Add mTLS authentication on nginx service
+  * Add Validate Client Consumer custom plugin
+  * Improve README
+
 ### 0.0.4 (2020-11-03)
 
   * Add MTLS certs manager Plugin
