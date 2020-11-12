@@ -1,3 +1,9 @@
+kong-docker-compose (0.0.6) Ubuntu; urgency=medium
+
+  * [138e4dd6] Add files of client consumer validator plugin to deb pkg
+
+ -- Mariano Fresno <mariano@02249-mfresno>  Thu, 12 Nov 2020 11:37:18 -0300
+
 kong-docker-compose (0.0.5) Ubuntu; urgency=medium
 
   * Add mTLS authentication on nginx service

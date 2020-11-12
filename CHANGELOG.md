@@ -1,6 +1,10 @@
 # Changelog
 
 
+### 0.0.6 (2020-11-12)
+
+  * [138e4dd6] Add files of client consumer validator plugin to deb pkg
+
 ### 0.0.5 (2020-11-12)
 
   * Add mTLS authentication on nginx service
