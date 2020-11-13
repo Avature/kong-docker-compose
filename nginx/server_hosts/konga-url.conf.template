@@ -1,1 +1,1 @@
-server_name konga.${BASE_HOST_DOMAIN};
+server_name konga${HOST_SERVICE_SEPARATOR}${BASE_HOST_DOMAIN};
