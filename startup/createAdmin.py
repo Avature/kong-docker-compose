@@ -10,13 +10,13 @@ admin_base_url = 'http://kong:8001'
 
 def get_admin_plugins():
   return [
-    {"target":"/routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
-    {"target":"/services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
-    {"target":"/routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {
+    {"target":"routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
+    {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
+    {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {
       "ca_private_key_path": "/home/kong/certs/server-ca-key.key",
       "ca_certificate_path": "/home/kong/certs/server-ca-cert.crt"
     }}},
-    {"target":"/routes/adminApi", "payload": {"name": "client_consumer_validator", "config": {
+    {"target":"routes/adminApi", "payload": {"name": "client_consumer_validator", "config": {
       "consumer_identifier":"username",
       "rules": {
         "rule_1": {
@@ -33,7 +33,7 @@ def get_admin_plugins():
         }
       }
     }}},
-    {"target": "", "payload": {"name": "prometheus"}}
+    {"target": "/", "payload": {"name": "prometheus"}}
   ]
 
 def create_admin_service():
@@ -84,7 +84,7 @@ def create_admin():
 
 def get_previous_plugins_for_target(target):
   if target not in previously_installed_plugins:
-    previous_plugins = requests.get(admin_base_url + target + '/plugins').json()["data"]
+    previous_plugins = requests.get(get_plugins_path_for_target(target)).json()["data"]
     previously_installed_plugins[target] = list(map(lambda plugin: plugin["name"], previous_plugins))
   return previously_installed_plugins[target]
 
@@ -100,12 +100,16 @@ def add_plugin(plugin_config):
   payload = plugin_config["payload"]
   plugin_name = payload["name"]
   if (not target_has_plugin(plugin_name, target)):
-    post_plugin_response = requests.post(url=admin_base_url + target + '/plugins', data=json.dumps(payload), verify=False, headers={"Content-Type": "application/json"})
+    post_plugin_response = requests.post(url=get_plugins_path_for_target(target), data=json.dumps(payload), verify=False, headers={"Content-Type": "application/json"})
     if (post_plugin_response.status_code == 201):
       previously_installed_plugins[target].append(plugin_name)
     else:
       print(post_plugin_response.json())
       exit(1)
+
+def get_plugins_path_for_target(target):
+  separator = '' if target.endswith('/') else '/'
+  return f"{admin_base_url}{separator}{target}{separator}plugins"
 
 if __name__ == "__main__":
   create_admin()
