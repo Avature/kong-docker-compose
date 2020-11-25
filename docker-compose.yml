@@ -174,7 +174,8 @@ services:
       - konga
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
-    command: bash -c  "./etc/nginx/conf.d/server_hosts/create-urls.sh && nginx -g 'daemon off;'"
+      HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
+    command: bash -c  "/etc/nginx/conf.d/server_hosts/create-urls.sh && nginx -g 'daemon off;'"
   #######################################
   # Python Startup
   #######################################
