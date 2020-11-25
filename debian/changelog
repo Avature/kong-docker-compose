@@ -1,3 +1,12 @@
+kong-docker-compose (0.0.7) Ubuntu; urgency=medium
+
+  * Add metrics endpoint to gather prometheus stats data
+  * Modify startup script to include / in targets
+  * Add env variable for host_service_separator and default value * Remove absolute path from create_url script
+  * Remove kong example config file. Add kong config file to debian install.
+
+ -- Mariano Fresno <mariano@02249-mfresno>  Wed, 25 Nov 2020 16:36:47 -0300
+
 kong-docker-compose (0.0.6) Ubuntu; urgency=medium
 
   * [138e4dd6] Add files of client consumer validator plugin to deb pkg
