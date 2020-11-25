@@ -1,1 +1,1 @@
-server_name admin.${BASE_HOST_DOMAIN};
+server_name admin${HOST_SERVICE_SEPARATOR}${BASE_HOST_DOMAIN};

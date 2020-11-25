@@ -9,6 +9,8 @@ services:
         KONG_DOCKER_TAG: $KONG_DOCKER_TAG
     extra_hosts:
       - "${SANDBOX_URL}:${SANDBOX_IP}"
+    environment:
+      HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:-.}"
   konga:
     volumes:
       - ./konga/kong_user.data:/run/kong_user.data:ro

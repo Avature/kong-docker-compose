@@ -1,5 +1,5 @@
 #!/bin/bash
-envsubst '$${BASE_HOST_DOMAIN}' < /etc/nginx/conf.d/server_hosts/admin-url.conf.template > /etc/nginx/conf.d/server_hosts/admin-url.conf
-envsubst '$${BASE_HOST_DOMAIN}' < /etc/nginx/conf.d/server_hosts/gateway-url.conf.template > /etc/nginx/conf.d/server_hosts/gateway-url.conf
-envsubst '$${BASE_HOST_DOMAIN}' < /etc/nginx/conf.d/server_hosts/konga-url.conf.template > /etc/nginx/conf.d/server_hosts/konga-url.conf
-
+cd `dirname "$0"`
+envsubst '$${HOST_SERVICE_SEPARATOR} $${BASE_HOST_DOMAIN}' < ./admin-url.conf.template > admin-url.conf
+envsubst '$${HOST_SERVICE_SEPARATOR} $${BASE_HOST_DOMAIN}' < ./gateway-url.conf.template > gateway-url.conf
+envsubst '$${HOST_SERVICE_SEPARATOR} $${BASE_HOST_DOMAIN}' < ./konga-url.conf.template > konga-url.conf
