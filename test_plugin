@@ -3,4 +3,4 @@
 cd plugins
 cd $1
 
-docker run --rm -t -v `pwd`:/data imega/busted
+docker run -t -v `pwd`:/data imega/busted
