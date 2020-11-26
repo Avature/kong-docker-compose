@@ -1,0 +1,5 @@
+[container]
+  # Enabling this options allow create containers inside of
+  # builder container, example docker
+  # here https://stgraber.org/2016/04/13/lxd-2-0-docker-in-lxd-712/
+  nesting = true
