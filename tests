@@ -1,23 +1,39 @@
 #!/bin/bash
 result=0
-error_index=1
+test_index=0
+
+show_binary_digits() {
+  expansion=""
+  total_tests=$(($test_index))
+  for index in $(seq 1 $total_tests);
+  do
+    expansion="$expansion{0..1}"
+  done
+  expansion="($expansion)"
+  eval "D2B=$expansion"
+  echo ${D2B[$1]} | sed "s/1/*/g" | sed "s/0/-/g"
+}
 
 assert_exit_code() {
   ./$1
   if [[ $? -ne 0 ]]; then
-      result=$(($result + $error_index))
-      echo "Failed running: $1"
+    error_index=$((2 ** $test_index))
+    result=$(($result + $error_index))
+    echo "Failed running: $1"
   fi
-  error_index=$(($error_index+1))
+  test_index=$(($test_index+1))
+}
+
+show_results_and_exit() {
+  if [[ $result -eq 0 ]]; then
+    echo "All tests RAN OK."
+  else
+    echo "Some tests failed, exit code was: $result, failed tests: $(show_binary_digits $result)"
+  fi
+  exit $result
 }
 
 assert_exit_code "test_plugin mtls_certs_manager"
 assert_exit_code "test_plugin client_consumer_validator"
 
-if [[ $result -eq 0 ]]; then
-  echo "All tests RAN OK."
-else
-  echo "Some tests failed, exit code was: $? ..."
-fi
-
-exit $result
+show_results_and_exit
