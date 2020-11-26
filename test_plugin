@@ -1,6 +1,6 @@
 #!/bin/bash
 
+cd plugins
 cd $1
-cd $2
 
 docker run --rm -t -v `pwd`:/data imega/busted

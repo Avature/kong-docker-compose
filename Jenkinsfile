@@ -1,10 +1,10 @@
 pipeline {
   agent any
   stages {
-      stage('Plugins Testing') {
+      stage('Test Plugins') {
         steps {
-          sh(script: './test plugins mtls_certs_manager')
-          sh(script: './test plugins client_consumer_validator')
+          sh(script: './test_plugin mtls_certs_manager')
+          sh(script: './test_plugin client_consumer_validator')
         }
       }
   }
