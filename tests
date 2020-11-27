@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 result=0
 test_index=0
 
@@ -33,6 +33,13 @@ show_results_and_exit() {
   exit $result
 }
 
+install_docker() {
+  apt install -yq docker.io
+  echo '{"bip": "192.168.43.1/24"}' > /etc/docker/daemon.json
+  systemctl restart docker
+}
+
+install_docker
 assert_exit_code "test_plugin mtls_certs_manager"
 assert_exit_code "test_plugin client_consumer_validator"
 
