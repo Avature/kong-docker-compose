@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd plugins
+cd $1
+
+docker pull -q imega/busted
+docker run -t -v `pwd`:/data imega/busted

@@ -5,7 +5,8 @@
 
   * Add metrics endpoint to gather prometheus stats data
   * Modify startup script to include / in targets
-  * Add env variable for host_service_separator and default value * Remove absolute path from create_url script
+  * Add env variable for host_service_separator and default value
+  * Remove absolute path from create_url script
   * Remove kong example config file. Add kong config file to debian install.
 
 ### 0.0.6 (2020-11-12)
