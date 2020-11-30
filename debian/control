@@ -5,15 +5,15 @@ Standards-Version: 4.0.0
 Homepage: Devops
 Build-Depends: debhelper (>= 9),
                dh-exec,
-               
+
 Package: kong-docker-compose
 Architecture: all
 Depends: docker-ce | docker.io
-Pre-Depends: dpkg (>= 1.18), 
+Pre-Depends: dpkg (>= 1.18),
 Description: Docker compose to run Kong within Avature
 
 Package: kong-docker-compose-dev
 Architecture: all
 Depends: kong-docker-compose, docker-ce | docker.io
-Pre-Depends: dpkg (>= 1.18), 
+Pre-Depends: dpkg (>= 1.18),
 Description: Docker compose to run Kong within Avature (development files)
