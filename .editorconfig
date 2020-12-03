@@ -16,3 +16,4 @@ indent_size = unset
 end_of_line = unset
 insert_final_newline = unset
 indent_size = unset
+trim_trailing_whitespace = unset
