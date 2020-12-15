@@ -19,9 +19,10 @@ services:
     environment:
       KONG_DATABASE: postgres
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
-      KONG_PG_HOST: db
+      KONG_PG_HOST: ${KONG_PG_HOST:-db}
       KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
       KONG_PG_USER: ${KONG_PG_USER}
+      KONG_PG_PORT: ${KONG_PG_PORT:-5432}
     links:
       - db:db
     networks:
@@ -38,9 +39,10 @@ services:
     environment:
       KONG_DATABASE: postgres
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
-      KONG_PG_HOST: db
+      KONG_PG_HOST: ${KONG_PG_HOST:-db}
       KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
       KONG_PG_USER: ${KONG_PG_USER}
+      KONG_PG_PORT: ${KONG_PG_PORT:-5432}
     links:
       - db:db
     networks:
@@ -68,7 +70,8 @@ services:
       KONG_CASSANDRA_CONTACT_POINTS: db
       KONG_DATABASE: postgres
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
-      KONG_PG_HOST: db
+      KONG_PG_HOST: ${KONG_PG_HOST:-db}
+      KONG_PG_PORT: ${KONG_PG_PORT:-5432}
       KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
       KONG_PG_USER: ${KONG_PG_USER}
       KONG_PROXY_ACCESS_LOG: /dev/stdout
@@ -146,7 +149,8 @@ services:
       KONGA_LDAP_ATTR_LASTNAME: "sn"
       KONGA_LDAP_ATTR_EMAIL: "mail"
       DB_ADAPTER: postgres
-      DB_HOST: db
+      DB_HOST: ${KONG_PG_HOST:-db}
+      DB_PORT: ${KONG_PG_PORT:-5432}
       DB_USER: ${KONG_PG_USER}
       DB_PASSWORD: ${KONG_PG_PASSWORD}
       TOKEN_SECRET: km1GUr4RkcQD7DewhJPNXrCuZwcKmqjb
