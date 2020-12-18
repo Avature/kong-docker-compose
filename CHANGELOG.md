@@ -1,6 +1,11 @@
 # Changelog
 
 
+### 0.0.8 (2020-12-18)
+
+  *  Add env variables for database host and port
+  *  Add db host and port to services
+
 ### 0.0.7 (2020-11-25)
 
   * Add metrics endpoint to gather prometheus stats data
