@@ -61,23 +61,13 @@ cd kong-docker-compose
 To install the debian package run:
 
 ```console
-dpkg -i ../kong-docker-compose_X.Y.Z_all.deb
-```
-or either run this to install the dev version:
-
-```console
-dpkg -i ../kong-docker-compose-dev_X.Y.Z_all.deb
-```
-
-Where X Y Z are the version numbers of the built package
-
-To run use this command (use start or startDev according to your needs):
+dpkg -i ../kong-docker-compose_X.Y.Z_ahacere start or startDev according to your needs):
 
 ```console
 ./{start, startDev}.sh
 ```
 
-## FAQ/Troubleshooting:
+## FAQ/Troubleshooting Dev Environment:
 
 * If when you run start this error appears:
 
@@ -105,7 +95,7 @@ Can't open certs/server-ca-key.key for reading, No such file or directory
 You can run the createDevCerts.sh script with sudo:
 
 ```
-sudo ./createDevCerts.sh
+sudo ./createDevCerts.sh -ssl
 ```
 
 ## Client Authentication with mutual TLS

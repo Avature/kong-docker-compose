@@ -20,6 +20,7 @@ create_ssl_server_certs() {
   openssl x509 -req -days 365 -in $server_ssl_csr -CA $server_ca_cert -CAkey $server_ca_key -CAcreateserial -out $server_ssl_cert -sha256 -passin pass:1234
 }
 
+mkdir certs
 rm certs/*.csr
 chmod +r ./certs/*
 
