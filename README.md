@@ -10,7 +10,7 @@ This is the Avature's Kong API Gateway docker-compose distribution
 * konga: Konga Kong's UI (latest version)
 * db: PostgreSQL 9.5 Databse
 * nginx: Nginx (latest nginx docker image version) Proxy pass that exposes gateway, admin, and konga subdomains in a secured and unified way.
-* startup: Startup script that setups the admin API loopback and plugins configuration in an automated way
+* startup: Startup script that setups the admin API loopback and plugins configuration in an automated way.
 
 ### It also includes the following custom Kong plugins, pre-built and included in the docker-compose project:
 
@@ -25,7 +25,7 @@ This is the Avature's Kong API Gateway docker-compose distribution
 
 ## Preconditions:
 
-### Install docker && docker-compose (in a bash console):
+### Installing a development environment (debian based distro):
 
 * ensure that exist the path ''/usr/local/bin''. If not, create it with <pre>sudo mkdir -p /usr/local/bin</pre>
 * install curl if not installed <pre>sudo apt-get install curl</pre>
@@ -36,9 +36,9 @@ This is the Avature's Kong API Gateway docker-compose distribution
 
 ## Usage:
 
-* To start the Platform run: ./startLocal.sh
+* To start the Platform run: ./startDev.sh
 
-* To login with BASH into KONG (See logs, adjust configs: ./startBash.sh)
+* To login with BASH into KONG after startup (See logs, adjust configs: ./startBash.sh)
 
 ## Building debian package:
 
@@ -56,27 +56,20 @@ cd kong-docker-compose
 ./buildDebian.sh
 ```
 
-## Installing debian-package:
+## Installing debian-package (production environment):
 
 To install the debian package run:
 
 ```console
-dpkg -i kong-docker-compose_0.0.1_all.deb
-```
-or either run this to install the dev version:
-
-```console
-dpkg -i kong-docker-compose-dev_0.0.1_all.deb
-```
-To run use this command (use start or startDev according to your needs):
+dpkg -i ../kong-docker-compose_X.Y.Z_ahacere start or startDev according to your needs):
 
 ```console
 ./{start, startDev}.sh
 ```
 
-## FAQ/Troubleshooting:
+## FAQ/Troubleshooting Dev Environment:
 
-If when you run start this error appears:
+* If when you run start this error appears:
 
 ```
 Creating network "kong_kong-net" with the default driver
@@ -89,6 +82,20 @@ Issue the following *container-destructive* commands:
 yes | docker network prune
 yes | docker system prune
 sudo ip link delete tun0
+```
+
+* If when you run start this error appears:
+
+```
+genrsa: Can't open "certs/server-ca-key.key" for writing, No such file or directory
+Can't open certs/server-ca-key.key for reading, No such file or directory
+139896872256512:error:02001002:system library:fopen:No such file or directory:crypto/bio/bss_file.c:69:fopen('certs/server-ca-key.key','r')
+```
+
+You can run the createDevCerts.sh script with sudo:
+
+```
+sudo ./createDevCerts.sh -ssl
 ```
 
 ## Client Authentication with mutual TLS
