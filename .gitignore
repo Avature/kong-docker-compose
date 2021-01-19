@@ -1,5 +1,4 @@
 .env
 secrets.ini
 venv
-startup/venv
 certs/
