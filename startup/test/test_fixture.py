@@ -5,10 +5,12 @@ import configparser
 import responses
 import requests
 
-# import debugger
+from test.debugger import run_debugger
+
+if (os.environ.get("ENABLE_DEBUGGER")):
+  run_debugger()
 
 class TestFixture(TestCase):
-
   @responses.activate
   def test_run_create_all_succeed(self):
     responses.add(responses.GET, 'http://kong:8001/consumers/admin/key-auth', status=404)
