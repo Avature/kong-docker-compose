@@ -3,4 +3,4 @@
 cd startup
 
 docker pull -q bitnami/python
-docker run -t -v `pwd`:/app bitnami/python run_tests.sh
+docker run -t -v `pwd`:/app bitnami/python /app/run_tests.sh
