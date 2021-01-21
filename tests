@@ -48,5 +48,6 @@ fi
 assert_exit_code "test_plugin mtls_certs_manager"
 assert_exit_code "test_plugin client_consumer_validator"
 assert_exit_code "test_syntax"
+assert_exit_code "test_startup"
 
 show_results_and_exit

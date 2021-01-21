@@ -25,5 +25,3 @@ class FixtureTest(TestCase):
     subject = Fixture()
     subject.run()
 
-if __name__ == '__main__':
-  main()
