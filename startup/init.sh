@@ -2,5 +2,5 @@
 
 python3 -m venv venv
 
-venv/bin/pip install requests==2.24.0
-venv/bin/python ./app/createAdmin.py
+venv/bin/pip3 install requests==2.24.0
+venv/bin/python3 ./app/createAdmin.py

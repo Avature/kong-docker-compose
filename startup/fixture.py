@@ -3,12 +3,14 @@ import requests
 import os
 import configparser
 import json
-
-previously_installed_plugins = {}
+import logging
 
 admin_base_url = 'http://kong:8001'
 
 class Fixture:
+  def __init__(self):
+    self.previously_installed_plugins = {}
+
   def get_admin_plugins(self):
     return [
       {"target":"routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
@@ -41,9 +43,7 @@ class Fixture:
     admin_api_response = requests.get(admin_base_url + '/services/adminApi')
     if admin_api_response.status_code == 404:
       admin_api_payload = {"name": "adminApi", "protocol": "http", "port": 8001, "host": "127.0.0.1"}
-      response = requests.post(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
-      if response.status_code != 201:
-        exit(1)
+      self.post_or_fail(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
 
   def create_admin_route(self):
     self.create_route('/admin-api', 'adminApi', [])
@@ -55,9 +55,7 @@ class Fixture:
     route_response = requests.get(admin_base_url + '/services/adminApi/routes/' + route_name)
     if route_response.status_code == 404:
       payload = {"name": route_name, "protocols": ["http", "https"], "paths": [route_path], "methods": methods}
-      response = requests.post(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
-      if response.status_code != 201:
-        exit(1)
+      self.post_or_fail(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
 
   def get_api_key(self):
     config = configparser.ConfigParser()
@@ -73,14 +71,14 @@ class Fixture:
       if admin_consumer_response.json()["data"][0]["key"] != api_key:
         requests.delete(key_auth_url + '/' + admin_consumer_response.json()["data"][0]["id"])
     else:
-      requests.post(admin_base_url + '/consumers', data={"username": "admin"}, verify=False)
-      requests.post(key_auth_url, data={"key": api_key}, verify=False)
+      self.post_or_fail(admin_base_url + '/consumers', data={"username": "admin"}, verify=False)
+      self.post_or_fail(key_auth_url, data={"key": api_key}, verify=False)
 
   def get_previous_plugins_for_target(self, target):
-    if target not in previously_installed_plugins:
+    if target not in self.previously_installed_plugins:
       previous_plugins = requests.get(self.get_plugins_path_for_target(target)).json()["data"]
-      previously_installed_plugins[target] = list(map(lambda plugin: plugin["name"], previous_plugins))
-    return previously_installed_plugins[target]
+      self.previously_installed_plugins[target] = list(map(lambda plugin: plugin["name"], previous_plugins))
+    return self.previously_installed_plugins[target]
 
   def target_has_plugin(self, plugin_name, target):
     return plugin_name in self.get_previous_plugins_for_target(target)
@@ -94,16 +92,24 @@ class Fixture:
     payload = plugin_config["payload"]
     plugin_name = payload["name"]
     if (not self.target_has_plugin(plugin_name, target)):
-      post_plugin_response = requests.post(url=self.get_plugins_path_for_target(target), data=json.dumps(payload), verify=False, headers={"Content-Type": "application/json"})
-      if (post_plugin_response.status_code == 201):
-        previously_installed_plugins[target].append(plugin_name)
-      else:
-        print(post_plugin_response.json())
-        exit(1)
+      self.post_or_fail(
+        url=self.get_plugins_path_for_target(target),
+        data=json.dumps(payload),
+        verify=False,
+        headers={"Content-Type": "application/json"}
+      )
+      self.previously_installed_plugins[target].append(plugin_name)
 
   def get_plugins_path_for_target(self, target):
     separator = '' if target.endswith('/') else '/'
     return f"{admin_base_url}{separator}{target}{separator}plugins"
+
+  def post_or_fail(self, url, data, verify, headers = {}):
+    response = requests.post(url=url, data=data, verify=verify, headers=headers)
+    if (response.status_code != 201):
+      logging.error(f'Error trying to post: {response.text}, target URL: {url}, request body: {response.request.body}')
+      exit(1)
+    return response
 
   def run(self):
     self.create_consumer()
