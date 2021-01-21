@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd startup
+
+docker pull -q bitnami/python
+docker run -t -v `pwd`:/app bitnami/python python -m unittest
