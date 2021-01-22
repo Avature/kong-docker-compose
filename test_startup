@@ -2,5 +2,5 @@
 
 cd startup
 
-docker pull -q bitnami/python
+docker pull -q python:alpine
 docker run -t -v `pwd`:/app bitnami/python /app/run_tests.sh
