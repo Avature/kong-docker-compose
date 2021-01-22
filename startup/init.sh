@@ -1,6 +1,6 @@
 #!/bin/sh
 
-python3 -m venv venv
+cd /app
 
-venv/bin/pip3 install -r requirements.txt
-venv/bin/python3 ./app/createAdmin.py
+pip install -r requirements.txt
+python createAdmin.py

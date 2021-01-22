@@ -184,7 +184,7 @@ services:
   # Python Startup
   #######################################
   startup:
-    image: python:alpine
+    image: bitnami/python
     networks:
       - kong-net
     volumes:
