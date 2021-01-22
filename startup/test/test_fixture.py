@@ -36,7 +36,6 @@ class TestFixture(TestCase):
     self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApiRegisterInstance/plugins', 2))
     self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 2))
 
-  @responses.activate
   def test_get_admin_plugins(self):
     subject = self.__get_subject()
     result = subject.get_admin_plugins()
@@ -58,6 +57,31 @@ class TestFixture(TestCase):
     subject = self.__get_subject()
     subject.create_admin_service()
     self.assertEqual(responses.calls[1].request.body, 'name=adminApi&protocol=http&port=8001&host=127.0.0.1')
+
+  @responses.activate
+  def test_create_consumer_updating_api_key(self):
+    responses.add(responses.GET, 'http://kong:8001/consumers/admin/key-auth',
+      status=200,
+      json={
+        "data": [
+          {
+            "key": "erroneous-api-key",
+            "id": "254252"
+          }
+        ]
+      }
+    )
+    responses.add(responses.DELETE, 'http://kong:8001/consumers/admin/key-auth/254252', status=204)
+    responses.add(responses.POST, 'http://kong:8001/consumers', status=201)
+    responses.add(responses.POST, 'http://kong:8001/consumers/admin/key-auth',
+      status=201,
+      json={
+        "key": "erroneous-api-key"
+      }
+    )
+    subject = self.__get_subject()
+    subject.create_consumer()
+    self.assertEqual(responses.calls[2].request.body, 'key=testing_api_key')
 
   def __get_subject(self):
     mock_config_parser = configparser.ConfigParser()
