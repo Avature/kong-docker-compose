@@ -69,10 +69,14 @@ class Fixture:
     admin_consumer_response = requests.get(key_auth_url)
     if admin_consumer_response.status_code == 200 and admin_consumer_response.json()["data"]:
       if admin_consumer_response.json()["data"][0]["key"] != api_key:
-        requests.delete(key_auth_url + '/' + admin_consumer_response.json()["data"][0]["id"])
+        self.__renew_api_key(api_key, key_auth_url, admin_consumer_response.json()["data"][0]["id"])
     else:
       self.post_or_fail(admin_base_url + '/consumers', data={"username": "admin"}, verify=False)
       self.post_or_fail(key_auth_url, data={"key": api_key}, verify=False)
+
+  def __renew_api_key(self, api_key, key_auth_url, id):
+    requests.delete(key_auth_url + '/' + id)
+    self.post_or_fail(key_auth_url, data={"key": api_key}, verify=False)
 
   def get_previous_plugins_for_target(self, target):
     if target not in self.previously_installed_plugins:
