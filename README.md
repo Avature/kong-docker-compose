@@ -1,4 +1,4 @@
-# Avature's KONG Distro
+# Description:
 
 This is the Avature's Kong API Gateway docker-compose distribution
 
@@ -34,11 +34,17 @@ This is the Avature's Kong API Gateway docker-compose distribution
 * install docker-compose -> https://docs.docker.com/compose/install/#install-compose-on-linux-systems
 * Clone the repo to your $HOME with: <pre>git clone https://this-repo-url/CustomAPIs/kong-docker-compose</pre>
 
-## Usage:
+# Basic usage:
 
 * To start the Platform run: ./startDev.sh
 
+* After that Konga UI must be up and running on the default URL: https://konga.kong-server.com
+
+* Username: admin, Password: adminadminadmin
+
 * To login with BASH into KONG after startup (See logs, adjust configs: ./startBash.sh)
+
+* Refer to the Client-Auth section to know how to use the mTLS authentication
 
 ## Building debian package:
 
@@ -56,6 +62,8 @@ cd kong-docker-compose
 ./buildDebian.sh
 ```
 
+# Installation
+
 ## Installing debian-package (production environment):
 
 To install the debian package run:
@@ -66,6 +74,14 @@ dpkg -i ../kong-docker-compose_X.Y.Z_ahacere start or startDev according to your
 ```console
 ./{start, startDev}.sh
 ```
+
+After installing, copy the .env.example file:
+
+```console
+cp .env.example .env
+```
+
+And modify it according your needs.
 
 ## FAQ/Troubleshooting Dev Environment:
 
@@ -102,9 +118,40 @@ sudo ./createDevCerts.sh -ssl
 
 The connection between Kong's admin API and its clients must be done via mutual TLS client authentication using client certificates signed by the kong distribution server's CA.
 
+To hit the secured admin API using mTLS you must first create a consumer using the register endpoint /instances/register provided by the mtls certs manager plugin, example call to create a consumer:
+
+```json
+{
+  "csr": "Certificate sign request data",
+  "instance": {
+    "name": "test-instance.ourdomain.org", "description": "A description for the instance"
+  }
+}
+```
+
+Where:
+
+* Certificate sign request data:
+
+Is the content of a certificate signing request (including the markers of start and end) that can be generated with openssl command.
+
+* test-instance.ourdomain.org:
+
+Is the hostname of the consumer instance that will be client for the admin API of Kong.
+
+* A description for the instance:
+
+Is a string used to describe the client that will be added as a consumer for Kong that will be stored as a tag in the Kong's consumer table.
+
 The certificates can be signed off by the mtls certs manager kong plugin via instances/register API endpoint.
 
 For more details about client auth workflow [click here](CLIENT_AUTH.md)
+
+# Contribuiting:
+
+* The recommended dev environment is VS Code with Python and LUA addons.
+
+* The major parts of the application are dockerized so the environment leans mainly on docker and docker-compose.
 
 ## TODO:
 
