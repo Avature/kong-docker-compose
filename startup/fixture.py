@@ -4,40 +4,17 @@ import os
 import configparser
 import json
 import logging
+from config import Config
 
 admin_base_url = 'http://kong:8001'
 
 class Fixture:
   def __init__(self):
     self.previously_installed_plugins = {}
+    self.config = Config()
 
   def get_admin_plugins(self):
-    return [
-      {"target":"routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
-      {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
-      {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {
-        "ca_private_key_path": "/home/kong/certs/server-ca-key.key",
-        "ca_certificate_path": "/home/kong/certs/server-ca-cert.crt"
-      }}},
-      {"target":"routes/adminApi", "payload": {"name": "client_consumer_validator", "config": {
-        "consumer_identifier":"username",
-        "rules": {
-          "rule_1": {
-            "request_path_activation_regex": "(.*)",
-            "search_in_header": "X-Certificate-CN-Header",
-            "expected_consumer_identifier_regex": "(.*)",
-            "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "TRACE", "CONNECT"]
-          },
-          "rule_2": {
-            "request_path_activation_regex": "/services/(.*)/plugins",
-            "search_in_json_payload": "config.replace.headers.1",
-            "expected_consumer_identifier_regex": "Host:(.*)",
-            "methods": ["POST", "PUT", "PATCH"]
-          }
-        }
-      }}},
-      {"target": "/", "payload": {"name": "prometheus"}}
-    ]
+    return self.config.get_plugins_config()
 
   def create_admin_service(self):
     admin_api_response = requests.get(admin_base_url + '/services/adminApi')
@@ -50,6 +27,9 @@ class Fixture:
 
   def create_register_instance_route(self):
     self.create_route('/admin-api/instances/register', 'adminApiRegisterInstance', ["POST"])
+
+  def create_renew_instance_route(self):
+    self.create_route('/admin-api/instances/renew', 'adminApiRenewInstance', ["POST"])
 
   def create_route(self, route_path, route_name, methods):
     route_response = requests.get(admin_base_url + '/services/adminApi/routes/' + route_name)
@@ -120,4 +100,5 @@ class Fixture:
     self.create_admin_service()
     self.create_admin_route()
     self.create_register_instance_route()
+    self.create_renew_instance_route()
     self.add_plugins()
