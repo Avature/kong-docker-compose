@@ -13,7 +13,8 @@ return {
           { ca_private_key_passphrase = { type = "string", default = "1234" }, },
           { ca_certificate_path = { type = "string", default = "/usr/local/custom/kong/plugins/mtls_certs_manager/example_certs/CA-cert.pem" }, },
           { common_name_regex = { type = "string", default = "CN=(.*)/O=" }, },
-          { days_of_validity = { type = "integer", default = 60 }, }
+          { days_of_validity = { type = "integer", default = 60 }, },
+          { is_for_renewal = { type = "boolean", default = false } }
         },
       },
     },
