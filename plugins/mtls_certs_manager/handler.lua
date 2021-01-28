@@ -1,4 +1,4 @@
-local access = require("kong.plugins.mtls_certs_manager.access")
+local MtlsCertsHandlerFactory = require("kong.plugins.mtls_certs_manager.factory")
 
 local MtlsCertsHandler = {
   PRIORITY = 1,
@@ -6,7 +6,8 @@ local MtlsCertsHandler = {
 }
 
 function MtlsCertsHandler:access(conf)
-  return access.execute(conf)
+  local instance = MtlsCertsHandlerFactory.getInstance(conf)
+  return instance.execute()
 end
 
 return MtlsCertsHandler
