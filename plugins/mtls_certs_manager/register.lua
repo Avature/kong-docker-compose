@@ -1,4 +1,4 @@
-local Access = {}
+local Register = {}
 
 local name_helper = require("kong.plugins.mtls_certs_manager.x509_name_helper")
 local encode_base64 = ngx.encode_base64
@@ -10,21 +10,21 @@ local pkey = require("resty.openssl.pkey")
 local bn = require("resty.openssl.bn")
 local openssl_rand = require("resty.openssl.rand")
 
-function Access:new()
-  local access = {}
-  setmetatable(access, self)
+function Register:new()
+  local register = {}
+  setmetatable(register, self)
   self.__index = self
-  return access
+  return register
 end
 
-function Access:read_file(file_name)
+function Register:read_file(file_name)
   local file_resource = assert(io.open(file_name, "rb"))
   local content = file_resource:read("*all")
   file_resource:close()
   return content
 end
 
-function Access:create_consumer(name, description)
+function Register:create_consumer(name, description)
   local _tags = {"instance-admin-client"}
   if description ~= nil and description:match("%S") ~= nil then
     table.insert(_tags, "description-" .. description:gsub("%s+", "_"))
@@ -36,18 +36,18 @@ function Access:create_consumer(name, description)
   return consumers:insert(consumer_data)
 end
 
-function Access:create_credential(consumer_id)
+function Register:create_credential(consumer_id)
   local token = encode_base64(openssl_rand.bytes(64))
   keyauth_credentials:insert({key = token, consumer = {id = consumer_id}})
   return token
 end
 
-function Access:check_instance_exists(instance_name)
+function Register:check_instance_exists(instance_name)
   local consumer = consumers:select_by_username(instance_name)
   return consumer ~= nil
 end
 
-function Access:respond(statusCode, message, errorDescription)
+function Register:respond(statusCode, message, errorDescription)
   local output = {
     message = message
   }
@@ -57,11 +57,7 @@ function Access:respond(statusCode, message, errorDescription)
   return kong.response.exit(statusCode, output)
 end
 
-function Access:is_renewal_route(conf)
-  return conf.is_for_renewal
-end
-
-function Access:execute(conf)
+function Register:execute(conf)
   local request_body = kong.request.get_body()
   local instance_name = request_body.instance.name
   local instance_description = request_body.instance.description
@@ -69,7 +65,7 @@ function Access:execute(conf)
   if conf.csr_path ~= nil then
     csr_content = self.read_file(conf.csr_path)
   end
-  if not self.is_renewal_route(conf) and self.check_instance_exists(instance_name) then
+  if self.check_instance_exists(instance_name) then
     return self.respond(401, "Instance already exists")
   end
   if not csr_content or csr_content == "" then
@@ -129,11 +125,9 @@ function Access:execute(conf)
   if err or not ok then
     return self.respond(500, "Cannot validate generated certificate", tostring(err))
   end
-  if not self.is_for_renewal(conf) then
-    local inserted_consumer = self.create_consumer(instance_name, instance_description)
-    if inserted_consumer == nil then
-      return self.respond(400, 'Unable to create consumer', 'Verify instance name and description for invalid characters')
-    end
+  local inserted_consumer = self.create_consumer(instance_name, instance_description)
+  if inserted_consumer == nil then
+    return self.respond(400, 'Unable to create consumer', 'Verify instance name and description for invalid characters')
   end
   local token = self.create_credential(inserted_consumer.id)
   return kong.response.exit(201, {
@@ -142,4 +136,4 @@ function Access:execute(conf)
   })
 end
 
-return Access
+return Register

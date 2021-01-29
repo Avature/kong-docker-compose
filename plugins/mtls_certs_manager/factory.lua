@@ -1,9 +1,16 @@
-local access = require("kong.plugins.mtls_certs_manager.access")
+local register = require("kong.plugins.mtls_certs_manager.register")
+local renew = require("kong.plugins.mtls_certs_manager.renew")
 
 local MtlsCertsHandlerFactory = {}
 
 function MtlsCertsHandlerFactory:getInstance(conf)
-  return access.new()
+  local instance = nil
+  if conf.is_for_renewal then
+    instance = renew.new()
+  else
+    instance = register.new()
+  end
+  return instance
 end
 
 return MtlsCertsHandlerFactory
