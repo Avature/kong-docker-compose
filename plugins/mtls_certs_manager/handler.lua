@@ -6,8 +6,8 @@ local MtlsCertsHandler = {
 }
 
 function MtlsCertsHandler:access(conf)
-  local instance = MtlsCertsHandlerFactory.getInstance(conf)
-  return instance.execute()
+  local instance = MtlsCertsHandlerFactory:getInstance(conf)
+  return instance:execute(conf)
 end
 
 return MtlsCertsHandler

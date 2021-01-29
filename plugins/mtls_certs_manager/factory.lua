@@ -6,9 +6,9 @@ local MtlsCertsHandlerFactory = {}
 function MtlsCertsHandlerFactory:getInstance(conf)
   local instance = nil
   if conf.is_for_renewal then
-    instance = renew.new()
+    instance = renew:new()
   else
-    instance = register.new()
+    instance = register:new()
   end
   return instance
 end

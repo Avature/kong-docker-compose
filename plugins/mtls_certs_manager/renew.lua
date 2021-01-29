@@ -1,12 +1,12 @@
-local register = require("kong.plugins.mtls_certs_manager.register")
+local Register = require("kong.plugins.mtls_certs_manager.register")
 
 local Renew = {}
+Renew.__index = Renew
+setmetatable(Renew, {__index = Register})
 
 function Renew:new()
-  local renew = {}
-  setmetatable(register, self)
-  self.__index = self
-  return renew
+  local self = setmetatable({}, Renew)
+  return self
 end
 
 function Renew:create_consumer(instance_name, description)
@@ -15,7 +15,7 @@ function Renew:create_consumer(instance_name, description)
 end
 
 function Renew:check_instance_exists(instance_name)
-  return false
+  return true
 end
 
 return Renew
