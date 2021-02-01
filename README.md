@@ -69,7 +69,10 @@ cd kong-docker-compose
 To install the debian package run:
 
 ```console
-dpkg -i ../kong-docker-compose_X.Y.Z_ahacere start or startDev according to your needs):
+dpkg -i ../kong-docker-compose_X.Y.Z_all.deb
+```
+
+Then run start or startDev script (according to your needs):
 
 ```console
 ./{start, startDev}.sh
