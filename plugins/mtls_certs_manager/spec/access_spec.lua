@@ -5,7 +5,7 @@ end
 local helper = require("spec.helper")
 assert:register("matcher", "is_json_like", helper.is_json_like)
 local register = require('register')
-local subject = register.new()
+local subject = register:new()
 
 local load_default_dependencies = function ()
   _G.package.loaded['kong.plugins.mtls_certs_manager.x509_name_helper'] = require('x509_name_helper')
