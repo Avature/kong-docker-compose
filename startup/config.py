@@ -28,6 +28,23 @@ class Config:
           }
         }
       }}},
+      {"target":"routes/adminApiRenewInstance", "payload": {"name": "client_consumer_validator", "config": {
+        "consumer_identifier":"username",
+        "rules": {
+          "rule_1": {
+            "request_path_activation_regex": "(.*)",
+            "search_in_header": "X-Certificate-CN-Header",
+            "expected_consumer_identifier_regex": "(.*)",
+            "methods": ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "TRACE", "CONNECT"]
+          },
+          "rule_2": {
+            "request_path_activation_regex": "/services/(.*)/plugins",
+            "search_in_json_payload": "config.replace.headers.1",
+            "expected_consumer_identifier_regex": "Host:(.*)",
+            "methods": ["POST", "PUT", "PATCH"]
+          }
+        }
+      }}},
       {"target": "/", "payload": {"name": "prometheus"}}
     ]
 

@@ -56,7 +56,7 @@ function _M.respond(statusCode, message, errorDescription)
   return kong.response.exit(statusCode, output)
 end
 
-function _M.execute(conf)
+function _M:execute(conf)
   local request_body = kong.request.get_body()
   local instance_name = request_body.instance.name
   local instance_description = request_body.instance.description
@@ -64,7 +64,7 @@ function _M.execute(conf)
   if conf.csr_path ~= nil then
     csr_content = _M.read_file(conf.csr_path)
   end
-  if _M.check_instance_exists(instance_name) then
+  if self.check_instance_exists(instance_name) then
     return _M.respond(401, "Instance already exists")
   end
   if not csr_content or csr_content == "" then
@@ -124,7 +124,7 @@ function _M.execute(conf)
   if err or not ok then
     return _M.respond(500, "Cannot validate generated certificate", tostring(err))
   end
-  local inserted_consumer = _M.create_consumer(instance_name, instance_description)
+  local inserted_consumer = self.create_consumer(instance_name, instance_description)
   if inserted_consumer == nil then
     return _M.respond(400, 'Unable to create consumer', 'Verify instance name and description for invalid characters')
   end

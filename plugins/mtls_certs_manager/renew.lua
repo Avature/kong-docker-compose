@@ -15,7 +15,7 @@ function _M.create_consumer(instance_name, description)
 end
 
 function _M.check_instance_exists(instance_name)
-  return true
+  return false
 end
 
 return _M
