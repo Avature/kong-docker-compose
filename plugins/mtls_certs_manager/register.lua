@@ -71,7 +71,6 @@ function _M.execute(conf)
     return _M.respond(400, "CSR Contents are empty")
   end
   local parsed_csr, err = csr.new(csr_content)
-  print(parsed_csr)
   if err then
     return _M.respond(400, "Error parsing CSR contents", tostring(err))
   end
