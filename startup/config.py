@@ -9,7 +9,7 @@ class Config:
       {"target":"routes/adminApiRenewInstance", "payload": {"name": "mtls_certs_manager", "config": {
         "ca_private_key_path": "/home/kong/certs/server-ca-key.key",
         "ca_certificate_path": "/home/kong/certs/server-ca-cert.crt",
-        "is_for_renewal": True
+        "plugin_endpoint_usage": "renew_instance"
       }}},
       {"target":"routes/adminApi", "payload": {"name": "client_consumer_validator", "config": {
         "consumer_identifier":"username",

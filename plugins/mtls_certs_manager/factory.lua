@@ -2,15 +2,14 @@ local register = require("kong.plugins.mtls_certs_manager.register")
 local renew = require("kong.plugins.mtls_certs_manager.renew")
 
 local MtlsCertsHandlerFactory = {}
+local Roles = {
+  ["register_instance"] = register,
+  ["renew_instance"] = renew
+}
 
-function MtlsCertsHandlerFactory:getInstance(conf)
-  local instance = nil
-  if conf.is_for_renewal then
-    instance = renew:new()
-  else
-    instance = register:new()
-  end
-  return instance
+function MtlsCertsHandlerFactory:getRole(conf)
+  local role = Roles[conf.plugin_endpoint_usage]
+  return role.new()
 end
 
 return MtlsCertsHandlerFactory
