@@ -37,7 +37,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(401, {message = "Instance already exists"})
   end)
 
@@ -55,7 +55,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "CSR Contents are empty"})
   end)
 
@@ -73,7 +73,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "CSR Contents are empty"})
   end)
 
@@ -93,7 +93,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Error parsing CSR contents", error_description = "impossible to parse csr"})
   end)
 
@@ -114,7 +114,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Cannot get subject from CSR", error_description = "cannot get subject name"})
   end)
 
@@ -136,7 +136,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Cannot get public key from CSR", error_description = "invalid public key"})
   end)
 
@@ -159,7 +159,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Cannot verify the CSR authenticity", error_description = "cannot verify the csr with pubkey"})
   end)
 
@@ -184,7 +184,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(401, {message = "Instance name does not match CSR subject's CN", error_description = "distinguished name is: C=US, ST=CA, CN=mydomain.com/O=\"MyOrg, Inc.\" but the instance name given was: this_test_instance_name"})
   end)
 
@@ -221,7 +221,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Error creating serial number", error_description = "Problem creating BN!"})
   end)
 
@@ -260,7 +260,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(500, {message = "Cannot load CA certificate", error_description = "error parsing ca"})
   end)
 
@@ -304,7 +304,7 @@ describe("mtls_certs_manager register hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(500, {message = "Cannot validate generated certificate", error_description = "impossible to verify output crt"})
   end)
 
@@ -353,7 +353,7 @@ describe("mtls_certs_manager register hook feature", function()
     spy.on(_G.kong.db.consumers, 'insert')
     spy.on(_G.kong.db.keyauth_credentials, 'insert')
 
-    subject.execute(conf)
+    subject:execute(conf)
 
     assert.spy(_G.kong.response.exit).was_called_with(match.is_json_like(400), match.is_json_like(
       {message = "Unable to create consumer", error_description = "Verify instance name and description for invalid characters"}
@@ -409,7 +409,7 @@ describe("mtls_certs_manager register hook feature", function()
     spy.on(_G.kong.db.consumers, 'insert')
     spy.on(_G.kong.db.keyauth_credentials, 'insert')
 
-    subject.execute(conf)
+    subject:execute(conf)
 
     assert.spy(_G.kong.response.exit).was_called_with(201, {certificate = "valid crt contents", token = "base64_encoded_key"})
     assert.spy(_G.kong.db.consumers.insert).was_called_with(match.is_table(), match.is_json_like(
