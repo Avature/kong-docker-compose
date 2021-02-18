@@ -10,7 +10,7 @@ This is the Avature's Kong API Gateway docker-compose distribution
 * konga: Konga Kong's UI (latest version)
 * db: PostgreSQL 9.5 Databse
 * nginx: Nginx (latest nginx docker image version) Proxy pass that exposes gateway, admin, and konga subdomains in a secured and unified way.
-* startup: Startup script that setups the admin API loopback and plugins configuration in an automated way.
+* startup: Startup script that sets up the admin API loopback and plugins configuration in an automated way.
 
 ### It also includes the following custom Kong plugins, pre-built and included in the docker-compose project:
 
@@ -20,14 +20,14 @@ This is the Avature's Kong API Gateway docker-compose distribution
 
 - [Client Consumer Validator](plugins/client_consumer_validator/README.md)
 
-  This plugin allows the server to validate headers and json payload information agains authenticated consumer
+  This plugin allows the server to validate headers and json payload information against authenticated consumer
   This helps in use cases where we need to assure some configurations done to services and routes are only done by a particular consumer.
 
 ## Preconditions:
 
 ### Installing a development environment (debian based distro):
 
-* ensure that exist the path ''/usr/local/bin''. If not, create it with <pre>sudo mkdir -p /usr/local/bin</pre>
+* ensure that the path ''/usr/local/bin'' exists. If not, create it with <pre>sudo mkdir -p /usr/local/bin</pre>
 * install curl if not installed <pre>sudo apt-get install curl</pre>
 * install docker -> https://docs.docker.com/install/linux/docker-ce/ubuntu/
 * configure docker to execute without sudo -> https://docs.docker.com/install/linux/linux-postinstall/
@@ -50,7 +50,7 @@ This is the Avature's Kong API Gateway docker-compose distribution
 
 ### Pre-requisites:
 
-Install this dependencies:
+Install these dependencies:
 
 1. fakeroot v1.22
 2. debhelper (>= 9),
@@ -69,7 +69,10 @@ cd kong-docker-compose
 To install the debian package run:
 
 ```console
-dpkg -i ../kong-docker-compose_X.Y.Z_ahacere start or startDev according to your needs):
+dpkg -i ../kong-docker-compose_X.Y.Z_all.deb
+```
+
+Then run start or startDev script (according to your needs):
 
 ```console
 ./{start, startDev}.sh
@@ -81,7 +84,7 @@ After installing, copy the .env.example file:
 cp .env.example .env
 ```
 
-And modify it according your needs.
+And modify it according to your needs.
 
 ## FAQ/Troubleshooting Dev Environment:
 
