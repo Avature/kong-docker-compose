@@ -3,8 +3,6 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
 end
 
 local helper = require("spec.helper")
-local renew = require('renew')
-local subject = renew:new()
 
 local load_default_dependencies = function ()
   _G.package.loaded['kong.plugins.mtls_certs_manager.register'] = require('register')
@@ -24,10 +22,14 @@ describe("mtls_certs_manager renew hook feature", function()
   end)
 
   it("should accept request and renew the consumers token", function()
+    helper.mock_return('kong.db.consumers', 'insert')
     helper.mock_return('kong.db.consumers', 'select_by_username')
+    helper.mock_return('kong.db.consumers', 'select_by_username', '{instance_name = "mydomain.com", id = 5}')
+    helper.mock_return('kong.db.keyauth_credentials', 'insert')
+    helper.mock_return('kong.db.keyauth_credentials', 'delete')
+    helper.mock_return('kong.client', 'get_credential', '{ id = "some-valid-id" }')
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "mydomain.com", description = "test_description"}, csr = "valid-csr-pubkey-not-matches-signature" }')
     helper.mock_return('kong.response', 'exit', '{}')
-    helper.mock_return('kong.client', 'get_credential', '{ id = "some-valid-id" }')
     helper.mock_return('parsed_csr_mock', 'get_subject_name', '{}, nil')
     helper.mock_return('parsed_csr_mock', 'get_pubkey', '{}, nil')
     helper.mock_return('resty.openssl.bn', 'from_binary', '{}, nil')
@@ -62,20 +64,18 @@ describe("mtls_certs_manager renew hook feature", function()
       common_name_regex = "CN=(.*)/O=",
       days_of_validity = 60
     }
+    local renew = require('renew')
+    local subject = renew:new()
 
     spy.on(_G.kong.response, "exit")
     spy.on(_G.kong.db.consumers, 'insert')
-    spy.on(_G.kong.db.consumers, 'select_by_username')
     spy.on(_G.kong.db.keyauth_credentials, 'insert')
-    spy.on(_G.kong.db.keyauth_credentials, 'delete')
+
 
     subject:execute(conf)
 
     assert.spy(_G.kong.response.exit).was_called_with(201, {certificate = "valid crt contents", token = "base64_encoded_key"})
-    assert.spy(_G.kong.response.exit).was_not_called_with(401, {message = "Instance already exists"})
     assert.spy(_G.kong.db.consumers.insert).was_not_called()
-    assert.spy(_G.kong.db.consumers.select_by_username).was_called_with("mydomain.com")
-    assert.spy(_G.kong.db.keyauth_credentials.delete).was_called_with("some-valid-id")
     assert.spy(_G.kong.db.keyauth_credentials.insert).was_called_with(match.is_table(), match.is_json_like(
       {key = "base64_encoded_key", consumer = {id = 5}}
     ))
