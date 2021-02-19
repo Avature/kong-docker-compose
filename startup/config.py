@@ -28,6 +28,7 @@ class Config:
           }
         }
       }}},
+      {"target":"routes/adminApiRenewInstance", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
       {"target":"routes/adminApiRenewInstance", "payload": {"name": "client_consumer_validator", "config": {
         "consumer_identifier":"username",
         "rules": {
