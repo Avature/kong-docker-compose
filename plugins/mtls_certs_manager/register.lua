@@ -129,7 +129,7 @@ function _M:execute(conf)
   if inserted_consumer == nil then
     return _M.respond(400, 'Unable to create consumer', 'Verify instance name and description for invalid characters')
   end
-  local token = _M.create_credential(inserted_consumer.id)
+  local token = self.create_credential(inserted_consumer.id)
   return kong.response.exit(201, {
     certificate = crt_output:to_PEM(),
     token = token

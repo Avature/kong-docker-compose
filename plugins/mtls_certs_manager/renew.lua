@@ -14,9 +14,9 @@ function _M.create_credential(consumer_id)
   local openssl_rand = require("resty.openssl.rand")
   local encode_base64 = ngx.encode_base64
   local token = encode_base64(openssl_rand.bytes(64))
-  local credential = keyauth_credentials:select_by_key(kong.request.get_header("X-Kong-Admin-Key"))
-  print(credential)
-  keyauth_credentials:update({id = credential.id}, {key = token})
+  local credential_id = kong.client.get_credential().id
+  keyauth_credentials:delete({ id = credential_id })
+  keyauth_credentials:insert({ key = token, consumer = { id = consumer_id }})
   return token
 end
 
