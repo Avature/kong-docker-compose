@@ -48,12 +48,12 @@ class TestFixture(TestCase):
     self.subject.run()
     self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApi/plugins', 3))
     self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApiRegisterInstance/plugins', 2))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApiRenewInstance/plugins', 3))
+    self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApiRenewInstance/plugins', 4))
     self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 2))
 
   def test_get_admin_plugins(self):
     result = self.subject.get_admin_plugins()
-    self.assertEqual(len(result), 7)
+    self.assertEqual(len(result), 8)
 
   @responses.activate
   def test_create_admin_service_and_failed(self):
