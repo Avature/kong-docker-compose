@@ -3,9 +3,9 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
 end
 
 local helper = require("spec.helper")
+assert:register("matcher", "is_json_like", helper.is_json_like)
 
 local load_default_dependencies = function ()
-  _G.package.loaded['kong.plugins.mtls_certs_manager.register'] = require('register')
   _G.package.loaded['kong.plugins.mtls_certs_manager.x509_name_helper'] = require('x509_name_helper')
   _G.package.loaded["resty.openssl.x509"    ] = {}
   _G.package.loaded["resty.openssl.x509.csr"] = {}
@@ -56,6 +56,8 @@ describe("mtls_certs_manager renew hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
     _G.package.loaded["renew"] = nil
+    _G.package.loaded['kong.plugins.mtls_certs_manager.base'] = require('base')
+    local subject = require('renew')
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -64,15 +66,12 @@ describe("mtls_certs_manager renew hook feature", function()
       common_name_regex = "CN=(.*)/O=",
       days_of_validity = 60
     }
-    local renew = require('renew')
-    local subject = renew:new()
 
     spy.on(_G.kong.response, "exit")
     spy.on(_G.kong.db.consumers, 'insert')
     spy.on(_G.kong.db.keyauth_credentials, 'insert')
 
-
-    subject:execute(conf)
+    subject.execute(conf)
 
     assert.spy(_G.kong.response.exit).was_called_with(201, {certificate = "valid crt contents", token = "base64_encoded_key"})
     assert.spy(_G.kong.db.consumers.insert).was_not_called()

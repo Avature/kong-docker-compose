@@ -7,7 +7,7 @@ local MtlsCertsHandler = {
 
 function MtlsCertsHandler:access(conf)
   local role = MtlsCertsHandlerFactory:getRole(conf)
-  return role:execute(conf)
+  return role.execute(conf)
 end
 
 return MtlsCertsHandler
