@@ -30,13 +30,14 @@ function _M:get_consumer(instance_name, description)
   return consumers:insert(consumer_data)
 end
 
-function _M:execute(conf)
+function _M:hasValidationErrors()
   local request_body = kong.request.get_body()
   local instance_name = request_body.instance.name
-  if self:check_instance_exists(instance_name) then
-    return self:respond(401, "Instance already exists")
+  local consumer = consumers:select_by_username(instance_name)
+  if consumer ~= nil then
+    return "Instance already exists", 401
   end
-  return self:doExecute(conf)
+  return self.super:hasValidationErrors()
 end
 
 return _M

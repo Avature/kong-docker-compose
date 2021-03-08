@@ -18,6 +18,14 @@ function _M:read_file(file_name)
   return content
 end
 
+function _M:create_credential(consumer_id)
+  error("This function shoud be implemented")
+end
+
+function _M:get_consumer(instance_name, description)
+  error("This function shoud be implemented")
+end
+
 function _M:respond(statusCode, message, errorDescription)
   local output = {
     message = message
@@ -26,6 +34,20 @@ function _M:respond(statusCode, message, errorDescription)
     output.error_description = errorDescription
   end
   return kong.response.exit(statusCode, output)
+end
+
+function _M:hasValidationErrors()
+  -- Add JSON Payload Schema Validation To MTLS
+  -- see case https://teg.avature.net/#Case/584763
+  return nil, nil
+end
+
+function _M:execute(conf)
+  local message, code = self:hasValidationErrors()
+  if message then
+    return self:respond(code, message)
+  end
+  return self:doExecute(conf)
 end
 
 function _M:doExecute(conf)

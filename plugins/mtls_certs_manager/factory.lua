@@ -9,7 +9,7 @@ local Roles = {
 }
 
 function MtlsCertsHandlerFactory:getRole(conf)
-  return register
+  return Roles[conf.plugin_endpoint_usage]
 end
 
 return MtlsCertsHandlerFactory

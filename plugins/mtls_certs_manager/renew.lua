@@ -18,8 +18,4 @@ function _M:get_consumer(instance_name, description)
   return consumers:select_by_username(instance_name)
 end
 
-function _M:execute(conf)
-  return self:doExecute(conf)
-end
-
 return _M
