@@ -77,7 +77,7 @@ describe("mtls_certs_manager renew hook feature", function()
     spy.on(_G.kong.db.consumers, 'insert')
     spy.on(_G.kong.db.keyauth_credentials, 'insert')
 
-    subject.execute(conf)
+    subject:execute(conf)
 
     assert.spy(_G.kong.response.exit).was_called_with(201, {certificate = "valid crt contents", token = "base64_encoded_key"})
     assert.spy(_G.kong.db.consumers.insert).was_not_called()

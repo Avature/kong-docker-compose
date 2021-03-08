@@ -6,18 +6,18 @@ local encode_base64 = ngx.encode_base64
 local keyauth_credentials = kong.db.keyauth_credentials
 local openssl_rand = require("resty.openssl.rand")
 
-function _M.create_credential(consumer_id)
+function _M:create_credential(consumer_id)
   local token = encode_base64(openssl_rand.bytes(64))
   keyauth_credentials:insert({key = token, consumer = {id = consumer_id}})
   return token
 end
 
-function _M.check_instance_exists(instance_name)
+function _M:check_instance_exists(instance_name)
   local consumer = consumers:select_by_username(instance_name)
   return consumer ~= nil
 end
 
-function _M.get_consumer(instance_name, description)
+function _M:get_consumer(instance_name, description)
   local consumers = kong.db.consumers
   local _tags = {"instance-admin-client"}
   if description ~= nil and description:match("%S") ~= nil then
@@ -30,13 +30,13 @@ function _M.get_consumer(instance_name, description)
   return consumers:insert(consumer_data)
 end
 
-function _M.execute(conf)
+function _M:execute(conf)
   local request_body = kong.request.get_body()
   local instance_name = request_body.instance.name
-  if _M.check_instance_exists(instance_name) then
-    return _M.respond(401, "Instance already exists")
+  if self:check_instance_exists(instance_name) then
+    return self:respond(401, "Instance already exists")
   end
-  return _M.super.execute(conf)
+  return self:doExecute(conf)
 end
 
 return _M

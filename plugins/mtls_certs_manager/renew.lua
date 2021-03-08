@@ -5,7 +5,7 @@ local encode_base64 = ngx.encode_base64
 local keyauth_credentials = kong.db.keyauth_credentials
 local openssl_rand = require("resty.openssl.rand")
 
-function _M.create_credential(consumer_id)
+function _M:create_credential(consumer_id)
   local token = encode_base64(openssl_rand.bytes(64))
   local credential_id = kong.client.get_credential().id
   keyauth_credentials:delete({ id = credential_id })
@@ -13,13 +13,13 @@ function _M.create_credential(consumer_id)
   return token
 end
 
-function _M.get_consumer(instance_name, description)
+function _M:get_consumer(instance_name, description)
   local consumers = kong.db.consumers
   return consumers:select_by_username(instance_name)
 end
 
-function _M.execute(conf)
-  return _M.super.execute(conf)
+function _M:execute(conf)
+  return self:doExecute(conf)
 end
 
 return _M
