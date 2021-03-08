@@ -17,8 +17,17 @@ function _M.check_instance_exists(instance_name)
   return consumer ~= nil
 end
 
-function _M.requires_consumer_creation()
-  return true
+function _M.get_consumer(instance_name, description)
+  local consumers = kong.db.consumers
+  local _tags = {"instance-admin-client"}
+  if description ~= nil and description:match("%S") ~= nil then
+    table.insert(_tags, "description-" .. description:gsub("%s+", "_"))
+  end
+  local consumer_data = {
+    username = instance_name,
+    tags = _tags
+  }
+  return consumers:insert(consumer_data)
 end
 
 function _M.execute(conf)

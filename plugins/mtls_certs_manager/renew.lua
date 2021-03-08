@@ -13,8 +13,9 @@ function _M.create_credential(consumer_id)
   return token
 end
 
-function _M.requires_consumer_creation()
-  return false
+function _M.get_consumer(instance_name, description)
+  local consumers = kong.db.consumers
+  return consumers:select_by_username(instance_name)
 end
 
 function _M.execute(conf)

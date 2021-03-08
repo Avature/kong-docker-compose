@@ -18,22 +18,6 @@ function _M.read_file(file_name)
   return content
 end
 
-function _M.get_consumer_and_create_if_needed(instance_name, description)
-  local consumers = kong.db.consumers
-  if _M.requires_consumer_creation() then
-    local _tags = {"instance-admin-client"}
-    if description ~= nil and description:match("%S") ~= nil then
-      table.insert(_tags, "description-" .. description:gsub("%s+", "_"))
-    end
-    local consumer_data = {
-      username = instance_name,
-      tags = _tags
-    }
-    return consumers:insert(consumer_data)
-  end
-  return consumers:select_by_username(instance_name)
-end
-
 function _M.create_consumer(name, description)
   local _tags = {"instance-admin-client"}
   if description ~= nil and description:match("%S") ~= nil then
@@ -44,18 +28,6 @@ function _M.create_consumer(name, description)
     tags = _tags
   }
   return consumers:insert(consumer_data)
-end
-
-function _M.create_credential(consumer_id)
-  error("This function should be implemented")
-end
-
-function _M.execute(conf)
-  error("This function should be implemented")
-end
-
-function _M.requires_consumer_creation()
-  error("This function should be implemented")
 end
 
 function _M.respond(statusCode, message, errorDescription)
@@ -133,10 +105,9 @@ function _M.execute(conf)
   if err or not ok then
     return _M.respond(500, "Cannot validate generated certificate", tostring(err))
   end
-  local inserted_consumer = _M.get_consumer_and_create_if_needed(instance_name, instance_description)
+  local inserted_consumer = _M.get_consumer(instance_name, instance_description)
   if inserted_consumer == nil then
-    -- return _M.respond(400, 'Unable to create consumer', 'Verify instance name and description for invalid characters')
-    return _M.respond(400, 'Unable to create consumer', "Conf: " .. tostring(conf.plugin_endpoint_usage) .. " Requires: " .. tostring(_M.requires_consumer_creation()))
+    return _M.respond(400, 'Unable to create consumer', 'Verify instance name and description for invalid characters')
   end
   local token = _M.create_credential(inserted_consumer.id)
   return kong.response.exit(201, {

@@ -7,12 +7,20 @@ assert:register("matcher", "is_json_like", helper.is_json_like)
 
 local load_default_dependencies = function ()
   _G.package.loaded['kong.plugins.mtls_certs_manager.x509_name_helper'] = require('x509_name_helper')
+  _G.package.loaded["kong.vendor.classic"] = helper.get_extender()
   _G.package.loaded["resty.openssl.x509"    ] = {}
   _G.package.loaded["resty.openssl.x509.csr"] = {}
   _G.package.loaded["resty.openssl.pkey"    ] = {}
   _G.package.loaded["resty.openssl.bn"      ] = {}
   helper.mock_return('resty.openssl.rand', 'bytes', '9999999999999999')
   helper.mock_return('ngx', 'encode_base64', '\"base64_encoded_key\"')
+end
+
+local require_renew = function()
+  _G.package.loaded["renew"] = nil
+  _G.package.loaded["base"] = nil
+  _G.package.loaded["kong.plugins.mtls_certs_manager.base"] = require('base')
+  return require('renew')
 end
 
 describe("mtls_certs_manager renew hook feature", function()
@@ -55,9 +63,7 @@ describe("mtls_certs_manager renew hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
-    _G.package.loaded["renew"] = nil
-    _G.package.loaded['kong.plugins.mtls_certs_manager.base'] = require('base')
-    local subject = require('renew')
+    local subject = require_renew()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",

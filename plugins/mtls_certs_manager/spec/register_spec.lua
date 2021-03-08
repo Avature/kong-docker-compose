@@ -16,14 +16,14 @@ local load_default_dependencies = function ()
   helper.mock_return('ngx', 'encode_base64', '\"base64_encoded_key\"')
 end
 
-local require_access = function()
-  _G.package.loaded["access"] = nil
+local require_register = function()
+  _G.package.loaded["register"] = nil
   _G.package.loaded["base"] = nil
   _G.package.loaded["kong.plugins.mtls_certs_manager.base"] = require('base')
-  return require('access')
+  return require('register')
 end
 
-describe("mtls_certs_manager access hook feature", function()
+describe("mtls_certs_manager register hook feature", function()
   before_each(function()
     helper.clear_runs()
     load_default_dependencies()
@@ -34,7 +34,7 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "test_instance", description = "test_description"}, csr = "test_csr_string" }')
     helper.mock_return('kong.response', 'exit', '{}')
 
-    local subject = require_access()
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "",
@@ -53,7 +53,7 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "test_instance", description = "test_description"}, csr = "" }')
     helper.mock_return('kong.response', 'exit', '{}')
 
-    local subject = require_access()
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -72,7 +72,7 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "test_instance", description = "test_description"}, csr = nil }')
     helper.mock_return('kong.response', 'exit', '{}')
 
-    local subject = require_access()
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -92,7 +92,7 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.response', 'exit', '{}')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'nil, "impossible to parse csr"')
 
-    local subject = require_access()
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -113,8 +113,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('parsed_csr_mock', 'get_subject_name', 'nil, "cannot get subject name"')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -136,8 +136,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('parsed_csr_mock', 'get_pubkey', 'nil, "invalid public key"')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -160,8 +160,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('parsed_csr_mock', 'verify', 'nil, "cannot verify the csr with pubkey"')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -185,8 +185,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.plugins.mtls_certs_manager.x509_name_helper', 'tostring', '\'C=US, ST=CA, CN=mydomain.com/O="MyOrg, Inc."\'')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -222,8 +222,8 @@ describe("mtls_certs_manager access hook feature", function()
 
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -262,8 +262,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'nil, "error parsing ca"', 1)
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -307,8 +307,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -355,8 +355,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -412,8 +412,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
-    _G.package.loaded["access"] = nil
-    local subject = require_access()
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
