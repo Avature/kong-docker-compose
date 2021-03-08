@@ -1,11 +1,15 @@
-local _M = {}
+local Object = require("kong.vendor.classic")
+local _M = Object:extend()
 
+local name_helper = require("kong.plugins.mtls_certs_manager.x509_name_helper")
+local encode_base64 = ngx.encode_base64
+local consumers = kong.db.consumers
+local keyauth_credentials = kong.db.keyauth_credentials
 local x509 = require("resty.openssl.x509")
+local csr = require("resty.openssl.x509.csr")
 local pkey = require("resty.openssl.pkey")
 local bn = require("resty.openssl.bn")
 local openssl_rand = require("resty.openssl.rand")
-local csr = require("resty.openssl.x509.csr")
-local name_helper = require("kong.plugins.mtls_certs_manager.x509_name_helper")
 
 function _M.read_file(file_name)
   local file_resource = assert(io.open(file_name, "rb"))
@@ -30,6 +34,18 @@ function _M.get_consumer_and_create_if_needed(instance_name, description)
   return consumers:select_by_username(instance_name)
 end
 
+function _M.create_consumer(name, description)
+  local _tags = {"instance-admin-client"}
+  if description ~= nil and description:match("%S") ~= nil then
+    table.insert(_tags, "description-" .. description:gsub("%s+", "_"))
+  end
+  local consumer_data = {
+    username = name,
+    tags = _tags
+  }
+  return consumers:insert(consumer_data)
+end
+
 function _M.create_credential(consumer_id)
   error("This function should be implemented")
 end
@@ -52,7 +68,7 @@ function _M.respond(statusCode, message, errorDescription)
   return kong.response.exit(statusCode, output)
 end
 
-function _M.doExecute(conf)
+function _M.execute(conf)
   local request_body = kong.request.get_body()
   local instance_name = request_body.instance.name
   local instance_description = request_body.instance.description

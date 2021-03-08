@@ -62,4 +62,22 @@ function _M.is_json_like(state, arguments)
   end
 end
 
+function _M.get_extender()
+  local _E = {}
+  _E.__index = _E
+  function _E:extend()
+    local cls = {}
+    for k, v in pairs(self) do
+      if k:find("__") == 1 then
+        cls[k] = v
+      end
+    end
+    cls.__index = cls
+    cls.super = self
+    setmetatable(cls, self)
+    return cls
+  end
+  return _E
+end
+
 return _M

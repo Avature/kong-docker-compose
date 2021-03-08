@@ -1,4 +1,5 @@
-local _M = require("kong.plugins.mtls_certs_manager.base")
+local base = require("kong.plugins.mtls_certs_manager.base")
+local _M = base:extend()
 
 local encode_base64 = ngx.encode_base64
 local keyauth_credentials = kong.db.keyauth_credentials
@@ -17,7 +18,7 @@ function _M.requires_consumer_creation()
 end
 
 function _M.execute(conf)
-  return _M.doExecute(conf)
+  return _M.super.execute(conf)
 end
 
 return _M

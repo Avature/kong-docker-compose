@@ -1,5 +1,5 @@
 local base = require("kong.plugins.mtls_certs_manager.base")
-local _M = setmetatable({}, base)
+local _M = base:extend()
 
 local consumers = kong.db.consumers
 local encode_base64 = ngx.encode_base64
@@ -27,7 +27,7 @@ function _M.execute(conf)
   if _M.check_instance_exists(instance_name) then
     return _M.respond(401, "Instance already exists")
   end
-  return _M.doExecute(conf)
+  return _M.super.execute(conf)
 end
 
 return _M
