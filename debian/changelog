@@ -1,3 +1,10 @@
+kong-docker-compose (0.0.8) Ubuntu; urgency=medium
+
+  *  Add env variables for database host and port
+  *  Add db host and port to services
+
+ -- Juan Cruz Vincenti <juan@02078-jvincenti>  Fri, 18 Dec 2020 09:46:12 -0300
+
 kong-docker-compose (0.0.7) Ubuntu; urgency=medium
 
   * Add metrics endpoint to gather prometheus stats data
