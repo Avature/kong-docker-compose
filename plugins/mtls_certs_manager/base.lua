@@ -3,7 +3,6 @@ local _M = Object:extend()
 
 local name_helper = require("kong.plugins.mtls_certs_manager.x509_name_helper")
 local encode_base64 = ngx.encode_base64
-local consumers = kong.db.consumers
 local keyauth_credentials = kong.db.keyauth_credentials
 local x509 = require("resty.openssl.x509")
 local csr = require("resty.openssl.x509.csr")
@@ -19,7 +18,9 @@ function _M:read_file(file_name)
 end
 
 function _M:create_credential(consumer_id)
-  error("This function shoud be implemented")
+  local token = encode_base64(openssl_rand.bytes(64))
+  keyauth_credentials:insert({key = token, consumer = {id = consumer_id}})
+  return token
 end
 
 function _M:get_consumer(instance_name, description)
@@ -55,9 +56,6 @@ function _M:doExecute(conf)
   local instance_name = request_body.instance.name
   local instance_description = request_body.instance.description
   local csr_content = request_body.csr
-  if conf.csr_path ~= nil then
-    csr_content = self:read_file(conf.csr_path)
-  end
   if not csr_content or csr_content == "" then
     return self:respond(400, "CSR Contents are empty")
   end
