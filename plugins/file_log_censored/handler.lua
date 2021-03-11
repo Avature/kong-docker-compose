@@ -62,7 +62,7 @@ local FileLogCensoredHandler = {
 
 function FileLogCensoredHandler:log(conf)
   local message = kong.log.serialize()
-  censored_message = attribute_remover.delete_attributes(message, conf.exclusion)
+  censored_message = attribute_remover.delete_attributes(message, conf.censored_fields)
   log(conf, censored_message)
 end
 

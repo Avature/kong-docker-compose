@@ -1,18 +1,23 @@
-local pl_utils = require "pl.utils"
-
-local function validate_file(value)
-  local ok = pl_utils.executeex("touch "..value)
-  if not ok then
-    return false, "Cannot create file. Make sure the path is valid, and has the right permissions"
-  end
-
-  return true
-end
+local typedefs = require "kong.db.schema.typedefs"
 
 return {
+  name = "file-log",
   fields = {
-    path = { required = true, type = "string", func = validate_file },
-    exclusion = { required = false, type = "array" },
-    reopen = { type = "boolean", required = true, default = false },
+    { protocols = typedefs.protocols },
+    { config = {
+        type = "record",
+        fields = {
+          { path = { type = "string",
+                     required = true,
+                     match = [[^[^*&%%\`]+$]],
+                     err = "not a valid filename",
+          }, },
+          { reopen = { type = "boolean", required = true, default = false }, },
+          { censored_fields = { required = false,
+                          type = "array",
+                          elements = { type = 'string' },
+                          default = {},
+          }, },
+    }, }, },
   }
 }

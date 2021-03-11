@@ -19,7 +19,7 @@ class Fixture:
         "config": {
           "path":"/home/kong/log/admin-api.log",
           "reopen": True,
-          "exclusion": ["request.headers.x-kong-admin-key"]
+          "censored_fields": ["request.headers.x-kong-admin-key"]
       }}},
       {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {
         "ca_private_key_path": "/home/kong/certs/server-ca-key.key",

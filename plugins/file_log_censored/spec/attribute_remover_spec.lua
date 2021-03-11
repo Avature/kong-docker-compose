@@ -3,7 +3,7 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
 end
 
 describe("file_log_censored attribute remover feature", function()
-  it("should remove the attributes specified at the exclusion array from the log message", function()
+  it("should remove the attributes specified at the censored_fields array from the log message", function()
 
     local subject = require('attribute_remover')
     local log = {
@@ -17,8 +17,8 @@ describe("file_log_censored attribute remover feature", function()
         }
       }
     }
-    local exclusion = {'request.headers.x-kong-api-key'}
-    local censored_message = subject.delete_attributes(log, exclusion)
+    local censored_fields = {'request.headers.x-kong-api-key'}
+    local censored_message = subject.delete_attributes(log, censored_fields)
     local expected = {
       request = {
         url = 'https://some-awesome-url.com/kong/rocks',
@@ -46,8 +46,8 @@ describe("file_log_censored attribute remover feature", function()
         }
       }
     }
-    local exclusion = {}
-    local censored_message = subject.delete_attributes(log, exclusion)
+    local censored_fields = {}
+    local censored_message = subject.delete_attributes(log, censored_fields)
     assert.are.same(log, censored_message)
   end)
 end)

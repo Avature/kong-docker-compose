@@ -1,6 +1,6 @@
 # File Log Censored Kong Plugin
 
-This plugin is built on top of Kong's file log plugin. It supports both path and reopen configuration, and it also has an exclusion configuration to exclude certain attributes from the output.
+This plugin is built on top of Kong's file log plugin. It supports both path and reopen configuration, and it also has an censored_fields configuration to exclude certain attributes from the output.
 
 ## Run the tests:
 
