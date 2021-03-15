@@ -1,22 +1,25 @@
+-- FIXME: If the MR specified at the case: https://teg.avature.net/#Case/586004
+-- is accepted and merged, we can remove this custom plugin and replace it
+-- for the file-log plugin at our startup config
+
 local ffi = require("ffi")
 local cjson = require("cjson")
-local system_constants = require("lua_system_constants")
+local bit = require("bit")
+local lua_system_constants = require("lua_system_constants")
 local attribute_remover = require("kong.plugins.file_log_censored.attribute_remover")
 
 local kong = kong
 
-local O_CREAT = system_constants.O_CREAT()
-local O_WRONLY = system_constants.O_WRONLY()
-local O_APPEND = system_constants.O_APPEND()
-local S_IRUSR = system_constants.S_IRUSR()
-local S_IWUSR = system_constants.S_IWUSR()
-local S_IRGRP = system_constants.S_IRGRP()
-local S_IROTH = system_constants.S_IROTH()
+local O_CREAT = lua_system_constants.O_CREAT()
+local O_WRONLY = lua_system_constants.O_WRONLY()
+local O_APPEND = lua_system_constants.O_APPEND()
+local S_IRUSR = lua_system_constants.S_IRUSR()
+local S_IWUSR = lua_system_constants.S_IWUSR()
+local S_IRGRP = lua_system_constants.S_IRGRP()
+local S_IROTH = lua_system_constants.S_IROTH()
 
 local oflags = bit.bor(O_WRONLY, O_CREAT, O_APPEND)
 local mode = bit.bor(S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH)
-
-local C = ffi.C
 
 ffi.cdef [[
 int write(int fd, const void * ptr, int numbytes);
@@ -42,17 +45,17 @@ local function log(conf, message)
   end
 
   if not fd then
-    fd = C.open(conf.path, oflags, mode)
+    fd = ffi.C.open(conf.path, oflags, mode)
     if fd < 0 then
       local errno = ffi.errno()
-      kong.log.err("failed to open the file: ", ffi.string(C.strerror(errno)))
+      kong.log.err("failed to open the file: ", ffi.string(ffi.C.strerror(errno)))
 
     else
       file_descriptors[conf.path] = fd
     end
   end
 
-  C.write(fd, msg, #msg)
+  ffi.C.write(fd, msg, #msg)
 end
 
 local FileLogCensoredHandler = {

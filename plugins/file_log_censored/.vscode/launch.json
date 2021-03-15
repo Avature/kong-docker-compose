@@ -9,7 +9,8 @@
         "command": "busted"
       },
       "args": [
-        "spec/attribute_remover_spec.lua"
+        "spec/attribute_remover_spec.lua",
+        "spec/log_spec.lua"
       ]
     },
     {

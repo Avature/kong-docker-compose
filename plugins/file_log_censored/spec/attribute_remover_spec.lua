@@ -10,10 +10,8 @@ describe("file_log_censored attribute remover feature", function()
       request = {
         url = 'https://some-awesome-url.com/kong/rocks',
         headers = {
-          ["content-type"] = 'application/json',
           ["x-kong-header"] = 'another-cool-header',
           ["x-kong-api-key"] = 'some-api-key',
-          accept = 'application/json'
         }
       }
     }
@@ -23,9 +21,7 @@ describe("file_log_censored attribute remover feature", function()
       request = {
         url = 'https://some-awesome-url.com/kong/rocks',
         headers = {
-          ["content-type"] = 'application/json',
           ["x-kong-header"] = 'another-cool-header',
-          accept = 'application/json'
         }
       }
     }
@@ -39,10 +35,8 @@ describe("file_log_censored attribute remover feature", function()
       request = {
         url = 'https://some-awesome-url.com/kong/rocks',
         headers = {
-          ["content-type"] = 'application/json',
           ["x-kong-header"] = 'another-cool-header',
           ["x-kong-api-key"] = 'some-api-key',
-          accept = 'application/json'
         }
       }
     }
