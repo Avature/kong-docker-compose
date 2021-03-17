@@ -28,7 +28,7 @@ describe("file_log_censored attribute remover feature", function()
     assert.are.same(censored_message, expected)
   end)
 
-  it("should not remove attributes from the log message when no attributes where declared", function()
+  it("should not remove attributes from the log message when no attributes were declared", function()
 
     local subject = require('attribute_remover')
     local log = {

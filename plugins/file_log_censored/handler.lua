@@ -1,4 +1,4 @@
--- FIXME: If the MR specified at the case: https://teg.avature.net/#Case/586004
+-- FIXME: If the PR: https://github.com/Kong/kong/pull/6930
 -- is accepted and merged, we can remove this custom plugin and replace it
 -- for the file-log plugin at our startup config
 
