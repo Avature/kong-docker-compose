@@ -1,7 +1,7 @@
 local typedefs = require "kong.db.schema.typedefs"
 
 return {
-  name = "file-log",
+  name = "file_log_censored",
   fields = {
     { protocols = typedefs.protocols },
     { config = {

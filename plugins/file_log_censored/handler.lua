@@ -39,7 +39,7 @@ local function log(conf, message)
   if fd and conf.reopen then
     -- close fd, we do this here, to make sure a previously cached fd also
     -- gets closed upon dynamic changes of the configuration
-    C.close(fd)
+    ffi.C.close(fd)
     file_descriptors[conf.path] = nil
     fd = nil
   end
