@@ -1,7 +1,13 @@
 class Config:
   PLUGINS_CONFIG = [
       {"target":"routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
-      {"target":"services/adminApi", "payload": {"name": "file-log", "config": {"path":"/home/kong/log/admin-api.log", "reopen": True}}},
+      {"target":"services/adminApi", "payload": {
+        "name": "file_log_censored",
+        "config": {
+          "path":"/home/kong/log/admin-api.log",
+          "reopen": True,
+          "censored_fields": ["request.headers.x-kong-admin-key"]
+      }}},
       {"target":"routes/adminApiRegisterInstance", "payload": {"name": "mtls_certs_manager", "config": {
         "ca_private_key_path": "/home/kong/certs/server-ca-key.key",
         "ca_certificate_path": "/home/kong/certs/server-ca-cert.crt"

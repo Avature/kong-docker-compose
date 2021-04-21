@@ -35,3 +35,6 @@ plugins/mtls_certs_manager/x509_name_helper.lua opt/kong/plugins/mtls_certs_mana
 plugins/client_consumer_validator/schema.lua opt/kong/plugins/client_consumer_validator
 plugins/client_consumer_validator/access.lua opt/kong/plugins/client_consumer_validator
 plugins/client_consumer_validator/handler.lua opt/kong/plugins/client_consumer_validator
+plugins/file_log_censored/schema.lua opt/kong/plugins/file_log_censored
+plugins/file_log_censored/handler.lua opt/kong/plugins/file_log_censored
+plugins/file_log_censored/attribute_remover.lua opt/kong/plugins/file_log_censored
