@@ -1,10 +1,14 @@
 # Changelog
 
 
+### 0.0.9 (2021-04-21)
+
+  * Add file log censored plugin
+
 ### 0.0.8 (2020-12-18)
 
-  *  Add env variables for database host and port
-  *  Add db host and port to services
+  * Add env variables for database host and port
+  * Add db host and port to services
 
 ### 0.0.7 (2020-11-25)
 
