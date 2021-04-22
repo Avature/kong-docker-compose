@@ -189,13 +189,6 @@ services:
       - kong-net
     volumes:
       - ./startup/:/app/
-    environment:
-      kong_apikey_file: /run/secrets/kong_apikey
-    secrets:
-      - kong_apikey
     command: /app/init.sh
     depends_on:
       - kong
-secrets:
-  kong_apikey:
-    file: ./secrets.ini
