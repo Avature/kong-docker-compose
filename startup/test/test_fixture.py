@@ -69,27 +69,3 @@ class TestFixture(TestCase):
     responses.add(responses.POST, 'http://kong:8001/services', status=201)
     self.subject.create_admin_service()
     self.assertEqual(responses.calls[1].request.body, 'name=adminApi&protocol=http&port=8001&host=127.0.0.1')
-
-  @responses.activate
-  def test_create_consumer_updating_api_key(self):
-    responses.add(responses.GET, 'http://kong:8001/consumers/admin/key-auth',
-      status=200,
-      json={
-        "data": [
-          {
-            "key": "erroneous-api-key",
-            "id": "254252"
-          }
-        ]
-      }
-    )
-    responses.add(responses.DELETE, 'http://kong:8001/consumers/admin/key-auth/254252', status=204)
-    responses.add(responses.POST, 'http://kong:8001/consumers', status=201)
-    responses.add(responses.POST, 'http://kong:8001/consumers/admin/key-auth',
-      status=201,
-      json={
-        "key": "erroneous-api-key"
-      }
-    )
-    self.subject.create_consumer()
-    self.assertEqual(responses.calls[2].request.body, 'key=testing_api_key')
