@@ -1,0 +1,30 @@
+#!/bin/bash
+ignoredDirsOrFiles=(
+  './.git*' '*/.gitignore' '*/certs/*' './debian/*' '*/test/*' '*/.vscode/*' '*/.vscode' '*.rockspec' '*spec.lua' './test*' '*/spec/*' '*README.md'
+  './kong/Dockerfile' './konga/kong_user.data' './konga/create_konga_connection.sql' './example_curl_call_including_client_cert.sh'
+  './nginx/server_hosts/*.conf' './startup/run_tests.sh' './startup/__pycache__/*' './startup/debug_tests.sh'
+  './CHANGELOG.md' './LICENSE' './buildDebian.sh' './startDev.sh' './CLIENT_AUTH.md' './docker-compose.dev.yml' './.editorconfig' './dev.env'
+  './integration-tests'
+)
+
+for i in "${ignoredDirsOrFiles[@]}"; do
+  findargs+=('-not' '-path' "$i")
+done
+
+readarray -d '' filesPath < <(find . -type f "${findargs[@]}")
+readarray -d '' installedFilesPath < <(find /opt/kong -type f)
+
+for filePath in ${filesPath[@]}
+do
+  if [[ ! " ${installedFilesPath[@]} " =~ "/opt/kong/${filePath:2}" ]]; then
+    notInstalledFiles+=(${filePath:2})
+  fi
+done
+
+if [ ${#notInstalledFiles[@]} -ne 0 ]; then
+  echo "The following files are missing from the debian install package file or need to be declared as ignored:"
+  echo ${notInstalledFiles[@]}
+  exit 1
+else
+  exit 0
+fi
