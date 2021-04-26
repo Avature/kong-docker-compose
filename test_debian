@@ -11,8 +11,8 @@ for i in "${ignoredDirsOrFiles[@]}"; do
   findargs+=('-not' '-path' "$i")
 done
 
-readarray -d '' filesPath < <(find . -type f "${findargs[@]}")
-readarray -d '' installedFilesPath < <(find /opt/kong -type f)
+readarray filesPath < <(find . -type f "${findargs[@]}")
+readarray installedFilesPath < <(find /opt/kong -type f)
 
 for filePath in ${filesPath[@]}
 do
