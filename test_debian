@@ -23,7 +23,7 @@ done
 
 if [ ${#notInstalledFiles[@]} -ne 0 ]; then
   echo "The following files are missing from the debian install package file or need to be declared as ignored:"
-  echo ${notInstalledFiles[@]}
+  (IFS=$'\n'; echo "${notInstalledFiles[*]}")
   exit 1
 else
   exit 0
