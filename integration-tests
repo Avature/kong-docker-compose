@@ -1,0 +1,6 @@
+#!/bin/bash -u
+. ./tests_helper
+
+assert_exit_code "test_debian_install"
+
+show_results_and_exit

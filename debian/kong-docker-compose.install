@@ -6,13 +6,16 @@
 .env.example => opt/kong/.env
 secrets.ini.example => opt/kong/secrets.ini
 docker-compose.yml opt/kong
-{start,stop}.sh opt/kong
+stop.sh opt/kong
+start.sh opt/kong
 startKongBash.sh opt/kong
 kong/connectToDB.sh opt/kong/kong
 konga/connectToDB.sh opt/kong/konga
 konga/kong_node.data opt/kong/konga
 startup/createAdmin.py opt/kong/startup
 startup/init.sh opt/kong/startup
+startup/requirements.txt opt/kong/startup
+startup/fixture.py opt/kong/startup
 nginx/sslCertificates.conf opt/kong/nginx
 nginx/konga.conf opt/kong/nginx
 nginx/gateway.conf opt/kong/nginx
@@ -24,7 +27,7 @@ nginx/server_hosts/create-urls.sh opt/kong/nginx/server_hosts
 createDevCerts.sh opt/kong
 kong/conf/custom-nginx.conf opt/kong/kong/conf
 kong/conf/custom-entrypoint.sh opt/kong/kong/conf
-kong/conf/kong.conf => opt/kong/kong/conf/kong.conf
+kong/conf/kong.conf opt/kong/kong/conf
 plugins/mtls_certs_manager/access.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/handler.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/schema.lua opt/kong/plugins/mtls_certs_manager

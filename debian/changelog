@@ -1,7 +1,19 @@
+kong-docker-compose (0.0.10) Ubuntu; urgency=medium
+
+  * Add Jenkins integration-test to avoid pushing debian install without new files
+
+ -- Juan Cruz Vincenti <juan@02078-jvincenti>  Mon, 03 May 2021 14:21:14 -0300
+
+kong-docker-compose (0.0.9) Ubuntu; urgency=medium
+
+  * Add file log censored plugin
+
+ -- Juan Cruz Vincenti <juan@02078-jvincenti>  Wed, 21 Apr 2021 09:53:20 -0300
+
 kong-docker-compose (0.0.8) Ubuntu; urgency=medium
 
-  *  Add env variables for database host and port
-  *  Add db host and port to services
+  * Add env variables for database host and port
+  * Add db host and port to services
 
  -- Juan Cruz Vincenti <juan@02078-jvincenti>  Fri, 18 Dec 2020 09:46:12 -0300
 
