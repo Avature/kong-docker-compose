@@ -8,7 +8,7 @@ return {
       { config = {
         type = "record",
         fields = {
-          { plugin_endpoint_usage = { type = "string", default = "register_instance", one_of = { "register_instance" } } },
+          { plugin_endpoint_usage = { type = "string", default = "register_instance", one_of = { "register_instance", "renew_instance" } } },
           { ca_private_key_path = { type = "string", default = "/usr/local/custom/kong/plugins/mtls_certs_manager/example_certs/CA-key.pem" }, },
           { ca_private_key_passphrase = { type = "string", default = "1234" }, },
           { ca_certificate_path = { type = "string", default = "/usr/local/custom/kong/plugins/mtls_certs_manager/example_certs/CA-cert.pem" }, },

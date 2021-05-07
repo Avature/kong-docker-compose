@@ -33,6 +33,7 @@ class TestFixture(TestCase):
     responses.add(responses.GET, 'http://kong:8001/services/adminApi/routes/adminApi', status=404)
     responses.add(responses.POST, 'http://kong:8001/services/adminApi/routes', status=201)
     responses.add(responses.GET, 'http://kong:8001/services/adminApi/routes/adminApiRegisterInstance', status=404)
+    responses.add(responses.GET, 'http://kong:8001/services/adminApi/routes/adminApiRenewInstance', status=404)
     responses.add(responses.POST, 'http://kong:8001/services/adminApi/routes', status=201)
     responses.add(responses.GET, 'http://kong:8001/routes/adminApi/plugins', status=200, json={"data":[]})
     responses.add(responses.POST, 'http://kong:8001/routes/adminApi/plugins', status=201)
@@ -40,16 +41,19 @@ class TestFixture(TestCase):
     responses.add(responses.POST, 'http://kong:8001/services/adminApi/plugins', status=201)
     responses.add(responses.GET, 'http://kong:8001/routes/adminApiRegisterInstance/plugins', status=200, json={"data":[]})
     responses.add(responses.POST, 'http://kong:8001/routes/adminApiRegisterInstance/plugins', status=201)
+    responses.add(responses.GET, 'http://kong:8001/routes/adminApiRenewInstance/plugins', status=200, json={"data":[]})
+    responses.add(responses.POST, 'http://kong:8001/routes/adminApiRenewInstance/plugins', status=201)
     responses.add(responses.GET, 'http://kong:8001/plugins', status=200, json={"data":[]})
     responses.add(responses.POST, 'http://kong:8001/plugins', status=201)
     self.subject.run()
     self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApi/plugins', 3))
     self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApiRegisterInstance/plugins', 2))
+    self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApiRenewInstance/plugins', 4))
     self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 2))
 
   def test_get_admin_plugins(self):
     result = self.subject.get_admin_plugins()
-    self.assertEqual(len(result), 5)
+    self.assertEqual(len(result), 8)
 
   @responses.activate
   def test_create_admin_service_and_failed(self):
@@ -65,27 +69,3 @@ class TestFixture(TestCase):
     responses.add(responses.POST, 'http://kong:8001/services', status=201)
     self.subject.create_admin_service()
     self.assertEqual(responses.calls[1].request.body, 'name=adminApi&protocol=http&port=8001&host=127.0.0.1')
-
-  @responses.activate
-  def test_create_consumer_updating_api_key(self):
-    responses.add(responses.GET, 'http://kong:8001/consumers/admin/key-auth',
-      status=200,
-      json={
-        "data": [
-          {
-            "key": "erroneous-api-key",
-            "id": "254252"
-          }
-        ]
-      }
-    )
-    responses.add(responses.DELETE, 'http://kong:8001/consumers/admin/key-auth/254252', status=204)
-    responses.add(responses.POST, 'http://kong:8001/consumers', status=201)
-    responses.add(responses.POST, 'http://kong:8001/consumers/admin/key-auth',
-      status=201,
-      json={
-        "key": "erroneous-api-key"
-      }
-    )
-    self.subject.create_consumer()
-    self.assertEqual(responses.calls[2].request.body, 'key=testing_api_key')

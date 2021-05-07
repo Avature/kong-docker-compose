@@ -1,3 +1,13 @@
+kong-docker-compose (0.0.11) Ubuntu; urgency=medium
+
+  * Add renew CRT endpoint to Kong
+  * Modify client_consumer_validator priority to 2
+  * Add a base lua class at mtls_certs_manager
+  * Add a factory lua class to get renew or register logic
+  * Move startup config to a separated script
+
+ -- Juan Cruz Vincenti <juan@02078-jvincenti>  Fri, 07 May 2021 11:35:08 -0300
+
 kong-docker-compose (0.0.10) Ubuntu; urgency=medium
 
   * Add Jenkins integration-test to avoid pushing debian install without new files

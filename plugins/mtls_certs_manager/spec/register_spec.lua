@@ -7,6 +7,7 @@ assert:register("matcher", "is_json_like", helper.is_json_like)
 
 local load_default_dependencies = function ()
   _G.package.loaded['kong.plugins.mtls_certs_manager.x509_name_helper'] = require('x509_name_helper')
+  _G.package.loaded["kong.vendor.classic"] = helper.get_extender()
   _G.package.loaded["resty.openssl.x509"    ] = {}
   _G.package.loaded["resty.openssl.x509.csr"] = {}
   _G.package.loaded["resty.openssl.pkey"    ] = {}
@@ -15,7 +16,14 @@ local load_default_dependencies = function ()
   helper.mock_return('ngx', 'encode_base64', '\"base64_encoded_key\"')
 end
 
-describe("mtls_certs_manager access hook feature", function()
+local require_register = function()
+  _G.package.loaded["register"] = nil
+  _G.package.loaded["base"] = nil
+  _G.package.loaded["kong.plugins.mtls_certs_manager.base"] = require('base')
+  return require('register')
+end
+
+describe("mtls_certs_manager register hook feature", function()
   before_each(function()
     helper.clear_runs()
     load_default_dependencies()
@@ -26,7 +34,7 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "test_instance", description = "test_description"}, csr = "test_csr_string" }')
     helper.mock_return('kong.response', 'exit', '{}')
 
-    local subject = require('access')
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "",
@@ -36,7 +44,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(401, {message = "Instance already exists"})
   end)
 
@@ -45,7 +53,7 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "test_instance", description = "test_description"}, csr = "" }')
     helper.mock_return('kong.response', 'exit', '{}')
 
-    local subject = require('access')
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -55,7 +63,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "CSR Contents are empty"})
   end)
 
@@ -64,7 +72,7 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.request', 'get_body', '{ instance = { name = "test_instance", description = "test_description"}, csr = nil }')
     helper.mock_return('kong.response', 'exit', '{}')
 
-    local subject = require('access')
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -74,7 +82,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "CSR Contents are empty"})
   end)
 
@@ -84,8 +92,7 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.response', 'exit', '{}')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'nil, "impossible to parse csr"')
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -95,7 +102,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Error parsing CSR contents", error_description = "impossible to parse csr"})
   end)
 
@@ -106,8 +113,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('parsed_csr_mock', 'get_subject_name', 'nil, "cannot get subject name"')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -117,7 +124,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Cannot get subject from CSR", error_description = "cannot get subject name"})
   end)
 
@@ -129,8 +136,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('parsed_csr_mock', 'get_pubkey', 'nil, "invalid public key"')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -140,7 +147,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Cannot get public key from CSR", error_description = "invalid public key"})
   end)
 
@@ -153,8 +160,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('parsed_csr_mock', 'verify', 'nil, "cannot verify the csr with pubkey"')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -164,7 +171,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Cannot verify the CSR authenticity", error_description = "cannot verify the csr with pubkey"})
   end)
 
@@ -178,8 +185,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('kong.plugins.mtls_certs_manager.x509_name_helper', 'tostring', '\'C=US, ST=CA, CN=mydomain.com/O="MyOrg, Inc."\'')
     helper.mock_return('resty.openssl.x509.csr', 'new', 'parsed_csr_mock, nil')
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -190,7 +197,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(401, {message = "Instance name does not match CSR subject's CN", error_description = "distinguished name is: C=US, ST=CA, CN=mydomain.com/O=\"MyOrg, Inc.\" but the instance name given was: this_test_instance_name"})
   end)
 
@@ -215,8 +222,8 @@ describe("mtls_certs_manager access hook feature", function()
 
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -228,7 +235,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(400, {message = "Error creating serial number", error_description = "Problem creating BN!"})
   end)
 
@@ -255,8 +262,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'nil, "error parsing ca"', 1)
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -268,7 +275,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(500, {message = "Cannot load CA certificate", error_description = "error parsing ca"})
   end)
 
@@ -300,8 +307,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -313,7 +320,7 @@ describe("mtls_certs_manager access hook feature", function()
 
     spy.on(_G.kong.response, "exit")
 
-    subject.execute(conf)
+    subject:execute(conf)
     assert.spy(_G.kong.response.exit).was_called_with(500, {message = "Cannot validate generated certificate", error_description = "impossible to verify output crt"})
   end)
 
@@ -348,8 +355,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -363,7 +370,7 @@ describe("mtls_certs_manager access hook feature", function()
     spy.on(_G.kong.db.consumers, 'insert')
     spy.on(_G.kong.db.keyauth_credentials, 'insert')
 
-    subject.execute(conf)
+    subject:execute(conf)
 
     assert.spy(_G.kong.response.exit).was_called_with(match.is_json_like(400), match.is_json_like(
       {message = "Unable to create consumer", error_description = "Verify instance name and description for invalid characters"}
@@ -405,8 +412,8 @@ describe("mtls_certs_manager access hook feature", function()
     helper.mock_return('resty.openssl.x509', 'new', 'mocked_crt_object')
     helper.mock_return('resty.openssl.x509', 'new', 'ca_mocked_crt_object, nil', 1)
 
-    _G.package.loaded["access"] = nil
-    local subject = require('access')
+    _G.package.loaded["register"] = nil
+    local subject = require_register()
 
     local conf = {
       ca_private_key_path = "./example_certs/CA-key.pem",
@@ -420,7 +427,7 @@ describe("mtls_certs_manager access hook feature", function()
     spy.on(_G.kong.db.consumers, 'insert')
     spy.on(_G.kong.db.keyauth_credentials, 'insert')
 
-    subject.execute(conf)
+    subject:execute(conf)
 
     assert.spy(_G.kong.response.exit).was_called_with(201, {certificate = "valid crt contents", token = "base64_encoded_key"})
     assert.spy(_G.kong.db.consumers.insert).was_called_with(match.is_table(), match.is_json_like(

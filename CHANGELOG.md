@@ -1,6 +1,14 @@
 # Changelog
 
 
+### 0.0.11 (2021-05-07)
+
+  * Add renew CRT endpoint to Kong
+  * Modify client_consumer_validator priority to 2
+  * Add a base lua class at mtls_certs_manager
+  * Add a factory lua class to get renew or register logic
+  * Move startup config to a separated script
+
 ### 0.0.10 (2021-05-03)
 
   * Add Jenkins integration-test to avoid pushing debian install without new files
