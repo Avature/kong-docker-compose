@@ -16,6 +16,7 @@ startup/createAdmin.py opt/kong/startup
 startup/init.sh opt/kong/startup
 startup/requirements.txt opt/kong/startup
 startup/fixture.py opt/kong/startup
+startup/config.py opt/kong/startup
 nginx/sslCertificates.conf opt/kong/nginx
 nginx/konga.conf opt/kong/nginx
 nginx/gateway.conf opt/kong/nginx
