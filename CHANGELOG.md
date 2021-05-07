@@ -1,6 +1,10 @@
 # Changelog
 
 
+### 0.0.10 (2021-05-03)
+
+  * Add Jenkins integration-test to avoid pushing debian install without new files
+
 ### 0.0.9 (2021-04-21)
 
   * Add file log censored plugin
