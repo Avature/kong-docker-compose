@@ -1,2 +1,2 @@
 #!/bin/bash
-./createCerts.sh -ssh
+./createCerts.sh -ssl

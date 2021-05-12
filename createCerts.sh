@@ -1,5 +1,5 @@
 #!/bin/bash
-source .env
+export $(cat .env | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | sed '/^#/d' | xargs)
 
 if [ -z "$BASE_HOST_DOMAIN" ]
 then
@@ -8,11 +8,14 @@ else
   server_ca_cn=$BASE_HOST_DOMAIN
 fi
 
-server_ca_key=certs/server-ca-key.key
-server_ca_cert=certs/server-ca-cert.crt
-server_ssl_key=certs/server-ssl-key.key
-server_ssl_cert=certs/server-ssl-cert.crt
-server_ssl_csr=certs/server-ssl.csr
+server_ca_path=certs/server-ca
+server_ssl_path=certs/server-ssl
+
+server_ca_key="$server_ca_path-key.key"
+server_ca_cert="$server_ca_path-cert.crt"
+server_ssl_key="$server_ssl_path-key.key"
+server_ssl_cert="$server_ssl_path-cert.crt"
+server_ssl_csr="$server_ssl_path-csr.csr"
 server_ssl_cn="*.$server_ca_cn"
 
 create_ca_certs() {
