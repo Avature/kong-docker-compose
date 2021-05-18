@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd startup
+cd $(dirname $0)/../startup
 
 docker pull -q python:alpine
 docker run -t -v `pwd`:/app bitnami/python /app/run_tests.sh

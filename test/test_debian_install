@@ -2,14 +2,14 @@
 
 while IFS=$'\n' read line; do
   findargs+=('-not' '-path' "$line")
-done < "./ignoredDirsAndFiles"
+done < "./debianIgnoredPaths"
 
 readarray filesPath < <(find . -type f "${findargs[@]}")
 readarray installedFilesPath < <(find /opt/kong -type f)
 
 for filePath in ${filesPath[@]}; do
   if [[ ! " ${installedFilesPath[@]} " =~ "/opt/kong/${filePath:2}" ]]; then
-    notInstalledFiles+=(${filePath:2})
+    notInstalledFiles+=("* ${filePath:2}")
   fi
 done
 

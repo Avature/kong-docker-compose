@@ -1,5 +1,6 @@
 ./.git*
 ./test*
+./test/test*
 ./RELEASE*
 ./debian/*
 */.vscode
@@ -32,4 +33,4 @@
 ./secrets.ini.example
 ./.env.example
 ./kong-docker-compose-build-deps*
-./ignoredDirsAndFiles
+./debianIgnoredPaths
