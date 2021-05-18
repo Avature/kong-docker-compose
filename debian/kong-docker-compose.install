@@ -29,7 +29,6 @@ kong/conf/custom-nginx.conf opt/kong/kong/conf
 kong/conf/custom-entrypoint.sh opt/kong/kong/conf
 kong/conf/kong.conf opt/kong/kong/conf
 plugins/mtls_certs_manager/register.lua opt/kong/plugins/mtls_certs_manager
-plugins/mtls_certs_manager/renew.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/base.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/factory.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/handler.lua opt/kong/plugins/mtls_certs_manager
