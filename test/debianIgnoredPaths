@@ -32,3 +32,4 @@ integration-tests
 .env.example
 kong-docker-compose-build-deps*
 debianIgnoredPaths
+RELEASE*

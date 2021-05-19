@@ -1,0 +1,27 @@
+#!/bin/bash
+
+echo -e "\nChecking both checksums were computed..."
+
+post_inst_checksums="/tmp/post-inst-plugins-checksum.chk"
+pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+
+assertFileExists() {
+  if [ -f $1 -a -s $1 ]; then
+    echo "$1 is OK"
+  else
+    echo "$1 not exists or is empty"
+  fi
+}
+
+checkThatChecksumsExists() {
+  if [ -f "$pre_inst_checksums" -a -f "$post_inst_checksums" -a -s "$post_inst_checksums" ]; then
+    echo "Both checksums exists and has contents... OK"
+    exit 0
+  else
+    echo -e "\nFailed:\n"
+    assertFileExists "$pre_inst_checksums"
+    assertFileExists "$post_inst_checksums"
+  fi
+}
+
+checkThatChecksumsExists

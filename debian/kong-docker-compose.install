@@ -9,6 +9,7 @@ stop.sh opt/kong
 start.sh opt/kong
 startKongBash.sh opt/kong
 createDevCerts.sh opt/kong
+createCerts.sh opt/kong
 kong/connectToDB.sh opt/kong/kong
 konga/connectToDB.sh opt/kong/konga
 konga/kong_node.data opt/kong/konga
@@ -29,6 +30,7 @@ kong/conf/custom-nginx.conf opt/kong/kong/conf
 kong/conf/custom-entrypoint.sh opt/kong/kong/conf
 kong/conf/kong.conf opt/kong/kong/conf
 plugins/mtls_certs_manager/register.lua opt/kong/plugins/mtls_certs_manager
+plugins/mtls_certs_manager/renew.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/base.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/factory.lua opt/kong/plugins/mtls_certs_manager
 plugins/mtls_certs_manager/handler.lua opt/kong/plugins/mtls_certs_manager

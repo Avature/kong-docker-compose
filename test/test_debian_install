@@ -29,7 +29,7 @@ assertInstalledVersusSourceFiles() {
 
 showResultsAndExit() {
   if [ ${#notInstalledFiles[@]} -ne 0 ]; then
-    echo -e "\nThe following files are missing from the debian install package file or need to be declared as ignored:\n"
+    echo -e "\nThe following files are missing from the installed debian package or need to be declared as ignored:\n"
     printf '* %s\n' "${notInstalledFiles[@]}"
     echo -e "\n"
     exit 1

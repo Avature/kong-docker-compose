@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# . $(dirname $0)/plugins_reload_helper
+
+generatePluginsChecksums() {
+    find /opt/kong/plugins -print0 2>/dev/null -type f -exec sha1sum "{}" + > $1
+}
+
+pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+
+generatePluginsChecksums $pre_inst_checksums
