@@ -25,6 +25,7 @@ checkThatChecksumsExists() {
 
 checkThatChecksumsAreEqual() {
   /var/lib/dpkg/info/kong-docker-compose.preinst
+  /var/lib/dpkg/info/kong-docker-compose.postinst
   if cmp --silent -- "$post_inst_checksums" "$pre_inst_checksums"; then
       echo -e "\nchecksums were equal as expected... OK"
       exit 0
@@ -35,8 +36,9 @@ checkThatChecksumsAreEqual() {
 }
 
 checkThatChecksumsDiffer() {
-  echo -e "\nDeleting a plugin's file to generate checksum and validate it works..."
-  rm /opt/kong/plugins/mtls_certs_manager/renew.lua
+  echo -e "\nDeleting a plugin's random file to generate new checksum and validate it works..."
+  /var/lib/dpkg/info/kong-docker-compose.preinst
+  find /opt/kong/plugins -type f | shuf | head -1 | xargs rm -f
   /var/lib/dpkg/info/kong-docker-compose.postinst
   if cmp --silent -- "$post_inst_checksums" "$pre_inst_checksums"; then
       echo -e "\nChecksums were forced to differ but they are the same so restart would not be invoked... FAIL"
