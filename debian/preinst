@@ -1,11 +1,26 @@
 #!/bin/bash
+set -xv   # this line will enable debug
 
-# . $(dirname $0)/plugins_reload_helper
+pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+post_inst_checksums="/tmp/post-inst-plugins-checksum.chk"
 
 generatePluginsChecksums() {
     find /opt/kong/plugins -print0 2>/dev/null -type f -exec sha1sum "{}" + > $1
 }
 
-pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+generatePreInstChecksums() {
+    echo "\nGenerating pre-install checksums..."
+    generatePluginsChecksums $pre_inst_checksums
+}
 
-generatePluginsChecksums $pre_inst_checksums
+generatePostInstChecksums() {
+    echo "\nGenerating post-install checksums..."
+    generatePluginsChecksums $post_inst_checksums
+}
+
+if [ "$1" = "postinst" ]
+then
+    generatePostInstChecksums
+else
+    generatePreInstChecksums
+fi
