@@ -1,22 +1,27 @@
 #!/bin/bash
-export $(cat .env | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | sed '/^#/d' | xargs)
 
-if [ -z "$BASE_HOST_DOMAIN" ]
-then
-  server_ca_cn=kong-server.com
-else
-  server_ca_cn=$BASE_HOST_DOMAIN
-fi
+readConfigFromDotEnv() {
+  export $(cat .env | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | sed '/^#/d' | xargs)
+}
 
-server_ca_path=certs/server-ca
-server_ssl_path=certs/server-ssl
+initializeConfigVariables() {
+  if [ -z "$BASE_HOST_DOMAIN" ]
+  then
+    server_ca_cn=kong-server.com
+  else
+    server_ca_cn=$BASE_HOST_DOMAIN
+  fi
 
-server_ca_key="$server_ca_path-key.key"
-server_ca_cert="$server_ca_path-cert.crt"
-server_ssl_key="$server_ssl_path-key.key"
-server_ssl_cert="$server_ssl_path-cert.crt"
-server_ssl_csr="$server_ssl_path-csr.csr"
-server_ssl_cn="*.$server_ca_cn"
+  server_ca_path=certs/server-ca
+  server_ssl_path=certs/server-ssl
+
+  server_ca_key="$server_ca_path-key.key"
+  server_ca_cert="$server_ca_path-cert.crt"
+  server_ssl_key="$server_ssl_path-key.key"
+  server_ssl_cert="$server_ssl_path-cert.crt"
+  server_ssl_csr="$server_ssl_path-csr.csr"
+  server_ssl_cn="*.$server_ca_cn"
+}
 
 create_ca_certs() {
   echo "Creating CA certificates..."
@@ -31,17 +36,24 @@ create_ssl_server_certs() {
   openssl x509 -req -days 365 -in $server_ssl_csr -CA $server_ca_cert -CAkey $server_ca_key -CAcreateserial -out $server_ssl_cert -sha256 -passin pass:1234
 }
 
-mkdir certs
-rm certs/*.csr
+setup_certs() {
+  readConfigFromDotEnv
+  initializeConfigVariables
 
-if [[ ! -f "$server_ca_cert" ]]
-then
-  create_ca_certs
-fi
+  mkdir -p certs
+  rm certs/*.csr
 
-if [[ "$1" == "-ssl" ]];
-then
-  create_ssl_server_certs
-fi
+  if [[ ! -f "$server_ca_cert" ]]
+  then
+    create_ca_certs
+  fi
 
-chmod +r ./certs/*
+  if [[ "$1" == "-ssl" ]];
+  then
+    create_ssl_server_certs
+  fi
+
+  chmod +r ./certs/*
+}
+
+setup_certs $1
