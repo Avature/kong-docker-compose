@@ -11,7 +11,7 @@ assertFileExists() {
   fi
 }
 
-checkThatChecksumsExists() {
+testChecksumsExists() {
   echo -e "\nChecking both checksums were computed..."
   if [ -f "$pre_inst_checksums" -a -f "$post_inst_checksums" -a -s "$post_inst_checksums" ]; then
     echo "Both checksums exists and has contents... OK"
@@ -23,7 +23,7 @@ checkThatChecksumsExists() {
   fi
 }
 
-checkThatChecksumsAreEqual() {
+testChecksumsAreEqual() {
   /var/lib/dpkg/info/kong-docker-compose.preinst
   /var/lib/dpkg/info/kong-docker-compose.postinst
   if cmp --silent -- "$post_inst_checksums" "$pre_inst_checksums"; then
@@ -35,7 +35,7 @@ checkThatChecksumsAreEqual() {
   fi
 }
 
-checkThatChecksumsDiffer() {
+testChecksumsDiffer() {
   echo -e "\nDeleting a plugin's random file to generate new checksum and validate it works..."
   /var/lib/dpkg/info/kong-docker-compose.preinst
   find /opt/kong/plugins -type f | shuf | head -1 | xargs rm -f
@@ -49,7 +49,7 @@ checkThatChecksumsDiffer() {
   fi
 }
 
-checkThatKongRestartIsNeededLogFound() {
+testKongRestartIsNeededLogFound() {
   if [ -f /opt/kong/kong-pending-restart.log ]
   then
       echo -e "\nRestart kong log file was found... OK"
@@ -62,15 +62,15 @@ checkThatKongRestartIsNeededLogFound() {
 
 case $1 in
   checksums_exists)
-    checkThatChecksumsExists
+    testChecksumsExists
   ;;
   checksums_are_equal)
-    checkThatChecksumsAreEqual
+    testChecksumsAreEqual
   ;;
   checksums_differ)
-    checkThatChecksumsDiffer
+    testChecksumsDiffer
   ;;
   kong_restart_logs)
-    checkThatKongRestartIsNeededLogFound
+    testKongRestartIsNeededLogFound
   ;;
 esac
