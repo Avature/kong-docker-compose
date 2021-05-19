@@ -3,9 +3,9 @@
 cd $(dirname $0)/test && . ./tests_helper
 
 assert_exit_code "test_debian_install"
-assert_exit_code "test_plugins_checksums_exists"
-assert_exit_code "test_plugins_checksums_equals"
-assert_exit_code "test_plugins_checksums_differ"
-assert_exit_code "test_plugins_restart_log"
+assert_exit_code "test_plugins_postinst checksums_exists"
+assert_exit_code "test_plugins_postinst checksums_are_equal"
+assert_exit_code "test_plugins_postinst checksums_differ"
+assert_exit_code "test_plugins_postinst kong_restart_logs"
 
 show_results_and_exit

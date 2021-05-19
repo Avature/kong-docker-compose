@@ -1,0 +1,74 @@
+#!/bin/bash
+
+post_inst_checksums="/tmp/post-inst-plugins-checksum.chk"
+pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+
+assertFileExists() {
+  if [ -f $1 -a -s $1 ]; then
+    echo -e "\n * $1 is OK"
+  else
+    echo -e "\n * $1 not exists or is empty"
+  fi
+}
+
+checkThatChecksumsExists() {
+  echo -e "\nChecking both checksums were computed..."
+  if [ -f "$pre_inst_checksums" -a -f "$post_inst_checksums" -a -s "$post_inst_checksums" ]; then
+    echo "Both checksums exists and has contents... OK"
+    exit 0
+  else
+    echo -e "\nFailed:\n"
+    assertFileExists "$pre_inst_checksums"
+    assertFileExists "$post_inst_checksums"
+  fi
+}
+
+checkThatChecksumsAreEqual() {
+  /var/lib/dpkg/info/kong-docker-compose.preinst
+  if cmp --silent -- "$post_inst_checksums" "$pre_inst_checksums"; then
+      echo -e "\nchecksums were equal as expected... OK"
+      exit 0
+  else
+      echo -e "\nchecksums were not-equal... FAIL"
+      exit 1
+  fi
+}
+
+checkThatChecksumsDiffer() {
+  echo -e "\nDeleting a plugin's file to generate checksum and validate it works..."
+  rm /opt/kong/plugins/mtls_certs_manager/renew.lua
+  /var/lib/dpkg/info/kong-docker-compose.postinst
+  if cmp --silent -- "$post_inst_checksums" "$pre_inst_checksums"; then
+      echo -e "\nChecksums were forced to differ but they are the same so restart would not be invoked... FAIL"
+      exit 1
+  else
+      echo -e "\nChecksums are different when plugins are updated... OK"
+      exit 0
+  fi
+}
+
+checkThatKongRestartIsNeededLogFound() {
+  if [ -f /opt/kong/kong-pending-restart.log ]
+  then
+      echo -e "\nRestart kong log file was found... OK"
+      exit 0
+  else
+      echo -e "\nRestart kong log file was not found... FAIL"
+      exit 1
+  fi
+}
+
+case $1 in
+  checksums_exists)
+    checkThatChecksumsExists
+  ;;
+  checksums_are_equal)
+    checkThatChecksumsAreEqual
+  ;;
+  checksums_differ)
+    checkThatChecksumsDiffer
+  ;;
+  kong_restart_logs)
+    checkThatKongRestartIsNeededLogFound
+  ;;
+esac
