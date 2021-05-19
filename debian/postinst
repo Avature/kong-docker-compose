@@ -1,17 +1,16 @@
 #!/bin/bash
-set -xv   # this line will enable debug
 
 runPostInstChecksums() {
     source /var/lib/dpkg/info/kong-docker-compose.preinst "postinst"
 }
 
-compareAndChecksumsAndRestartIfneeded() {
+compareAndChecksumsAndRestartKongIfneeded() {
     if cmp --silent -- "$post_inst_checksums" "$pre_inst_checksums"; then
-    echo "Previous plugin files are identical to the new ones, avoiding restart"
+        echo "Previous plugin files are identical to the new ones, avoiding restart"
     else
-    echo "Plugins were updated/installed, restarting kong"
-    cd /opt/kong
-    docker-compose restart kong
+        echo "Plugins were updated/installed, restarting kong"
+        cd /opt/kong
+        docker-compose restart kong
     fi
 }
 
@@ -20,4 +19,4 @@ runPostInstChecksums
 echo "post-install checksums: $post_inst_checksums"
 echo "pre-install checksums: $pre_inst_checksums"
 
-compareAndChecksumsAndRestartIfneeded
+compareAndChecksumsAndRestartKongIfneeded

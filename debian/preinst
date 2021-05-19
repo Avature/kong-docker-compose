@@ -1,5 +1,4 @@
 #!/bin/bash
-set -xv   # this line will enable debug
 
 pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
 post_inst_checksums="/tmp/post-inst-plugins-checksum.chk"
@@ -9,12 +8,13 @@ generatePluginsChecksums() {
 }
 
 generatePreInstChecksums() {
-    echo "\nGenerating pre-install checksums..."
+    echo -e "\nGenerating pre-install checksums..."
     generatePluginsChecksums $pre_inst_checksums
+    exit 0;
 }
 
 generatePostInstChecksums() {
-    echo "\nGenerating post-install checksums..."
+    echo -e "\nGenerating post-install checksums..."
     generatePluginsChecksums $post_inst_checksums
 }
 
