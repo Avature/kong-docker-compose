@@ -73,4 +73,10 @@ case $1 in
   kong_restart_logs)
     testKongRestartIsNeededLogFound
   ;;
+  all)
+    testChecksumsExists
+    testChecksumsAreEqual
+    testChecksumsDiffer
+    testKongRestartIsNeededLogFound
+  ;;
 esac

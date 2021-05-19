@@ -15,16 +15,8 @@ mapSrcFilesIntoRelativePaths() {
   mapfile -c1 -C 'appendRelativePath' -t < <(find "$src_root/" -type f "${findargs[@]}");
 }
 
-listInstalledFiles() {
+loadInstalledFilesOnList() {
   readarray installedFilesPath < <(find /opt/kong -type f)
-}
-
-assertInstalledVersusSourceFiles() {
-  for filePath in ${filesPath[@]}; do
-    if [[ ! " ${installedFilesPath[@]} " =~ "/opt/kong${filePath}" ]]; then
-      notInstalledFiles+=("${filePath:1}")
-    fi
-  done
 }
 
 showResultsAndExit() {
@@ -38,8 +30,16 @@ showResultsAndExit() {
   fi
 }
 
-mapIgnoredPathsIntoFindArgs
-mapSrcFilesIntoRelativePaths
-listInstalledFiles
-assertInstalledVersusSourceFiles
-showResultsAndExit
+testDifferencesBetweenInstalledAndSourceFiles() {
+  mapIgnoredPathsIntoFindArgs
+  mapSrcFilesIntoRelativePaths
+  loadInstalledFilesOnList
+  for filePath in ${filesPath[@]}; do
+    if [[ ! " ${installedFilesPath[@]} " =~ "/opt/kong${filePath}" ]]; then
+      notInstalledFiles+=("${filePath:1}")
+    fi
+  done
+  showResultsAndExit
+}
+
+testDifferencesBetweenInstalledAndSourceFiles

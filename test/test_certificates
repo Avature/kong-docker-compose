@@ -47,4 +47,8 @@ case $1 in
   create_all_certs)
     testAllCertsExists
   ;;
+  all)
+    testOnlyCaCertsExists
+    testAllCertsExists
+  ;;
 esac
