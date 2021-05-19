@@ -10,6 +10,11 @@ compareAndChecksumsAndRestartKongIfneeded() {
     else
         echo "Plugins were updated/installed, restarting kong"
         cd /opt/kong
+        which docker-compose
+        if [[ $? -ne 0 ]]; then
+            echo -e "\nDocker compose isn't installed cannot restart Kong"
+            exit 0
+        fi
         docker-compose restart kong
     fi
 }
