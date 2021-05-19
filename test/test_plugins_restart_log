@@ -1,0 +1,14 @@
+#!/bin/bash
+
+checkThatKongRestartIsNeededLogFound() {
+  if [ -f /opt/kong/kong-pending-restart.log ]
+  then
+      echo -e "\nRestart kong log file was found... OK"
+      exit 0
+  else
+      echo -e "\nRestart kong log file was not found... FAIL"
+      exit 1
+  fi
+}
+
+checkThatKongRestartIsNeededLogFound

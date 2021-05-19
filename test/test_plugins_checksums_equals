@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo -e "\nChecking both checksums were computed..."
+
+post_inst_checksums="/tmp/post-inst-plugins-checksum.chk"
+pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+
+checkThatChecksumsAreEqual() {
+  if cmp --silent -- "$post_inst_checksums" "$pre_inst_checksums"; then
+      echo -e "\nchecksums were equal as expected... OK"
+      exit 0
+  else
+      echo -e "\nchecksums were not-equal... FAIL"
+      exit 1
+  fi
+}
+
+checkThatChecksumsAreEqual

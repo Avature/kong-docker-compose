@@ -7,9 +7,9 @@ pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
 
 assertFileExists() {
   if [ -f $1 -a -s $1 ]; then
-    echo "$1 is OK"
+    echo -e "\n * $1 is OK"
   else
-    echo "$1 not exists or is empty"
+    echo -e "\n * $1 not exists or is empty"
   fi
 }
 
