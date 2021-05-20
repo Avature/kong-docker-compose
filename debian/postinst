@@ -1,7 +1,11 @@
 #!/bin/bash
 
+pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+post_inst_checksums="/tmp/post-inst-plugins-checksum.chk"
+
 runPostInstChecksums() {
-    source /var/lib/dpkg/info/kong-docker-compose.preinst "postinst"
+    echo -e "\nGenerating Kong plugins post-install checksums..."
+    find /opt/kong/plugins -print0 2>/dev/null -type f -exec sha1sum "{}" + > "$post_inst_checksums"
 }
 
 assertDockerComposeIsInstalledAndExitIfNeeded() {
@@ -9,7 +13,7 @@ assertDockerComposeIsInstalledAndExitIfNeeded() {
     if [[ $? -ne 0 ]]; then
         echo -e "\ndocker-compose isn't installed cannot restart Kong"
         current_time=$(date "+%Y.%m.%d-%H.%M.%S")
-        echo "KONG PENDING RESTART FOR PLUGINS RELOADING - $current_time" > /opt/kong/kong-pending-restart.log
+        echo "Kong is pending to be restarted because plugins changed - $current_time" > /opt/kong/kong-pending-restart.log
         exit 0
     fi
 }
@@ -29,11 +33,5 @@ compareChecksumsAndRestartKongIfneeded() {
     fi
 }
 
-showChecksumFilenames() {
-    echo "post-install checksums: $post_inst_checksums"
-    echo "pre-install checksums: $pre_inst_checksums"
-}
-
 runPostInstChecksums
-showChecksumFilenames
 compareChecksumsAndRestartKongIfneeded
