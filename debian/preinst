@@ -1,0 +1,10 @@
+#!/bin/bash
+
+generatePluginsChecksums() {
+    pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+    echo -e "\nGenerating Kong plugins pre-install checksums..."
+    find /opt/kong/plugins -print0 2>/dev/null -type f -exec sha1sum "{}" + > "$pre_inst_checksums"
+    exit 0;
+}
+
+generatePluginsChecksums

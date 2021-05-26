@@ -1,0 +1,54 @@
+#!/bin/bash
+
+assertFileExists() {
+  if [ -f $1 -a -s $1 ]; then
+    echo -e "\n $1 certificate/key file exists... OK"
+  else
+    echo -e "\n $1 certificate/key file NOT exists... FAIL"
+    exit 1
+  fi
+}
+
+assertFileNotExists() {
+  if [ -f $1 -a -s $1 ]; then
+    echo -e "\n $1 certificate/key file exists... FAIL"
+    exit 1
+  else
+    echo -e "\n $1 certificate/key file NOT exists... OK"
+  fi
+}
+
+testAllCertsExists() {
+  echo -e "\nTest creating CA & SSL certs for dev env"
+  ./createDevCerts.sh
+  assertFileExists "/opt/kong/certs/server-ca-cert.crt"
+  assertFileExists "/opt/kong/certs/server-ca-key.key"
+  assertFileExists "/opt/kong/certs/server-ssl-csr.csr"
+  assertFileExists "/opt/kong/certs/server-ssl-key.key"
+  assertFileExists "/opt/kong/certs/server-ssl-cert.crt"
+}
+
+testOnlyCaCertsExists() {
+  echo -e "\nTest creating CA certs for prod env"
+  /opt/kong/createCerts.sh
+  assertFileExists "/opt/kong/certs/server-ca-cert.crt"
+  assertFileExists "/opt/kong/certs/server-ca-key.key"
+  assertFileNotExists "/opt/kong/certs/server-ssl-csr.csr"
+  assertFileNotExists "/opt/kong/certs/server-ssl-key.key"
+  assertFileNotExists "/opt/kong/certs/server-ssl-cert.crt"
+}
+
+cd /opt/kong && rm -rf certs
+
+case $1 in
+  create_only_ca_certs)
+    testOnlyCaCertsExists
+  ;;
+  create_all_certs)
+    testAllCertsExists
+  ;;
+  all)
+    testOnlyCaCertsExists
+    testAllCertsExists
+  ;;
+esac

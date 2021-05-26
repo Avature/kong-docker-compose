@@ -1,6 +1,13 @@
 #!/bin/bash -u
-. ./tests_helper
+
+cd $(dirname $0)/test && . ./tests_helper
 
 assert_exit_code "test_debian_install"
+assert_exit_code "test_plugins_postinst checksums_exists"
+assert_exit_code "test_plugins_postinst checksums_are_equal"
+assert_exit_code "test_plugins_postinst checksums_differ"
+assert_exit_code "test_plugins_postinst kong_restart_logs"
+assert_exit_code "test_certificates create_only_ca_certs"
+assert_exit_code "test_certificates create_all_certs"
 
 show_results_and_exit

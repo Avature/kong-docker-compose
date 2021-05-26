@@ -14,10 +14,8 @@ class TestFixture(TestCase):
   def setUp(self):
     mock_config_parser = configparser.ConfigParser()
     mock_os = mock.Mock()
-    mock_config_parser["kong-apikey"] = {"apikey": "testing_api_key"}
     mock_config_parser.read = mock.MagicMock()
     mock_config_parser.ConfigParser = mock.MagicMock(return_value=mock_config_parser)
-    mock_os.environ = {"kong_apikey_file": "secrets.ini"};
     sys.modules['configparser'] = mock_config_parser
     sys.modules['os'] = mock_os
     from fixture import Fixture

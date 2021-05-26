@@ -1,0 +1,45 @@
+#!/bin/bash
+
+src_root="$(dirname "$PWD")"
+
+mapIgnoredPathsIntoFindArgs() {
+  while IFS=$'\n' read line; do
+    findargs+=('-not' '-path' "$src_root/$line")
+  done < "./debianIgnoredPaths"
+}
+
+mapSrcFilesIntoRelativePaths() {
+  appendRelativePath() {
+    filesPath+=(${2##"$(echo $src_root)"});
+  }
+  mapfile -c1 -C 'appendRelativePath' -t < <(find "$src_root/" -type f "${findargs[@]}");
+}
+
+loadInstalledFilesOnList() {
+  readarray installedFilesPath < <(find /opt/kong -type f)
+}
+
+showResultsAndExit() {
+  if [ ${#notInstalledFiles[@]} -ne 0 ]; then
+    echo -e "\nThe following files are missing from the installed debian package or need to be declared as ignored:\n"
+    printf '* %s\n' "${notInstalledFiles[@]}"
+    echo -e "\n"
+    exit 1
+  else
+    exit 0
+  fi
+}
+
+testDifferencesBetweenInstalledAndSourceFiles() {
+  mapIgnoredPathsIntoFindArgs
+  mapSrcFilesIntoRelativePaths
+  loadInstalledFilesOnList
+  for filePath in ${filesPath[@]}; do
+    if [[ ! " ${installedFilesPath[@]} " =~ "/opt/kong${filePath}" ]]; then
+      notInstalledFiles+=("${filePath:1}")
+    fi
+  done
+  showResultsAndExit
+}
+
+testDifferencesBetweenInstalledAndSourceFiles

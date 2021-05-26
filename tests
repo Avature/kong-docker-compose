@@ -1,5 +1,6 @@
 #!/bin/bash -u
-. ./tests_helper
+
+cd $(dirname $0)/test && . ./tests_helper
 
 assert_exit_code "test_plugin mtls_certs_manager"
 assert_exit_code "test_plugin client_consumer_validator"

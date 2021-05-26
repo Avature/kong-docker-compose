@@ -42,6 +42,12 @@ It was created with the following command:
 
 `openssl x509 -req -in mydomain.com.csr -CA CA-cert.pem -CAkey CA-key.pem -CAcreateserial -out mydomain.com.crt -days 500 -sha256 -passin pass:1234`
 
+### Analyzing a certificate:
+
+Issue this command to extract all the information out of it:
+
+`openssl x509 -in certs/server-ca-cert.crt -text`
+
 ## Example call
 
 This example call is just to know every data needed to make a secured call. We will use the PHP HTTP client Guzzle instead of curl command.
