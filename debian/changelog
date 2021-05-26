@@ -1,3 +1,12 @@
+kong-docker-compose (0.0.12) Ubuntu; urgency=medium
+
+  * Add tests to SSL certificates creational scripts
+  * Add pre and post inst scripts for plugins reload verification
+  * Refactor and re-arrange tests for better clarity
+  * Add some more testing
+
+ -- Mariano Fresno <mariano@02249-mfresno>  Wed, 26 May 2021 12:59:17 -0300
+
 kong-docker-compose (0.0.11) Ubuntu; urgency=medium
 
   * Add renew CRT endpoint to Kong

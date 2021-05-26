@@ -1,6 +1,13 @@
 # Changelog
 
 
+### 0.0.12 (2021-05-26)
+
+  * Add tests to SSL certificates creational scripts
+  * Add pre and post inst scripts for plugins reload verification
+  * Refactor and re-arrange tests for better clarity
+  * Add some more testing
+
 ### 0.0.11 (2021-05-07)
 
   * Add renew CRT endpoint to Kong
