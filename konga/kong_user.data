@@ -1,4 +1,3 @@
-var uuidv4 = require('uuid/v4');
 module.exports = [
     {
         "username": "admin",
@@ -9,15 +8,5 @@ module.exports = [
         "admin": true,
         "active": true,
         "password": "adminadminadmin"
-    },
-    {
-        "username": uuidv4(),
-        "email": "standup-dummy@email.dummy",
-        "firstName": "Dummy",
-        "lastName": "LDAP Standup",
-        "node_id": "http://kong:8001",
-        "admin": true,
-        "active": true,
-        "password": uuidv4()
     }
 ];

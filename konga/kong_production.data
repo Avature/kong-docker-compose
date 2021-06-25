@@ -1,4 +1,4 @@
-var uuidv4 = require('uuid/v4');
+var uuidv4 = require('/app/node_modules/uuid/v4');
 module.exports = [
     {
         "username": uuidv4(),
