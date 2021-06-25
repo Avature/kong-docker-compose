@@ -1,3 +1,9 @@
+kong-docker-compose (0.0.13) Ubuntu; urgency=medium
+
+  * Add startup admin user
+  
+ -- Juan Cruz Vincenti <juan@02078-jvincenti>  Fri, 25 Jun 2021 17:00:57 -0300
+
 kong-docker-compose (0.0.12) Ubuntu; urgency=medium
 
   * Add tests to SSL certificates creational scripts

@@ -131,8 +131,10 @@ services:
       - kong-net
     volumes:
       - ./konga/kong_node.data:/run/kong_node.data:ro
+      - ./konga/kong_production.data:/run/kong_production.data:ro
     environment:
       KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
+      KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_production.data
       KONGA_AUTH_PROVIDER: ${KONGA_AUTH_PROVIDER}
       KONGA_LDAP_HOST: ${LDAP_HOST}
       KONGA_LDAP_BIND_DN: "cn=AppReader,dc=avature,dc=net"
