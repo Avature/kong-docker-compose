@@ -13,6 +13,7 @@ createCerts.sh opt/kong
 kong/connectToDB.sh opt/kong/kong
 konga/connectToDB.sh opt/kong/konga
 konga/kong_node.data opt/kong/konga
+konga/kong_production.data opt/kong/konga
 startup/createAdmin.py opt/kong/startup
 startup/init.sh opt/kong/startup
 startup/requirements.txt opt/kong/startup
