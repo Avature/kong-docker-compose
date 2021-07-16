@@ -22,7 +22,7 @@ restartKongIfNeeded() {
     if [[ `docker-compose ps --services --filter "status=running" | grep kong` ]]; then
         docker-compose restart kong
     else
-        echo "Kong service is not running. Restart is not required."
+        echo "Kong service is not running. Restart was skipped."
     fi
 }
 
