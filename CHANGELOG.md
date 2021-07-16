@@ -1,6 +1,10 @@
 # Changelog
 
 
+### 0.0.14 (2021-07-16)
+
+  * Add conditional restart of Kong service
+
 ### 0.0.13 (2021-06-25)
 
   * Add startup admin user

@@ -18,8 +18,12 @@ assertDockerComposeIsInstalledAndExitIfNeeded() {
     fi
 }
 
-restartKong() {
-    docker-compose restart kong
+restartKongIfNeeded() {
+    if [[ `docker-compose ps --services --filter "status=running" | grep kong` ]]; then
+        docker-compose restart kong
+    else
+        echo "Kong service is not running. Restart was skipped."
+    fi
 }
 
 compareChecksumsAndRestartKongIfneeded() {
@@ -29,7 +33,7 @@ compareChecksumsAndRestartKongIfneeded() {
         echo "Plugins were updated/installed, restarting kong"
         cd /opt/kong
         assertDockerComposeIsInstalledAndExitIfNeeded
-        restartKong
+        restartKongIfNeeded
     fi
 }
 
