@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deploy
+  namespace: customendpoints-dev
+  annotations:
+    avature.net/team: customendpoints
+    avature.net/environment: Development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-app
+  template:
+    metadata:
+      labels:
+        app: db-app
+    spec:
+      containers:
+        - name: db
+          image: postgres:9.5
+          env:
+            - name: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_USER
+              value: pguser
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - --username
+                - ""
+                - --dbname
+                - ""
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 30
+          resources: {}
+          stdin: true
+          tty: true
+          volumeMounts:
+            - name: database-volume
+              mountPath: /var/lib/postgresql/data
+          ports:
+            - containerPort: 5432
+      restartPolicy: Always
+      volumes:
+        - name: database-volume
+          persistentVolumeClaim:
+            claimName: cephfs-demo-pvc
+            readOnly: false
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-svc
+spec:
+  selector:
+    app: db
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
