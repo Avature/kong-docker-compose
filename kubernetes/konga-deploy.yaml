@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: konga-ui
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: konga-ui
+  template:
+    metadata:
+      labels:
+        app: konga-ui
+    spec:
+      containers:
+      - image: pantsel/konga:next
+        name: konga-ui
+        ports:
+        - containerPort: 1337
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: konga-ui
+spec:
+  selector:
+    app: konga-ui
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 1337

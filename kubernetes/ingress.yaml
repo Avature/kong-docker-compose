@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kong-cluster
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: konga.k8sqa-en.play.xcadev.net
+    external-dns.alpha.kubernetes.io/ttl: "30"
+spec:
+  tls:
+  - hosts:
+    - konga.k8sqa-en.play.xcadev.net
+  rules:
+  - host: konga.k8sqa-en.play.xcadev.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: konga-ui
+            port:
+              number: 8080
