@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db-deploy
+  name: kong-db-deploy
   namespace: customendpoints-dev
   annotations:
     avature.net/team: customendpoints
@@ -27,12 +27,7 @@ spec:
               value: pguser
           livenessProbe:
             exec:
-              command:
-                - pg_isready
-                - --username
-                - ""
-                - --dbname
-                - ""
+              command: ['pg_isready', '--username', 'pguser', '--dbname', 'kong-db']
             failureThreshold: 3
             periodSeconds: 30
             timeoutSeconds: 30
@@ -58,7 +53,7 @@ metadata:
   name: db-svc
 spec:
   selector:
-    app: db
+    app: db-app
   type: ClusterIP
   ports:
     - protocol: TCP

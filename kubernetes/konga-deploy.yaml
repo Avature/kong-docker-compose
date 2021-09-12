@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: konga-ui
+  name: konga-ui-deploy
   namespace: customendpoints-dev
   annotations:
     avature.net/team: customendpoints
@@ -34,6 +34,10 @@ spec:
               value: konga_db
           ports:
           - containerPort: 1337
+      initContainers:
+        - name: konga-prepare
+          image: pantsel/konga:next
+          command: ["/app/start.sh", "-c", "prepare", "-a", "postgres", "-u", "postgresql://pguser:password@db-svc:5432/konga_db"]
 ---
 apiVersion: v1
 kind: Service
