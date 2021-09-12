@@ -27,7 +27,7 @@ spec:
               value: pguser
           livenessProbe:
             exec:
-              command: ['pg_isready', '--username', 'pguser', '--dbname', 'kong-db']
+              command: ['pg_isready', '--username', 'pguser', '--dbname', 'postgres']
             failureThreshold: 3
             periodSeconds: 30
             timeoutSeconds: 30
@@ -37,6 +37,8 @@ spec:
           volumeMounts:
             - name: database-volume
               mountPath: /var/lib/postgresql/data
+            - name: database-initializer
+              mountPath: /docker-entrypoint-initdb.d
           ports:
             - containerPort: 5432
       restartPolicy: Always
@@ -45,6 +47,9 @@ spec:
           persistentVolumeClaim:
             claimName: cephfs-demo-pvc
             readOnly: false
+        - name: database-initializer
+          configMap:
+            name: postgres-initdb-config
 status: {}
 ---
 apiVersion: v1
@@ -59,3 +64,12 @@ spec:
     - protocol: TCP
       port: 5432
       targetPort: 5432
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-initdb-config
+data:
+  initdb.sql: |
+    CREATE DATABASE kong WITH ENCODING 'UTF8' TEMPLATE template0;
+    CREATE DATABASE konga_db WITH ENCODING 'UTF8' TEMPLATE template0;
