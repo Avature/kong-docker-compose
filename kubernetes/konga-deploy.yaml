@@ -20,6 +20,8 @@ spec:
         - name: konga-ui
           image: pantsel/konga:next
           env:
+            - name: DB_ADAPTER
+              value: postgres
             - name: DB_HOST
               value: 'db-svc'
             - name: DB_PORT
@@ -32,6 +34,8 @@ spec:
               value: km1GUr4RkcQD7DewhJPNXrCuZwcKmqjb
             - name: DB_DATABASE
               value: konga_db
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: '0'
           ports:
           - containerPort: 1337
       initContainers:

@@ -26,7 +26,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kong-gateway
+            name: kong-svc
             port:
               number: 8000
   - host: admin.k8sqa-en.play.xcadev.net
@@ -36,6 +36,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kong-gateway
+            name: kong-svc
             port:
               number: 8001
