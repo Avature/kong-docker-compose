@@ -7,7 +7,7 @@ metadata:
     avature.net/team: customendpoints
     avature.net/environment: Development
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: konga-ui
@@ -37,7 +37,14 @@ spec:
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: '0'
           ports:
-          - containerPort: 1337
+            - containerPort: 1337
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "300m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
       initContainers:
         - name: konga-prepare
           image: pantsel/konga:next

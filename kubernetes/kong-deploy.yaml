@@ -41,6 +41,7 @@ spec:
             - name: KONG_PROXY_ACCESS_LOG
               value: /dev/stdout
             - name: KONG_PROXY_ERROR_LOG
+              value: /dev/stderr
           ports:
             - containerPort: 8000
               name: gateway
@@ -49,6 +50,13 @@ spec:
           volumeMounts:
             - name: kong-config
               mountPath: /etc/kong
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "750m"
+            limits:
+              memory: "12Gi"
+              cpu: "1000m"
       initContainers:
         - name: kong-migrations
           image: kong:2.1.4
@@ -111,5 +119,6 @@ metadata:
   name: kong-config
 data:
   kong.conf: |
+    plugins = bundled
     lua_package_path = /usr/local/custom/?.lua;;
 
