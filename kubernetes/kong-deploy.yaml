@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kong-gateway-deploy
+  name: kong-deploy
   namespace: customendpoints-dev
   annotations:
     avature.net/team: customendpoints
@@ -10,15 +10,15 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: kong-gateway
+      app: kong
   template:
     metadata:
       labels:
-        app: kong-gateway
+        app: kong
     spec:
       containers:
-        - name: kong-gateway
-          image: kong:2.1.4
+        - name: kong
+          image: ghcr.io/mnofresno/kong-custom
           env:
             - name: KONG_ADMIN_ACCESS_LOG
               value: /dev/stdout
@@ -41,10 +41,14 @@ spec:
             - name: KONG_PROXY_ACCESS_LOG
               value: /dev/stdout
             - name: KONG_PROXY_ERROR_LOG
-              value: /dev/stderr
           ports:
-          - containerPort: 8000
-          - containerPort: 8001
+            - containerPort: 8000
+              name: gateway
+            - containerPort: 8001
+              name: admin
+          volumeMounts:
+            - name: kong-config
+              mountPath: /etc/kong
       initContainers:
         - name: kong-migrations
           image: kong:2.1.4
@@ -78,6 +82,10 @@ spec:
               value: password
             - name: KONG_PG_USER
               value: pguser
+      volumes:
+        - name: kong-config
+          configMap:
+            name: kong-config
 ---
 apiVersion: v1
 kind: Service
@@ -85,14 +93,23 @@ metadata:
   name: kong-svc
 spec:
   selector:
-    app: kong-gateway
+    app: kong
   type: ClusterIP
   ports:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-      name: gateway-endpoint
+      name: gateway
     - protocol: TCP
       port: 8001
       targetPort: 8001
-      name: admin-endpoint
+      name: admin
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kong-config
+data:
+  kong.conf: |
+    lua_package_path = /usr/local/custom/?.lua;;
+
