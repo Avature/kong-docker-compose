@@ -5,11 +5,11 @@ metadata:
 spec:
   tls:
   - hosts:
-    - konga.k8sqa-en.play.xcadev.net
-    - gateway.k8sqa-en.play.xcadev.net
-    - admin.k8sqa-en.play.xcadev.net
+    - konga.$CLUSTER_BASE_URL
+    - gateway.$CLUSTER_BASE_URL
+    - admin.$CLUSTER_BASE_URL
   rules:
-  - host: konga.k8sqa-en.play.xcadev.net
+  - host: konga.$CLUSTER_BASE_URL
     http:
       paths:
       - path: /
@@ -19,7 +19,7 @@ spec:
             name: konga-ui-svc
             port:
               number: 8080
-  - host: gateway.k8sqa-en.play.xcadev.net
+  - host: gateway.$CLUSTER_BASE_URL
     http:
       paths:
       - path: /
@@ -29,7 +29,7 @@ spec:
             name: kong-svc
             port:
               number: 8000
-  - host: admin.k8sqa-en.play.xcadev.net
+  - host: admin.$CLUSTER_BASE_URL
     http:
       paths:
       - path: /
