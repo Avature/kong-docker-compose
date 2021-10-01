@@ -7,7 +7,7 @@ metadata:
     avature.net/team: customendpoints
     avature.net/environment: Development
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: konga-ui
@@ -40,10 +40,10 @@ spec:
             - containerPort: 1337
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "300m"
+              memory: "2Gi"
+              cpu: "500m"
             limits:
-              memory: "512Mi"
+              memory: "3Gi"
               cpu: "500m"
       initContainers:
         - name: konga-prepare

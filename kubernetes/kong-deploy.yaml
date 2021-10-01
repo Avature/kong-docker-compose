@@ -16,9 +16,12 @@ spec:
       labels:
         app: kong
     spec:
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
       containers:
         - name: kong
-          image: ghcr.io/mnofresno/kong-custom
+          image: ghcr.io/mnofresno/kong-custom:latest
           env:
             - name: KONG_ADMIN_ACCESS_LOG
               value: /dev/stdout
@@ -42,20 +45,19 @@ spec:
               value: /dev/stdout
             - name: KONG_PROXY_ERROR_LOG
               value: /dev/stderr
+            - name: NGINX_WORKER_PROCESSES
+              value: '4'
           ports:
             - containerPort: 8000
               name: gateway
             - containerPort: 8001
               name: admin
-          volumeMounts:
-            - name: kong-config
-              mountPath: /etc/kong
           resources:
             requests:
-              memory: "4Gi"
-              cpu: "750m"
+              memory: "2Gi"
+              cpu: "500m"
             limits:
-              memory: "12Gi"
+              memory: "4Gi"
               cpu: "1000m"
       initContainers:
         - name: kong-migrations
@@ -90,10 +92,6 @@ spec:
               value: password
             - name: KONG_PG_USER
               value: pguser
-      volumes:
-        - name: kong-config
-          configMap:
-            name: kong-config
 ---
 apiVersion: v1
 kind: Service
@@ -112,13 +110,3 @@ spec:
       port: 8001
       targetPort: 8001
       name: admin
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kong-config
-data:
-  kong.conf: |
-    plugins = bundled
-    lua_package_path = /usr/local/custom/?.lua;;
-

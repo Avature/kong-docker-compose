@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: cephfs-demo-pvc
+  name: cephfs-kong-pvc
   namespace: customendpoints-dev
 spec:
   accessModes:

@@ -52,7 +52,7 @@ spec:
       volumes:
         - name: database-volume
           persistentVolumeClaim:
-            claimName: cephfs-demo-pvc
+            claimName: cephfs-kong-pvc
             readOnly: false
         - name: database-initializer
           configMap:
