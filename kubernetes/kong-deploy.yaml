@@ -21,7 +21,7 @@ spec:
         runAsUser: 0
       containers:
         - name: kong
-          image: ghcr.io/mnofresno/kong-custom:latest
+          image: ghcr.io/mnofresno/kong:2.1.4.01
           env:
             - name: KONG_ADMIN_ACCESS_LOG
               value: /dev/stdout

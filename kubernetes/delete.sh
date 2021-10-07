@@ -1,2 +1,2 @@
 #!/bin/bash
-kubectl delete -f kong-data-volume.yaml -f konga-deploy.yaml -f kong-deploy.yaml -f db-deploy.yaml -f ingress.yaml -f secrets.yaml
+kubectl delete -f kong-data-volume.yaml -f konga-deploy.yaml -f kong-deploy.yaml -f db-deploy.yaml -f ingress.yaml.template -f secrets.yaml
