@@ -13,3 +13,14 @@ KUBECONFIG=$HOME/.kube/{your-json-kubeconfig-credential-file} ./delete.sh
 We need to have a way to configure the number of NGINX workers via an env variable, a valid approach could be something like this:
 
 sed -i 's/worker\_processes auto\;/worker\_processes $NGINX_WORKER_PROCESSES\;/g' /usr/local/kong/nginx.conf
+
+
+# LAST CHANGES
+
+* Add start markup to where it were missing
+* Add double check to delete script to avoid accidental triggering
+* Convert kong token into secret
+* Remove namepace
+* Add image pull policy
+* Add requested/limit resources
+* Add fixed image tag

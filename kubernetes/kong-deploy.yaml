@@ -1,8 +1,8 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kong-deploy
-  namespace: customendpoints-dev
   annotations:
     avature.net/team: customendpoints
     avature.net/environment: Development
@@ -16,12 +16,14 @@ spec:
       labels:
         app: kong
     spec:
-      securityContext:
-        runAsNonRoot: false
-        runAsUser: 0
       containers:
         - name: kong
           image: ghcr.io/mnofresno/kong:2.1.4.01
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            readOnlyRootFilesystem: false
           env:
             - name: KONG_ADMIN_ACCESS_LOG
               value: /dev/stdout
@@ -38,7 +40,10 @@ spec:
             - name: KONG_PG_PORT
               value: '5432'
             - name: KONG_PG_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: postgres-db-password
             - name: KONG_PG_USER
               value: pguser
             - name: KONG_PROXY_ACCESS_LOG
@@ -62,6 +67,7 @@ spec:
       initContainers:
         - name: kong-migrations
           image: kong:2.1.4
+          imagePullPolicy: Always
           command: ['kong', 'migrations', 'bootstrap']
           env:
             - name: KONG_DATABASE
@@ -73,11 +79,22 @@ spec:
             - name: KONG_PG_PORT
               value: '5432'
             - name: KONG_PG_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: postgres-db-password
             - name: KONG_PG_USER
               value: pguser
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "1000m"
         - name: kong-migrations-up
           image: kong:2.1.4
+          imagePullPolicy: Always
           command: ['kong', 'migrations', 'up']
           env:
             - name: KONG_DATABASE
@@ -89,9 +106,19 @@ spec:
             - name: KONG_PG_PORT
               value: '5432'
             - name: KONG_PG_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: postgres-db-password
             - name: KONG_PG_USER
               value: pguser
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "1000m"
 ---
 apiVersion: v1
 kind: Service

@@ -1,8 +1,8 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kong-db-deploy
-  namespace: customendpoints-dev
   annotations:
     avature.net/team: customendpoints
     avature.net/environment: Development
@@ -19,19 +19,31 @@ spec:
       containers:
         - name: db
           image: postgres:9.5
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            readOnlyRootFilesystem: false
           env:
             - name: POSTGRES_DB
             - name: POSTGRES_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: postgres-db-password
             - name: POSTGRES_USER
               value: pguser
           livenessProbe:
             exec:
-              command: ['pg_isready', '--username', 'pguser', '--dbname', 'postgres']
+              command:
+                - 'pg_isready'
+                - '--username'
+                - 'pguser'
+                - '--dbname'
+                - 'postgres'
             failureThreshold: 3
             periodSeconds: 30
             timeoutSeconds: 30
-          resources: {}
           stdin: true
           tty: true
           volumeMounts:
@@ -43,10 +55,10 @@ spec:
             - containerPort: 5432
           resources:
             requests:
-              memory: "256Mi"
+              memory: "512Mi"
               cpu: "500m"
             limits:
-              memory: "512Mi"
+              memory: "1024Mi"
               cpu: "500m"
       restartPolicy: Always
       volumes:
@@ -57,7 +69,6 @@ spec:
         - name: database-initializer
           configMap:
             name: postgres-initdb-config
-status: {}
 ---
 apiVersion: v1
 kind: Service

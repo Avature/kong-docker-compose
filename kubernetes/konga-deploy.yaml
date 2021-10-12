@@ -1,8 +1,8 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: konga-ui-deploy
-  namespace: customendpoints-dev
   annotations:
     avature.net/team: customendpoints
     avature.net/environment: Development
@@ -18,7 +18,12 @@ spec:
     spec:
       containers:
         - name: konga-ui
-          image: pantsel/konga:next
+          image: pantsel/konga:0.14.9
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            readOnlyRootFilesystem: false
           env:
             - name: DB_ADAPTER
               value: postgres
@@ -29,9 +34,15 @@ spec:
             - name: DB_USER
               value: pguser
             - name: DB_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: postgres-db-password
             - name: TOKEN_SECRET
-              value: km1GUr4RkcQD7DewhJPNXrCuZwcKmqjb
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: konga-token-secret
             - name: DB_DATABASE
               value: konga_db
             - name: NODE_TLS_REJECT_UNAUTHORIZED
@@ -44,11 +55,32 @@ spec:
               cpu: "500m"
             limits:
               memory: "3Gi"
-              cpu: "500m"
+              cpu: "1000m"
       initContainers:
         - name: konga-prepare
-          image: pantsel/konga:next
-          command: ["/app/start.sh", "-c", "prepare", "-a", "postgres", "-u", "postgresql://pguser:password@db-svc:5432/konga_db"]
+          image: pantsel/konga:0.14.9
+          imagePullPolicy: Always
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: postgres-db-password
+          command:
+            - "/app/start.sh"
+            - "-c"
+            - "prepare"
+            - "-a"
+            - "postgres"
+            - "-u"
+            - "postgresql://pguser:$(DB_PASSWORD)@db-svc:5432/konga_db"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "3Gi"
+              cpu: "1000m"
 ---
 apiVersion: v1
 kind: Service
