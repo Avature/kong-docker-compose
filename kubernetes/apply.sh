@@ -1,13 +1,8 @@
 #!/bin/bash
-clusterBaseUrl=$1
-if [ -z "$clusterBaseUrl" ]; then
-  echo -n "Type the cluster ingress base URL: ";
-  read;
-  clusterBaseUrl=${REPLY}
-fi
-if [ -z "$clusterBaseUrl" ]; then
-  echo "Invalid input";
-  exit;
+if [ -z "$1" ]; then
+  read -p "Type the cluster ingress base URL: " clusterBaseUrl
+else
+  clusterBaseUrl=$1
 fi
 cp ingress.yaml.template /tmp/ingress.yaml
 sed -i "s|\$CLUSTER_BASE_URL|${clusterBaseUrl}|g" /tmp/ingress.yaml
