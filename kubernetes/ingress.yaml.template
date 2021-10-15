@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kong-cluster-ingress
+spec:
+  tls:
+  - hosts:
+    - konga.$CLUSTER_BASE_URL
+    - gateway.$CLUSTER_BASE_URL
+    - admin.$CLUSTER_BASE_URL
+  rules:
+  - host: konga.$CLUSTER_BASE_URL
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: konga-ui-svc
+            port:
+              number: 8080
+  - host: gateway.$CLUSTER_BASE_URL
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kong-svc
+            port:
+              number: 8000
+  - host: admin.$CLUSTER_BASE_URL
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kong-svc
+            port:
+              number: 8001

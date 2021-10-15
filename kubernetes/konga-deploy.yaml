@@ -1,0 +1,96 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: konga-ui-deploy
+  annotations:
+    avature.net/team: customendpoints
+    avature.net/environment: Development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: konga-ui
+  template:
+    metadata:
+      labels:
+        app: konga-ui
+    spec:
+      containers:
+        - name: konga-ui
+          image: pantsel/konga:0.14.9
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            readOnlyRootFilesystem: false
+          env:
+            - name: DB_ADAPTER
+              value: postgres
+            - name: DB_HOST
+              value: 'db-svc'
+            - name: DB_PORT
+              value: '5432'
+            - name: DB_USER
+              value: pguser
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: postgres-db-password
+            - name: TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: konga-token-secret
+            - name: DB_DATABASE
+              value: konga_db
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: '0'
+          ports:
+            - containerPort: 1337
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "3Gi"
+              cpu: "1000m"
+      initContainers:
+        - name: konga-prepare
+          image: pantsel/konga:0.14.9
+          imagePullPolicy: Always
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kong-k8s-secrets
+                  key: postgres-db-password
+          command:
+            - "/app/start.sh"
+            - "-c"
+            - "prepare"
+            - "-a"
+            - "postgres"
+            - "-u"
+            - "postgresql://pguser:$(DB_PASSWORD)@db-svc:5432/konga_db"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "3Gi"
+              cpu: "1000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: konga-ui-svc
+spec:
+  selector:
+    app: konga-ui
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 1337

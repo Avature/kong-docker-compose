@@ -33,3 +33,16 @@ integration-tests
 kong-docker-compose-build-deps*
 debianIgnoredPaths
 RELEASE*
+kubernetes/apply.sh
+kubernetes/delete.sh
+kubernetes/secrets.yaml
+kubernetes/konga-deploy.yaml
+kubernetes/db-deploy.yaml
+kubernetes/kong-deploy.yaml
+kubernetes/kong-data-volume.yaml
+kubernetes/ingress.yaml.template
+kubernetes/kong/custom-nginx.conf
+kubernetes/kong/Dockerfile
+kubernetes/kong/build-and-push.sh
+kubernetes/kong/kong.conf
+kubernetes/kong/custom-entrypoint.sh
