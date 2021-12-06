@@ -1,6 +1,11 @@
 # Changelog
 
 
+### 0.0.15 (2021-12-06)
+
+  * Add server_name matching the header used on our client for upstream/loadbalancing 
+  * Add Avature's url to kong docker image registry
+
 ### 0.0.14 (2021-07-16)
 
   * Add conditional restart of Kong service
