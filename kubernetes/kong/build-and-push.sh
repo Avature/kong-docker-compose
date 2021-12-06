@@ -1,3 +1,3 @@
 #!/bin/bash
-docker build . -t ghcr.io/mnofresno/kong-custom
-docker push ghcr.io/mnofresno/kong-custom
+docker build . -t ghcr.io/avature/kong:2.1.4.01
+docker push ghcr.io/avature/kong:2.1.4.01

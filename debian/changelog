@@ -1,3 +1,10 @@
+kong-docker-compose (0.0.15) Ubuntu; urgency=medium
+
+  * Add server_name matching the header used on our client for upstream/loadbalancing 
+  * Add Avature's url to kong docker image registry
+
+ -- Juan Cruz Vincenti <juan@02078-jvincenti>  Mon, 06 Dec 2021 13:46:09 -0300
+
 kong-docker-compose (0.0.14) Ubuntu; urgency=medium
 
   * Add conditional restart of Kong service
