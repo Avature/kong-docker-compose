@@ -191,6 +191,13 @@ services:
       - kong-net
     volumes:
       - ./startup/:/app/
+      - ./.env:/certs_startup/.env
+      - ./createCerts.sh:/certs_startup/createCerts.sh
+      - ./certs/:/certs_startup/certs/
     command: /app/init.sh
     depends_on:
       - kong
+    environment:
+      BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
+      HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
+      CREATE_SSL_CERTS: "false"
