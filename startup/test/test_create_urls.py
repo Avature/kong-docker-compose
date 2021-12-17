@@ -12,7 +12,7 @@ if (os.environ.get("ENABLE_DEBUGGER")):
 class TestCreateUrls(TestCase):
   def setUp(self):
     self.test_path = "/nginx_startup/server_hosts/test/"
-    os.environ["TARGET_DIR"] = self.test_path + "/"
+    os.environ["TARGET_URLS_CONF_DIR"] = self.test_path + "/"
     Path(self.test_path).mkdir(parents=True, exist_ok=True)
 
   def tearDown(self):
