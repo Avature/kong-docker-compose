@@ -2,5 +2,11 @@
 
 cd $(dirname $0)/../startup
 
-docker pull -q python:alpine
-docker run -t -v `pwd`:/app bitnami/python /app/run_tests.sh
+docker build . -t test_startup_container
+docker run -t \
+  -v `pwd`:/app \
+  -v `pwd`/../nginx:/nginx_startup \
+  --env BASE_HOST_DOMAIN=test-host-for-testing \
+  --env HOST_SERVICE_SEPARATOR=-sepa- \
+  test_startup_container \
+  /app/run_tests.sh

@@ -181,12 +181,13 @@ services:
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
-    command: bash -c  "/etc/nginx/conf.d/server_hosts/create-urls.sh && nginx -g 'daemon off;'"
   #######################################
   # Python Startup
   #######################################
   startup:
-    image: python:alpine
+    image: ghcr.io/avature/kong-startup:0.0.2
+    build:
+      context: ./startup
     networks:
       - kong-net
     volumes:
@@ -194,6 +195,7 @@ services:
       - ./.env:/certs_startup/.env
       - ./createCerts.sh:/certs_startup/createCerts.sh
       - ./certs/:/certs_startup/certs/
+      - ./nginx/:/nginx_startup/
     command: /app/init.sh
     depends_on:
       - kong
