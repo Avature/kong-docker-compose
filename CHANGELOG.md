@@ -1,6 +1,11 @@
 # Changelog
 
 
+### 0.0.16 (2021-12-17)
+
+  * Add certificates management to startup service container
+  * Add create-urls logic to startup service
+
 ### 0.0.15 (2021-12-06)
 
   * Add server_name matching the header used on our client for upstream/loadbalancing 

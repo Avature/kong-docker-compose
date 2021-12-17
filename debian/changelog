@@ -1,3 +1,10 @@
+kong-docker-compose (0.0.16) Ubuntu; urgency=medium
+
+  * Add certificates management to startup service container
+  * Add create-urls logic to startup service
+
+ -- Juan Cruz Vincenti <juan@02078-jvincenti>  Fri, 17 Dec 2021 16:24:03 -0300
+
 kong-docker-compose (0.0.15) Ubuntu; urgency=medium
 
   * Add server_name matching the header used on our client for upstream/loadbalancing 
