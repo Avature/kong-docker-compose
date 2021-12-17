@@ -17,3 +17,7 @@ services:
     environment:
       KONGA_AUTH_PROVIDER: "local"
       KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_user.data
+  startup:
+    environment:
+      CREATE_SSL_CERTS: "true"
+

@@ -1,4 +1,5 @@
 #!/bin/bash
+cd /certs_startup
 
 readConfigFromDotEnv() {
   export $(cat .env | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | sed '/^#/d' | xargs)
@@ -48,7 +49,7 @@ setup_certs() {
     create_ca_certs
   fi
 
-  if [[ "$1" == "-ssl" ]];
+  if [ "$1" == "-ssl" ] || [ "$CREATE_SSL_CERTS" = true ];
   then
     create_ssl_server_certs
   fi

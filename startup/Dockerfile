@@ -7,6 +7,8 @@ COPY requirements.txt /app
 
 RUN apk add gettext
 RUN apk add bash
+RUN apk add openssl
+
 RUN pip install -r requirements.txt
 
 CMD /app/init.sh
