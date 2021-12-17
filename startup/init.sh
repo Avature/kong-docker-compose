@@ -1,6 +1,5 @@
 #!/bin/sh
 
-cd /app
+bash -c "/nginx_startup/server_hosts/create-urls.sh"
 
-pip install -r requirements.txt
 python createAdmin.py
