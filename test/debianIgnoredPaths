@@ -46,3 +46,16 @@ kubernetes/kong/Dockerfile
 kubernetes/kong/build-and-push.sh
 kubernetes/kong/kong.conf
 kubernetes/kong/custom-entrypoint.sh
+kubernetes/kong/plugins/client_consumer_validator/handler.lua
+kubernetes/kong/plugins/client_consumer_validator/schema.lua
+kubernetes/kong/plugins/client_consumer_validator/access.lua
+kubernetes/kong/plugins/file_log_censored/attribute_remover.lua
+kubernetes/kong/plugins/file_log_censored/handler.lua
+kubernetes/kong/plugins/file_log_censored/schema.lua
+kubernetes/kong/plugins/mtls_certs_manager/base.lua
+kubernetes/kong/plugins/mtls_certs_manager/factory.lua
+kubernetes/kong/plugins/mtls_certs_manager/handler.lua
+kubernetes/kong/plugins/mtls_certs_manager/register.lua
+kubernetes/kong/plugins/mtls_certs_manager/renew.lua
+kubernetes/kong/plugins/mtls_certs_manager/schema.lua
+kubernetes/kong/plugins/mtls_certs_manager/x509_name_helper.lua
