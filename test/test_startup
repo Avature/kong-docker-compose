@@ -6,6 +6,7 @@ docker build . -t test_startup_container
 docker run -t \
   -v `pwd`:/app \
   -v `pwd`/../nginx:/nginx_startup \
+  -v `pwd`/../certs:/certs_startup \
   --env BASE_HOST_DOMAIN=test-host-for-testing \
   --env HOST_SERVICE_SEPARATOR=-sepa- \
   test_startup_container \
