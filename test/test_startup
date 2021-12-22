@@ -5,10 +5,9 @@ cd $(dirname $0)/../startup
 docker run \
   -v `pwd`:/app \
   -v `pwd`/../nginx/:/nginx_startup/ \
-  -v `pwd`/../certs/:/certs_startup/ \
-  -v `pwd`/../createCerts.sh:/certs_startup/createCerts.sh \
+  -v `pwd`/../certs/:/certs_startup/certs/ \
+  -v `pwd`/../createCerts.sh:/certs/createCerts.sh \
   --env BASE_HOST_DOMAIN=test-host-for-testing \
   --env HOST_SERVICE_SEPARATOR=-sepa- \
-  --env STARTUP_TESTING=true \
-  --rm -it $(docker build -q .) \
-  /app/run_tests.sh
+  --entrypoint /app/run_tests.sh \
+  --rm -it $(docker build -q . )
