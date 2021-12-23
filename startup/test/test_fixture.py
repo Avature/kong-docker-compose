@@ -3,7 +3,6 @@ from unittest import main, mock, TestCase
 import os
 import configparser
 import responses
-import requests
 
 from test.debugger import run_debugger
 

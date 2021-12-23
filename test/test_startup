@@ -6,7 +6,7 @@ docker run \
   -v `pwd`:/app \
   -v `pwd`/../nginx/:/nginx_startup/ \
   -v `pwd`/../certs/:/certs_startup/certs/ \
-  -v `pwd`/../createCerts.sh:/certs/createCerts.sh \
+  -v `pwd`/../createCerts.sh:/certs_startup/createCerts.sh \
   --env BASE_HOST_DOMAIN=test-host-for-testing \
   --env HOST_SERVICE_SEPARATOR=-sepa- \
   --entrypoint /app/run_tests.sh \
