@@ -2,7 +2,7 @@
 
 cd $(dirname $0)/../startup
 
-docker run \
+docker container run \
   -v `pwd`:/app \
   -v `pwd`/../nginx/:/nginx_startup/ \
   -v `pwd`/../certs/:/certs_startup/certs/ \
