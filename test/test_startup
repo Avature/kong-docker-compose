@@ -2,11 +2,12 @@
 
 cd $(dirname $0)/../startup
 
-docker build . -t test_startup_container
-docker run -t \
+docker container run \
   -v `pwd`:/app \
-  -v `pwd`/../nginx:/nginx_startup \
+  -v `pwd`/../nginx/:/nginx_startup/ \
+  -v `pwd`/../certs/:/certs_startup/certs/ \
+  -v `pwd`/../createCerts.sh:/certs_startup/createCerts.sh \
   --env BASE_HOST_DOMAIN=test-host-for-testing \
   --env HOST_SERVICE_SEPARATOR=-sepa- \
-  test_startup_container \
-  /app/run_tests.sh
+  --entrypoint /app/run_tests.sh \
+  --rm -it $(docker build -q . )
