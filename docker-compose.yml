@@ -172,6 +172,7 @@ services:
     volumes:
       - ./nginx/:/etc/nginx/conf.d/
       - ./certs/:/etc/ssl/certs/
+      - ./nginx/reloader.sh:/usr/local/nginx/reloader.sh
     ports:
       - "80:80"
       - "443:443"
