@@ -10,5 +10,5 @@ generateChecksums() {
     find $1 -print0 2>/dev/null -type f -exec sha1sum "{}" + > "$2"
 }
 
-generateChecksums $plugins_path $pre_inst_plugins_checksums
-generateChecksums $nginx_path $pre_inst_nginx_checksums
+generateChecksums $plugins_path $pre_inst_plugins_checksums "*.lua"
+generateChecksums $nginx_path $pre_inst_nginx_checksums "*.conf"
