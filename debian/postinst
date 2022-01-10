@@ -16,10 +16,11 @@ assertIsInstalledAndExitIfNeeded() {
     which $1
     if [[ $? -eq 0 ]]; then
         $3
+    else
+        echo -e "\n$1 isn't installed cannot restart $2"
+        current_time=$(date "+%Y.%m.%d-%H.%M.%S")
+        echo "$2 is pending to be restarted because it changed - $current_time" > "/opt/kong/$2-pending-restart.log"
     fi
-    echo -e "\n$1 isn't installed cannot restart $2"
-    current_time=$(date "+%Y.%m.%d-%H.%M.%S")
-    echo "$2 is pending to be restarted because it changed - $current_time" > "/opt/kong/$2-pending-restart.log"
 }
 
 restartKongIfNeeded() {

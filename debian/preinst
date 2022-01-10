@@ -7,7 +7,7 @@ nginx_path="/opt/kong/nginx"
 
 generateChecksums() {
     echo -e "\nGenerating pre-install checksums into file $2"
-    find $1 -print0 2>/dev/null -type f -exec sha1sum "{}" + > "$2"
+    find $1 -print0 2>/dev/null -type f -name $3 -exec sha1sum "{}" + > "$2"
 }
 
 generateChecksums $plugins_path $pre_inst_plugins_checksums "*.lua"
