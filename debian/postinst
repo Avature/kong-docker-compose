@@ -45,11 +45,14 @@ compareChecksumsAndRestartIfneeded() {
     else
         echo "$4 files were updated/installed, restarting $4"
         cd /opt/kong
-        assertIsInstalledAndExitIfNeeded "$3" "$4" $5
+        if [ -n "$5" ]; then
+            assertIsInstalledAndExitIfNeeded "$3" "$4" $5
+        fi
     fi
 }
 
 runPostInstChecksums $plugins_path $post_inst_plugins_checksums "*.lua"
 runPostInstChecksums $nginx_path $post_inst_nginx_checksums "*.conf"
-compareChecksumsAndRestartIfneeded $post_inst_nginx_checksums $pre_inst_nginx_checksums "nginx" "nginx" restartNginxIfNeeded
 compareChecksumsAndRestartIfneeded $post_inst_plugins_checksums $pre_inst_plugins_checksums "docker-compose" "kong" restartKongIfNeeded
+compareChecksumsAndRestartIfneeded $post_inst_nginx_checksums $pre_inst_nginx_checksums "nginx" "nginx"
+restartNginxIfNeeded
