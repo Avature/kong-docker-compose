@@ -166,7 +166,9 @@ services:
   # NGINX: Webserver
   #######################################
   nginx:
-    image: nginx
+    image: ghcr.io/jcvincenti/kong-nginx:latest
+    build:
+      context: ./nginx
     networks:
       - kong-net
     volumes:
