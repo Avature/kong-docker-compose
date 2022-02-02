@@ -1,25 +1,20 @@
 #!/bin/bash
 
-pre_inst_plugins_checksums="/tmp/pre-inst-plugins-checksum.chk"
-post_inst_plugins_checksums="/tmp/post-inst-plugins-checksum.chk"
-pre_inst_nginx_checksums="/tmp/pre-inst-nginx-checksum.chk"
-post_inst_nginx_checksums="/tmp/post-inst-nginx-checksum.chk"
-plugins_path="/opt/kong/plugins"
-nginx_path="/opt/kong/nginx"
+pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+post_inst_checksums="/tmp/post-inst-plugins-checksum.chk"
 
 runPostInstChecksums() {
-    echo -e "\nGenerating post-install checksums into file $2"
-    find $1 -print0 2>/dev/null -type f -name $3 -exec sha1sum "{}" + > "$2"
+    echo -e "\nGenerating Kong plugins post-install checksums..."
+    find /opt/kong/plugins -print0 2>/dev/null -type f -exec sha1sum "{}" + > "$post_inst_checksums"
 }
 
-assertIsInstalledAndExitIfNeeded() {
-    which $1
-    if [[ $? -eq 0 ]]; then
-        $3
-    else
-        echo -e "\n$1 isn't installed cannot restart $2"
+assertDockerComposeIsInstalledAndExitIfNeeded() {
+    which docker-compose
+    if [[ $? -ne 0 ]]; then
+        echo -e "\ndocker-compose isn't installed cannot restart Kong"
         current_time=$(date "+%Y.%m.%d-%H.%M.%S")
-        echo "$2 is pending to be restarted because it changed - $current_time" > "/opt/kong/$2-pending-restart.log"
+        echo "Kong is pending to be restarted because plugins changed - $current_time" > /opt/kong/kong-pending-restart.log
+        exit 0
     fi
 }
 
@@ -31,28 +26,16 @@ restartKongIfNeeded() {
     fi
 }
 
-restartNginxIfNeeded() {
-    if [[ `docker-compose ps --services --filter "status=running" | grep nginx` ]]; then
-        docker-compose exec nginx nginx -s reload
+compareChecksumsAndRestartKongIfneeded() {
+    if cmp --silent -- "$post_inst_checksums" "$pre_inst_checksums"; then
+        echo "Previous plugin files are identical to the new ones, avoiding restart"
     else
-        echo "Nginx service is not running. Restart was skipped."
-    fi
-}
-
-compareChecksumsAndRestartIfneeded() {
-    if cmp --silent -- "$1" "$2"; then
-        echo "Previous $4 files are identical to the new ones, avoiding restart"
-    else
-        echo "$4 files were updated/installed, restarting $4"
+        echo "Plugins were updated/installed, restarting kong"
         cd /opt/kong
-        if [ -n "$5" ]; then
-            assertIsInstalledAndExitIfNeeded "$3" "$4" $5
-        fi
+        assertDockerComposeIsInstalledAndExitIfNeeded
+        restartKongIfNeeded
     fi
 }
 
-runPostInstChecksums $plugins_path $post_inst_plugins_checksums "*.lua"
-runPostInstChecksums $nginx_path $post_inst_nginx_checksums "*.conf"
-compareChecksumsAndRestartIfneeded $post_inst_plugins_checksums $pre_inst_plugins_checksums "docker-compose" "kong" restartKongIfNeeded
-compareChecksumsAndRestartIfneeded $post_inst_nginx_checksums $pre_inst_nginx_checksums "nginx" "nginx"
-restartNginxIfNeeded
+runPostInstChecksums
+compareChecksumsAndRestartKongIfneeded

@@ -1,15 +1,10 @@
 #!/bin/bash
 
-pre_inst_plugins_checksums="/tmp/pre-inst-plugins-checksum.chk"
-pre_inst_nginx_checksums="/tmp/pre-inst-nginx-checksum.chk"
-plugins_path="/opt/kong/plugins"
-nginx_path="/opt/kong/nginx"
-
-generateChecksums() {
-    echo -e "\nGenerating pre-install checksums into file $2"
-    find $1 -print0 2>/dev/null -type f -name $3 -exec sha1sum "{}" + > "$2"
-    echo -e "\nChecksum generated to file $2"
+generatePluginsChecksums() {
+    pre_inst_checksums="/tmp/pre-inst-plugins-checksum.chk"
+    echo -e "\nGenerating Kong plugins pre-install checksums..."
+    find /opt/kong/plugins -print0 2>/dev/null -type f -exec sha1sum "{}" + > "$pre_inst_checksums"
+    exit 0;
 }
 
-generateChecksums $plugins_path $pre_inst_plugins_checksums "*.lua"
-generateChecksums $nginx_path $pre_inst_nginx_checksums "*.conf"
+generatePluginsChecksums
