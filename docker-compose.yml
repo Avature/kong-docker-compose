@@ -55,7 +55,6 @@ services:
     image: "${KONG_DOCKER_TAG}"
     user: "root"
     volumes:
-      - ./kong/plugins/:/usr/local/custom/kong/plugins/
       - ./kong/conf/:/etc/kong/
       - /var/log/avature/kong/:/home/kong/log/
       - ./kong/conf/custom-nginx.conf:/usr/local/kong/custom-nginx.conf:ro
