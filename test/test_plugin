@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $(dirname $0)/../kubernetes/kong/plugins/$1
+cd $(dirname $0)/../kong/plugins/$1
 
 docker pull -q imega/busted
 docker run -t -v `pwd`:/data imega/busted
