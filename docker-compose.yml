@@ -59,7 +59,6 @@ services:
       - /var/log/avature/kong/:/home/kong/log/
       - ./kong/conf/custom-nginx.conf:/usr/local/kong/custom-nginx.conf:ro
       - ./certs/:/home/kong/certs/
-    command: /etc/kong/custom-entrypoint.sh
     depends_on:
       - db
     environment:
