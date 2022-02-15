@@ -11,4 +11,4 @@ RUN apk add openssl
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["/app/init.sh"]
+CMD /app/init.sh
