@@ -197,6 +197,7 @@ services:
     command: /app/init.sh
     depends_on:
       - kong
+      - nginx
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
