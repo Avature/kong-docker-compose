@@ -2,7 +2,6 @@ version: '3.1'
 
 services:
   kong:
-    image: "${KONG_DOCKER_IMAGE}${KONG_DOCKER_TAG}"
     build:
       context: ./kong
       dockerfile: Dockerfile.dev

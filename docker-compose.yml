@@ -12,7 +12,9 @@ services:
   # Kong database preparation
   #######################################
   kong-migrations:
-    image: "${KONG_DOCKER_TAG}"
+    image: ghcr.io/avature/kong:2.1.4.01
+    build:
+      context: ./kong
     command: kong migrations bootstrap
     depends_on:
       - db
@@ -32,7 +34,9 @@ services:
   # Kong migrations runner
   #######################################
   kong-migrations-up:
-    image: "${KONG_DOCKER_TAG}"
+    image: ghcr.io/avature/kong:2.1.4.01
+    build:
+      context: ./kong
     command: kong migrations up
     depends_on:
       - db
@@ -52,7 +56,9 @@ services:
   # Kong service
   #######################################
   kong:
-    image: "${KONG_DOCKER_TAG}"
+    image: ghcr.io/avature/kong:2.1.4.01
+    build:
+      context: ./kong
     user: "root"
     volumes:
       - ./kong/conf/:/etc/kong/
@@ -197,7 +203,6 @@ services:
     command: /app/init.sh
     depends_on:
       - kong
-      - nginx
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"

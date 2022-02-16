@@ -5,5 +5,5 @@
 ## config/config.production.toml => /etc/project/config.toml
 dev.env opt/kong
 docker-compose.dev.yml opt/kong
-kong/Dockerfile opt/kong/kong
+kong/Dockerfile.dev opt/kong/kong
 startDev.sh opt/kong

@@ -11,7 +11,6 @@ startKongBash.sh opt/kong
 createDevCerts.sh opt/kong
 createCerts.sh opt/kong
 kong/connectToDB.sh opt/kong/kong
-kong/Dockerfile opt/kong/kong
 konga/connectToDB.sh opt/kong/konga
 konga/kong_node.data opt/kong/konga
 konga/kong_production.data opt/kong/konga
