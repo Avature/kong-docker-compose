@@ -21,6 +21,7 @@ startup/fixture.py opt/kong/startup
 startup/config.py opt/kong/startup
 startup/Dockerfile opt/kong/startup
 nginx/sslCertificates.conf opt/kong/nginx
+nginx/Dockerfile opt/kong/nginx
 nginx/konga.conf opt/kong/nginx
 nginx/gateway.conf opt/kong/nginx
 nginx/admin.conf opt/kong/nginx
