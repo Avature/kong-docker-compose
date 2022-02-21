@@ -166,11 +166,12 @@ services:
   # NGINX: Webserver
   #######################################
   nginx:
-    image: nginx
+    image: ghcr.io/avature/kong-nginx:0.0.1
+    build:
+      context: ./nginx
     networks:
       - kong-net
     volumes:
-      - ./nginx/:/etc/nginx/conf.d/
       - ./certs/:/etc/ssl/certs/
     ports:
       - "80:80"
