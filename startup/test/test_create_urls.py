@@ -24,7 +24,7 @@ class TestCreateUrls(TestCase):
     self.assertFileNotExists(self.test_path + "/konga-url.conf")
 
   def test_run_create_urls(self):
-    subprocess.call("/app/init.sh")
+    subprocess.call("/nginx_startup/server_hosts/create-urls.sh")
     adminUrlContent = self.read_file(self.test_path + "/admin-url.conf")
     gatewayUrlContent = self.read_file(self.test_path + "/gateway-url.conf")
     kongaUrlContent = self.read_file(self.test_path + "/konga-url.conf")
