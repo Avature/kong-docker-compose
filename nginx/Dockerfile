@@ -1,6 +1,10 @@
 FROM nginx:stable-alpine
 
-COPY . /etc/nginx/conf.d
-COPY entrypoint.sh /etc/nginx
+RUN mkdir -p /app
+RUN chmod -R 777 /app
 
-CMD /etc/nginx/entrypoint.sh
+COPY . /etc/nginx/conf.d
+COPY create-urls.sh /app
+COPY entrypoint.sh /app
+
+CMD ["/app/entrypoint.sh"]
