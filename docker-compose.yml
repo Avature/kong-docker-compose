@@ -182,6 +182,7 @@ services:
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
+      TARGET_URLS_CONF_DIR: "/etc/nginx/conf.d/server_hosts/"
   #######################################
   # Python Startup
   #######################################
