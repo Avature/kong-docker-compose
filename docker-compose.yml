@@ -168,7 +168,7 @@ services:
   # NGINX: Webserver
   #######################################
   nginx:
-    image: ghcr.io/avature/kong-nginx:0.0.1
+    image: ghcr.io/avature/kong-nginx:0.0.2
     build:
       context: ./nginx
     networks:
@@ -184,6 +184,7 @@ services:
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
+      TARGET_URLS_CONF_DIR: "${TARGET_URLS_CONF_DIR:-/etc/nginx/conf.d/server_hosts/}"
   #######################################
   # Python Startup
   #######################################
