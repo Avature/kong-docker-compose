@@ -29,6 +29,7 @@ nginx/server_hosts/konga-url.conf.template opt/kong/nginx/server_hosts
 nginx/server_hosts/gateway-url.conf.template opt/kong/nginx/server_hosts
 nginx/server_hosts/admin-url.conf.template opt/kong/nginx/server_hosts
 nginx/server_hosts/create-urls.sh opt/kong/nginx/server_hosts
+nginx/entrypoint.sh opt/kong/nginx/entrypoint.sh
 kong/conf/custom-nginx.conf opt/kong/kong/conf
 kong/conf/custom-entrypoint.sh opt/kong/kong/conf
 kong/conf/kong.conf opt/kong/kong/conf
