@@ -1,7 +1,10 @@
-ARG KONG_DOCKER_TAG
-FROM ${KONG_DOCKER_TAG}
+FROM kong:2.1.4
 USER root
-RUN apk add bash
-RUN apk add jq
-RUN apk add vim
-RUN apk add git
+
+COPY ./conf/custom-entrypoint.sh /etc/kong/custom-entrypoint.sh
+COPY ./conf/kong.conf /etc/kong/kong.conf
+COPY ./plugins /usr/local/custom/kong/plugins
+
+RUN chmod +x /etc/kong/custom-entrypoint.sh
+
+CMD ["/etc/kong/custom-entrypoint.sh"]
