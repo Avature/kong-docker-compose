@@ -1,6 +1,13 @@
 # Changelog
 
 
+### 0.0.17 (2022-05-04)
+
+  * Change Dockerfile to include plugins
+  * Make dev depends on prod and add liveness and readiness on kong in kubernetes
+  * Move nginx to its own image
+  * Fix create-urls to work from app directory, Fix permission setting, Support sh instead of bash
+
 ### 0.0.16 (2021-12-17)
 
   * Add certificates management to startup service container
