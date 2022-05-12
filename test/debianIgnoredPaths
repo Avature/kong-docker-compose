@@ -18,7 +18,6 @@ nginx/server_hosts/*.conf
 startup/run_tests.sh
 startup/.*
 */__pycache__/*
-CHANGELOG.md
 LICENSE
 buildDebian.sh
 startDev.sh
@@ -61,4 +60,3 @@ kong/conf/custom-entrypoint.sh
 kong/conf/custom-nginx.conf
 kong/conf/kong.conf
 kong/Dockerfile.dev
-kong/Dockerfile

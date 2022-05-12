@@ -12,9 +12,7 @@ services:
   # Kong database preparation
   #######################################
   kong-migrations:
-    image: ghcr.io/avature/kong:2.1.4.03
-    build:
-      context: ./kong
+    image: ghcr.io/avature/kong:2.1.4.04
     command: kong migrations bootstrap
     depends_on:
       - db
@@ -34,9 +32,7 @@ services:
   # Kong migrations runner
   #######################################
   kong-migrations-up:
-    image: ghcr.io/avature/kong:2.1.4.03
-    build:
-      context: ./kong
+    image: ghcr.io/avature/kong:2.1.4.04
     command: kong migrations up
     depends_on:
       - db
@@ -56,9 +52,7 @@ services:
   # Kong service
   #######################################
   kong:
-    image: ghcr.io/avature/kong:2.1.4.03
-    build:
-      context: ./kong
+    image: ghcr.io/avature/kong:2.1.4.04
     user: "root"
     volumes:
       - /var/log/avature/kong/:/home/kong/log/
