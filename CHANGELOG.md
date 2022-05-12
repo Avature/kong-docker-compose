@@ -1,6 +1,10 @@
 # Changelog
 
 
+### 0.0.18 (2022-05-11)
+
+  * [ad773eb4] Update dockerfile to include all the files on /app and build the image
+
 ### 0.0.17 (2022-05-04)
 
   * Change Dockerfile to include plugins
