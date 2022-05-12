@@ -1,9 +1,13 @@
 # Changelog
 
 
+### 0.0.19 (2022-05-11)
+
+  * Use kong image instead of building it locally on the server * Add changelog * Update kong image
+
 ### 0.0.18 (2022-05-11)
 
-  * [ad773eb4] Update dockerfile to include all the files on /app and build the image
+  * Update dockerfile to include all the files on /app and build the image
 
 ### 0.0.17 (2022-05-04)
 

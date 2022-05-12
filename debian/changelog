@@ -1,6 +1,12 @@
+kong-docker-compose (0.0.19) Ubuntu; urgency=medium
+
+  * Use kong image instead of building it locally on the server * Add changelog * Update kong image
+
+ -- Mariano Fresno <mariano.fresno@avature.net>  Wed, 11 May 2022 23:36:58 -0300
+
 kong-docker-compose (0.0.18) Ubuntu; urgency=medium
 
-  * [ad773eb4] Update dockerfile to include all the files on /app and build the image
+  * Update dockerfile to include all the files on /app and build the image
 
  -- Mariano Fresno <mariano.fresno@avature.net>  Wed, 11 May 2022 22:30:09 -0300
 
