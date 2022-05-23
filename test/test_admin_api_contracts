@@ -9,7 +9,21 @@ curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compos
 
 chmod +x /usr/local/bin/docker-compose
 
-echo "Running Contract Tests..."
+echo "Starting Kong Services..."
 
 cd $src_root
-docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.test.yml up
+docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.test.yml up -d
+
+echo "Building Contract Tests..."
+
+cd admin_contract
+
+docker build . -t admin_contract_test
+
+echo "Running Contract Tests..."
+
+docker run admin_contract_test
+
+echo "Stopping Kong Services..."
+
+docker-compose down
