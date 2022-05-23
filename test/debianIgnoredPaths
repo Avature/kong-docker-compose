@@ -60,3 +60,7 @@ kong/conf/custom-entrypoint.sh
 kong/conf/custom-nginx.conf
 kong/conf/kong.conf
 kong/Dockerfile.dev
+admin_contract/Dockerfile
+admin_contract/init.sh
+admin_contract/verify_contract.py
+admin_contract/requirements.txt
