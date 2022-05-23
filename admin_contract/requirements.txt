@@ -1,0 +1,2 @@
+pact-python==1.5.2
+requests
