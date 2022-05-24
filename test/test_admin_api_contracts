@@ -12,7 +12,7 @@ chmod +x /usr/local/bin/docker-compose
 echo "Starting Kong Services..."
 
 cd $src_root
-docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.test.yml up -d
+docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 echo "Building Contract Tests..."
 
@@ -22,7 +22,7 @@ docker build . -t admin_contract_test
 
 echo "Running Contract Tests..."
 
-docker run --net="host" --add-host=admin.kong-server.com:127.0.0.1 -t admin_contract
+docker run --env PACT_BROKER_URL --env PACT_BROKER_USERNAME --env PACT_BROKER_PASSWORD --net="host" --add-host=admin.kong-server.com:127.0.0.1 -t admin_contract
 
 echo "Stopping Kong Services..."
 
