@@ -16,7 +16,7 @@ class TestVerifyContracts(TestCase):
       "broker_username": os.environ.get("PACT_BROKER_USERNAME") or PACT_BROKER_USERNAME,
       "broker_password": os.environ.get("PACT_BROKER_PASSWORD") or PACT_BROKER_PASSWORD,
       "broker_url": os.environ.get("PACT_BROKER_URL") or PACT_BROKER_URL,
-      "publish_version": "0.0.19",
+      "publish_version": os.environ.get("PACT_BROKER_URL") or '',
       "publish_verification_results": True,
     }
 
