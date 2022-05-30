@@ -1,0 +1,22 @@
+#!/bin/bash
+
+src_root="$(dirname "$PWD")"
+
+echo "Installing Docker-Compose"
+
+curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+chmod +x /usr/local/bin/docker-compose
+
+echo "Starting Kong Services..."
+
+cd $src_root
+docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+echo "Running Contract Tests..."
+
+docker run --env PACT_BROKER_URL --env PACT_BROKER_USERNAME --env PACT_BROKER_PASSWORD --net="host" --add-host=admin.kong-server.com:127.0.0.1 ghcr.io/avature/kong-contract-tests:0.0.1
+
+echo "Stopping Kong Services..."
+
+docker-compose down
