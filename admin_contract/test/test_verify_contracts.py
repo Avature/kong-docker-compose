@@ -23,6 +23,7 @@ class TestVerifyContracts(TestCase):
   def setUp(self):
     self.verifier = Verifier(provider="KongDockerCompose", provider_base_url=PROVIDER_URL)
 
+  # TODO: Add a povider state setup endpoint that allows to control Kong's initial state (#747767)
   def test_user_service_provider_against_broker(self):
     success, logs = self.verifier.verify_with_broker(
         **self.__broker_opts(),
@@ -32,11 +33,3 @@ class TestVerifyContracts(TestCase):
         validateSSL=False
     )
     self.assertTrue(success == 0)
-
-  # def test_user_service_provider_against_pact(self):
-  #     output, logs = self.verifier.verify_pacts(
-  #         "../pacts/userserviceclient-userservice.json",
-  #         verbose=False,
-  #         provider_states_setup_url="{}/_pact/provider_states".format(PROVIDER_URL),
-  #     )
-  #     self.assertTrue(output == 0)
