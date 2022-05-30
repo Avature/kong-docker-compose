@@ -183,8 +183,6 @@ services:
   #######################################
   startup:
     image: ghcr.io/avature/kong-startup:0.0.2
-    build:
-      context: ./startup
     networks:
       - kong-net
     volumes:
