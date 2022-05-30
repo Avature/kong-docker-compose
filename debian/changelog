@@ -1,3 +1,11 @@
+kong-docker-compose (0.0.20) Ubuntu; urgency=medium
+
+  * Add contract verification test fir admin API
+  * Fix NGINX to enable stock entrypoint override
+  * Remove build context from kong image service
+
+ -- mariano.fresno <mariano.fresno@avature.net>  Mon, 30 May 2022 18:51:21 -0300
+
 kong-docker-compose (0.0.19) Ubuntu; urgency=medium
 
   * Use kong image instead of building it locally on the server * Add changelog * Update kong image

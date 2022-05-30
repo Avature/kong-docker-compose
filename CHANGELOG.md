@@ -1,6 +1,12 @@
 # Changelog
 
 
+### 0.0.20 (2022-05-30)
+
+  * Add contract verification test fir admin API
+  * Fix NGINX to enable stock entrypoint override
+  * Remove build context from kong image service
+
 ### 0.0.19 (2022-05-11)
 
   * Use kong image instead of building it locally on the server * Add changelog * Update kong image
