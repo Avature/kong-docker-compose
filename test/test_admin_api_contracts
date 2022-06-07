@@ -1,5 +1,13 @@
 #!/bin/bash
 
+healthcheck() {
+  while ! curl --insecure --silent --fail https://admin.kong-server.com:443/metrics; do
+      echo >&2 'Kong down, retrying in 2s...'
+      sleep 2
+  done
+}
+export -f healthcheck
+
 src_root="$(dirname "$PWD")"
 
 echo "Installing Docker-Compose"
@@ -12,6 +20,12 @@ echo "Starting Kong Services..."
 
 cd $src_root
 docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d
+echo "Pulling Contract tests image..."
+docker pull -q ghcr.io/avature/kong-contract-tests:0.0.1
+
+echo "Waiting Kong to be ready for tests..."
+
+timeout 60s bash -c healthcheck
 
 echo "Running Contract Tests..."
 
