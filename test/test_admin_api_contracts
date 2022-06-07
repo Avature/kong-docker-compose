@@ -20,12 +20,10 @@ echo "Starting Kong Services..."
 
 cd $src_root
 docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d
-echo "Pulling Contract tests image..."
-docker pull -q ghcr.io/avature/kong-contract-tests:0.0.1
 
 echo "Waiting Kong to be ready for tests..."
 
-timeout 60s bash -c healthcheck
+timeout 90s bash -c healthcheck
 
 echo "Running Contract Tests..."
 
