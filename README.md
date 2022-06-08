@@ -57,7 +57,7 @@ Install these dependencies:
 3. dh-exec
 
 
-```console
+```bash
 cd kong-docker-compose
 ./buildDebian.sh
 ```
@@ -68,19 +68,19 @@ cd kong-docker-compose
 
 To install the debian package run:
 
-```console
+```bash
 dpkg -i ../kong-docker-compose_X.Y.Z_all.deb
 ```
 
 Then run start or startDev script (according to your needs):
 
-```console
+```bash
 ./{start, startDev}.sh
 ```
 
 After installing, copy the .env.example file:
 
-```console
+```bash
 cp .env.example .env
 ```
 
@@ -97,7 +97,7 @@ ERROR: could not find an available, non-overlapping IPv4 address pool among the 
 
 Issue the following *container-destructive* commands:
 
-```
+```bash
 yes | docker network prune
 yes | docker system prune
 sudo ip link delete tun0
@@ -113,7 +113,7 @@ Can't open certs/server-ca-key.key for reading, No such file or directory
 
 You can run the createDevCerts.sh script with sudo:
 
-```
+```bash
 sudo ./createDevCerts.sh -ssl
 ```
 
@@ -149,6 +149,16 @@ Is a string used to describe the client that will be added as a consumer for Kon
 The certificates can be signed off by the mtls certs manager kong plugin via instances/register API endpoint.
 
 For more details about client auth workflow [click here](CLIENT_AUTH.md)
+
+# Running The Tests:
+
+For contract tests run this command:
+
+```bash
+cd test && PACT_BROKER_URL=https://pact-broker.yourserver.com ./test_admin_api_contracts
+```
+
+Repleace the environment variable with your pact-broker deployment.
 
 # Contribuiting:
 
