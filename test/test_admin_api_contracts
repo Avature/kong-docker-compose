@@ -27,7 +27,7 @@ timeout 90s bash -c healthcheck
 
 echo "Running Contract Tests..."
 
-docker run --env PACKAGE_VERSION --env PACT_BROKER_URL --env PACT_BROKER_USERNAME --env PACT_BROKER_PASSWORD --net="host" --add-host=admin.kong-server.com:127.0.0.1 ghcr.io/avature/kong-contract-tests:0.0.1
+docker run --env PACKAGE_VERSION --env PACT_BROKER_URL --env PACT_BROKER_USERNAME --env PACT_BROKER_PASSWORD --net="host" --add-host=admin.kong-server.com:127.0.0.1 ghcr.io/avature/kong-contract-tests:0.0.2
 
 echo "Stopping Kong Services..."
 

@@ -3,7 +3,7 @@ FROM python:3.7-slim
 WORKDIR /app
 
 COPY init.sh /app
-COPY test/* /app/test/
+COPY . /app/
 COPY requirements.txt /app
 
 RUN apt update && apt install -y curl iputils-ping

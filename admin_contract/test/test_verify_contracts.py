@@ -1,6 +1,7 @@
 from unittest import TestCase
 from pact import Verifier
 import os
+import requests
 
 PACT_BROKER_URL = "http://localhost:9292"
 PACT_BROKER_USERNAME = "pactbroker"
@@ -22,6 +23,10 @@ class TestVerifyContracts(TestCase):
 
   def setUp(self):
     self.verifier = Verifier(provider="KongDockerCompose", provider_base_url=PROVIDER_URL)
+
+  def test_state_endpoint(self):
+    response_from_state_endpoint = requests.get('http://localhost:9281/alive')
+    self.assertEqual(b'It\'s Alive!', response_from_state_endpoint.content)
 
   # TODO: Add a povider state setup endpoint that allows to control Kong's initial state (#747767)
   def test_user_service_provider_against_broker(self):
