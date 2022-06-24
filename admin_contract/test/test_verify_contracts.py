@@ -11,6 +11,8 @@ PROVIDER_HOST = "admin.kong-server.com"
 PROVIDER_PORT = 443
 PROVIDER_URL = f"https://{PROVIDER_HOST}:{PROVIDER_PORT}"
 
+PROVIDER_STATE_ENDPOINT="http://localhost:9281"
+
 class TestVerifyContracts(TestCase):
   def __broker_opts(self):
     return {
@@ -25,7 +27,7 @@ class TestVerifyContracts(TestCase):
     self.verifier = Verifier(provider="KongDockerCompose", provider_base_url=PROVIDER_URL)
 
   def test_state_endpoint(self):
-    response_from_state_endpoint = requests.get('http://localhost:9281/alive')
+    response_from_state_endpoint = requests.get(f"{PROVIDER_STATE_ENDPOINT}/alive")
     self.assertEqual(b'It\'s Alive!', response_from_state_endpoint.content)
 
   # TODO: Add a povider state setup endpoint that allows to control Kong's initial state (#747767)
@@ -33,7 +35,7 @@ class TestVerifyContracts(TestCase):
     success, logs = self.verifier.verify_with_broker(
         **self.__broker_opts(),
         verbose=True,
-        # provider_states_setup_url=f"{PROVIDER_URL}/_pact/provider_states",
+        provider_states_setup_url=f"{PROVIDER_STATE_ENDPOINT}/provider_states",
         enable_pending=False,
         validateSSL=False
     )
