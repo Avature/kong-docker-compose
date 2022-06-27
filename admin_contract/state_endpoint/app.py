@@ -1,5 +1,5 @@
 from flask import Flask, request
-from state_map import StateMap
+from state_processor import StateProcessor
 
 app = Flask(__name__)
 
@@ -10,9 +10,8 @@ def provider_state_is_alive():
 @app.route('/provider_states', methods=['POST'])
 def set_provider_state():
   state_data = request.json
-  map = StateMap()
-  live_state = map.get(state_data['state'])
-  live_state.apply()
+  state_processor = StateProcessor()
+  state_processor.process(state_data['state'])
   return 'Setting state'
 
 if __name__ == "__main__":
