@@ -1,13 +1,5 @@
 #!/bin/bash
 
-healthcheck() {
-  while ! curl --insecure --silent --fail https://admin.kong-server.com:443/metrics; do
-      echo >&2 'Kong down, retrying in 2s...'
-      sleep 2
-  done
-}
-export -f healthcheck
-
 src_root="$(dirname "$PWD")"
 
 echo "Installing Docker-Compose"
@@ -19,15 +11,11 @@ chmod +x /usr/local/bin/docker-compose
 echo "Starting Kong Services..."
 
 cd $src_root
-docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d
-
-echo "Waiting Kong to be ready for tests..."
-
-timeout 90s bash -c healthcheck
+docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml -f admin_contract/docker-compose.contract.yml up -d
 
 echo "Running Contract Tests..."
 
-docker run --env PACKAGE_VERSION --env PACT_BROKER_URL --env PACT_BROKER_USERNAME --env PACT_BROKER_PASSWORD --net="host" --add-host=admin.kong-server.com:127.0.0.1 ghcr.io/avature/kong-contract-tests:0.0.2
+docker run --env PACKAGE_VERSION --env PACT_BROKER_URL --env PACT_BROKER_USERNAME --env PACT_BROKER_PASSWORD --net="host" --add-host=admin.kong-server.com:127.0.0.1 --add-host=kong-direct-admin:127.0.0.1 ghcr.io/avature/kong-contract-tests:0.0.2
 
 echo "Stopping Kong Services..."
 

@@ -12,7 +12,7 @@ def set_provider_state():
   state_data = request.json
   map = StateMap()
   live_state = map.get(state_data['state'])
-  live_state.run()
+  live_state.apply()
   return 'Setting state'
 
 if __name__ == "__main__":

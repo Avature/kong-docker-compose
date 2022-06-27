@@ -1,7 +1,7 @@
 import requests
 
 class DeleteInstance:
-  def run(self):
+  def apply(self):
     print("Deleting instance")
-    result = requests.get('http://kong:8001')
+    result = requests.delete('http://kong-direct-admin:8001/consumers/devapp-sb0.local')
     print(result)

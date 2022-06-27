@@ -1,0 +1,6 @@
+version: '3.1'
+
+services:
+  kong:
+    ports:
+      - "127.0.0.1:8001:8001"

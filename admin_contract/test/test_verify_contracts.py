@@ -30,7 +30,6 @@ class TestVerifyContracts(TestCase):
     response_from_state_endpoint = requests.get(f"{PROVIDER_STATE_ENDPOINT}/alive")
     self.assertEqual(b'It\'s Alive!', response_from_state_endpoint.content)
 
-  # TODO: Add a povider state setup endpoint that allows to control Kong's initial state (#747767)
   def test_user_service_provider_against_broker(self):
     success, logs = self.verifier.verify_with_broker(
         **self.__broker_opts(),
