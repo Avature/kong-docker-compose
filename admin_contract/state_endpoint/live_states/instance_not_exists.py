@@ -1,4 +1,3 @@
-import requests
 from .base_state import BaseState
 
 class InstanceNotExists(BaseState):
