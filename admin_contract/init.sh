@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exit_code = 0
+exit_code=0
 
 healthcheck() {
   while ! curl --insecure --silent --fail https://admin.kong-server.com:443/metrics; do
