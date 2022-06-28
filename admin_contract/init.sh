@@ -15,8 +15,11 @@ echo "Waiting Kong to be ready for tests..."
 
 timeout 90s bash -c healthcheck
 
-echo "Running Contract Tests..."
-
-python3 -m unittest
+if [ $? -ne 124 ]; then
+  echo "Waiting for Kong has timed out"
+else
+  echo "Running Contract Tests..."
+  python3 -m unittest
+fi
 
 kill "$background_flask_pid"

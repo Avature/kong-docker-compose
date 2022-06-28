@@ -2,7 +2,7 @@ from .base_state import BaseState
 
 class ServerIsAvailable(BaseState):
   def apply(self):
-    print("Asserting the all the admin endpoints are available")
+    print("Asserting that all the admin endpoints are available")
     self._assert_url_responds_ok(ServerIsAvailable.DIRECT_ADMIN_HOST)
     self._assert_url_responds_ok('https://admin.kong-server.com/metrics')
     self._assert_url_responds_ok('https://admin.kong-server.com/instance/register', 'POST', 401)
