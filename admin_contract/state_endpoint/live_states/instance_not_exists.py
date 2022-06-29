@@ -1,10 +1,11 @@
+import re
 from .base_state import BaseState
 
 class InstanceNotExists(BaseState):
-  CONSUMER_NAME = 'devapp-sb0.local'
-
   def apply(self):
-    self._make_sure_consumer_not_exists(InstanceNotExists.CONSUMER_NAME)
+    self._make_sure_consumer_not_exists(
+      self._get_instance_name()
+    )
 
   def _make_sure_consumer_not_exists(self, consumer_name):
     consumer_response = self.requests.get(f"{InstanceNotExists.DIRECT_ADMIN_HOST}/consumers/{consumer_name}")
@@ -15,3 +16,7 @@ class InstanceNotExists(BaseState):
     response_deleting = self.requests.delete(f"{InstanceNotExists.DIRECT_ADMIN_HOST}/consumers/{consumer_name}")
     if response_deleting.status_code != 204:
       raise Exception(f"Error deleting the instance {consumer_name}")
+
+  def _get_instance_name(self):
+    regex_search = re.search("doesn\\'t\shave\s(.+)\sconsumer registered", self.state_statement)
+    return regex_search[1]

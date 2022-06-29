@@ -9,6 +9,7 @@ class ServerIsAvailable(BaseState):
     self._assert_url_responds_ok('https://admin.kong-server.com/instance/renew', 'POST', 401)
 
   def _assert_url_responds_ok(self, url, http_verb = 'GET', expected_state = 200):
+    print(f"Asserting that {url} with {http_verb} responds {expected_state}...")
     response = self.requests.request(http_verb, url, verify = False)
     if response.status_code != expected_state:
       print(f"The admin endpoint URL {url} is not available")
