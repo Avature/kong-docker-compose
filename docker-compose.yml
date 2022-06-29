@@ -94,9 +94,10 @@ services:
       POSTGRES_USER: ${KONG_PG_USER}
     healthcheck:
       test: ["CMD", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
-      interval: 30s
-      timeout: 30s
+      interval: 5s
+      timeout: 5s
       retries: 3
+      start_period: 80s
     restart: on-failure
     stdin_open: true
     tty: true
@@ -174,6 +175,7 @@ services:
     depends_on:
       - kong
       - konga
+      - db
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
@@ -194,6 +196,7 @@ services:
     command: /app/init.sh
     depends_on:
       - kong
+      - db
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"

@@ -8,9 +8,10 @@ curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compos
 
 chmod +x /usr/local/bin/docker-compose
 
-echo "Starting Kong Services..."
-
 cd $src_root
+echo "Pre-heating the DB to be available on all services"
+timeout 20s docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml -f admin_contract/docker-compose.contract.yml up db
+echo "Starting Kong Services..."
 docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml -f admin_contract/docker-compose.contract.yml up -d
 
 echo "Running Contract Tests..."
