@@ -3,16 +3,19 @@
 exit_code=0
 
 healthcheck() {
-  while ! curl --insecure --silent --fail https://admin.kong-server.com:443/metrics; do
-      echo >&2 'Kong down, retrying in 2s...'
-      sleep 2
+  until [ \
+    "$(curl -H "Content-Type: application/json" --insecure -s -w '%{http_code}' -d '{"csr":"", "instance":{"name":"", "description":""}}' -o /dev/null "https://admin.kong-server.com:443/instances/register")" \
+    -eq 400 ]
+  do
+    echo >&2 'Kong down, retrying in 3s...'
+    sleep 3
   done
 }
 export -f healthcheck
 
 echo "Waiting Kong to be ready for tests..."
 
-timeout 90s bash -c healthcheck
+timeout 180s bash -c healthcheck
 
 if [[ $? -eq 124 ]]; then
   echo "Waiting for Kong has timed out"
