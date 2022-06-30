@@ -10,7 +10,7 @@ chmod +x /usr/local/bin/docker-compose
 
 cd $src_root
 echo "Pre-heating the DB to be available on all services"
-timeout 40s docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml -f admin_contract/docker-compose.contract.yml up kong-migrations kong-migrations-up
+timeout 40s docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml -f admin_contract/docker-compose.contract.yml up db kong-migrations kong-migrations-up
 echo "Starting Kong Services..."
 docker-compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml -f admin_contract/docker-compose.contract.yml up -d
 
