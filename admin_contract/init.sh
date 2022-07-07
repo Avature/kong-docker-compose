@@ -15,7 +15,7 @@ export -f healthcheck
 
 echo "Waiting Kong to be ready for tests..."
 
-timeout 180s bash -c healthcheck
+timeout 300s bash -c healthcheck
 
 if [[ $? -eq 124 ]]; then
   echo "Waiting for Kong has timed out"
