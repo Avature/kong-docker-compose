@@ -162,7 +162,7 @@ services:
   # NGINX: Webserver
   #######################################
   nginx:
-    image: ghcr.io/avature/kong-nginx:0.0.4
+    image: ghcr.io/avature/kong-nginx:0.0.5
     networks:
       - kong-net
     volumes:
