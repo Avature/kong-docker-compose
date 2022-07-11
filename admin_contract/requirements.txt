@@ -1,2 +1,5 @@
 pact-python==1.5.2
 requests
+urllib3==1.26.9
+chardet==3.0.4
+Flask
