@@ -7,6 +7,7 @@ RUN apk add bash
 COPY ./admin.conf /etc/nginx/conf.d/admin.conf
 COPY ./gateway.conf /etc/nginx/conf.d/gateway.conf
 COPY ./konga.conf /etc/nginx/conf.d/konga.conf
+COPY ./20-custom-configs.conf /etc/nginx/conf.d/20-custom-configs.conf
 
 COPY ./server_hosts/create-urls.sh /app/create-urls.sh
 COPY ./server_hosts/admin-url.conf.template /app/admin-url.conf.template
