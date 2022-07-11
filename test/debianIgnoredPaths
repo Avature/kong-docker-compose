@@ -64,3 +64,5 @@ admin_contract/Dockerfile
 admin_contract/init.sh
 admin_contract/verify_contract.py
 admin_contract/requirements.txt
+nginx/build-and-push.sh
+nginx/20-custom-configs.conf
