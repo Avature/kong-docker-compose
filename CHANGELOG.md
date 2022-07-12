@@ -1,6 +1,11 @@
 # Changelog
 
 
+### 0.0.21 (2022-07-12)
+
+  * Fix long URL bug.
+  * Add state endpoint for Pact testing.
+
 ### 0.0.20 (2022-05-30)
 
   * Add contract verification test fir admin API
