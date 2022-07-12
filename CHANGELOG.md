@@ -3,6 +3,10 @@
 
 ### 0.0.21 (2022-07-12)
 
+  * [4104cbe1] Fix regex for version parsing on jenkins
+
+### 0.0.21 (2022-07-12)
+
   * Fix long URL bug.
   * Add state endpoint for Pact testing.
 
