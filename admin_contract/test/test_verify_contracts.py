@@ -18,10 +18,10 @@ class TestVerifyContracts(TestCase):
   def setUp(self):
     self.verifier = Verifier(provider="KongDockerCompose", provider_base_url=PROVIDER_URL)
     package_version = (os.environ.get("PACKAGE_VERSION") or '_empty_version_~_empty_branch_-_empty_commit_')
-    package_version_parts = re.search('([0-9\.]+)~([a-zA-Z0-9_\-]+)-([a-z0-9]+)', package_version)
-    self.version = package_version_parts[1]
-    self.branch_name = package_version_parts[2]
-    self.commit_sha1 = package_version_parts[3]
+    package_version_parts = re.search('([0-9\.]+)(~([a-zA-Z0-9_\-]+)-([a-z0-9]+))?', package_version)
+    self.version = package_version_parts[1] or '_empty_version_'
+    self.branch_name = package_version_parts[2] or '_empty_branch_'
+    self.commit_sha1 = package_version_parts[3] or '_empty_commit_'
     print(f"Identified provider | version: {self.version}, branch: {self.branch_name}, commit: {self.commit_sha1}")
 
   def __broker_opts(self):
