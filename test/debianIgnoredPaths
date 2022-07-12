@@ -101,3 +101,5 @@ nginx/admin.conf
 nginx/entrypoint.sh
 nginx/konga.conf
 stop.sh
+nginx/build-and-push.sh
+nginx/20-custom-configs.conf
