@@ -1,15 +1,6 @@
 # Changelog
 
 
-### 0.0.21 (2022-07-12)
-
-  * [4104cbe1] Fix regex for version parsing on jenkins
-
-### 0.0.21 (2022-07-12)
-
-  * Fix long URL bug.
-  * Add state endpoint for Pact testing.
-
 ### 0.0.20 (2022-05-30)
 
   * Add contract verification test fir admin API
@@ -38,7 +29,7 @@
 
 ### 0.0.15 (2021-12-06)
 
-  * Add server_name matching the header used on our client for upstream/loadbalancing 
+  * Add server_name matching the header used on our client for upstream/loadbalancing
   * Add Avature's url to kong docker image registry
 
 ### 0.0.14 (2021-07-16)
@@ -48,7 +39,7 @@
 ### 0.0.13 (2021-06-25)
 
   * Add startup admin user
-  
+
 ### 0.0.12 (2021-05-26)
 
   * Add tests to SSL certificates creational scripts

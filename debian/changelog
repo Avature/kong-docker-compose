@@ -1,16 +1,3 @@
-kong-docker-compose (0.0.21) Ubuntu; urgency=medium
-
-  * [4104cbe1] Fix regex for version parsing on jenkins
-
- -- Nicolas Vega <nicolas.vega@avature.net>  Tue, 12 Jul 2022 17:50:16 -0300
-
-kong-docker-compose (0.0.21) Ubuntu; urgency=medium
-
-  * Fix long URL bug.
-  * Add state endpoint for Pact testing.
-
- -- Nicolas Vega <nicolas.vega@avature.net>  Tue, 12 Jul 2022 17:14:51 -0300
-
 kong-docker-compose (0.0.20) Ubuntu; urgency=medium
 
   * Add contract verification test fir admin API
@@ -49,7 +36,7 @@ kong-docker-compose (0.0.16) Ubuntu; urgency=medium
 
 kong-docker-compose (0.0.15) Ubuntu; urgency=medium
 
-  * Add server_name matching the header used on our client for upstream/loadbalancing 
+  * Add server_name matching the header used on our client for upstream/loadbalancing
   * Add Avature's url to kong docker image registry
 
  -- Juan Cruz Vincenti <juan@02078-jvincenti>  Mon, 06 Dec 2021 13:46:09 -0300
@@ -63,7 +50,7 @@ kong-docker-compose (0.0.14) Ubuntu; urgency=medium
 kong-docker-compose (0.0.13) Ubuntu; urgency=medium
 
   * Add startup admin user
-  
+
  -- Juan Cruz Vincenti <juan@02078-jvincenti>  Fri, 25 Jun 2021 17:00:57 -0300
 
 kong-docker-compose (0.0.12) Ubuntu; urgency=medium
