@@ -3,6 +3,7 @@ from unittest import TestCase
 from pact import Verifier
 import os
 import requests
+from .package_version_parser import PackageVersionParser
 
 PACT_BROKER_URL = "http://localhost:9292"
 PACT_BROKER_USERNAME = "pactbroker"
@@ -17,11 +18,10 @@ PROVIDER_STATE_ENDPOINT="http://localhost:9281"
 class TestVerifyContracts(TestCase):
   def setUp(self):
     self.verifier = Verifier(provider="KongDockerCompose", provider_base_url=PROVIDER_URL)
-    package_version = (os.environ.get("PACKAGE_VERSION") or '_empty_version_~_empty_branch_-_empty_commit_')
-    package_version_parts = re.search('([0-9\.]+)(~([a-zA-Z0-9_\-]+)-([a-z0-9]+))?', package_version)
-    self.version = package_version_parts[1] or '_empty_version_'
-    self.branch_name = package_version_parts[2] or '_empty_branch_'
-    self.commit_sha1 = package_version_parts[3] or '_empty_commit_'
+    parsed_version_info = PackageVersionParser().parse(os.environ.get("PACKAGE_VERSION"))
+    self.version = parsed_version_info['version']
+    self.branch_name = parsed_version_info['branch_name']
+    self.commit_sha1 = parsed_version_info['commit_sha1']
     print(f"Identified provider | version: {self.version}, branch: {self.branch_name}, commit: {self.commit_sha1}")
 
   def __broker_opts(self):

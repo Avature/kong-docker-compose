@@ -10,6 +10,5 @@ RUN pip install -r requirements.txt
 COPY init.sh /app
 COPY . /app/
 
-
 ENTRYPOINT ["/bin/sh", "-c"]
 CMD ["/app/init.sh"]
