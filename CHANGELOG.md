@@ -1,6 +1,10 @@
 # Changelog
 
 
+### 0.1.2 (2022-07-18)
+
+  * Add timeout much longer
+
 ### 0.1.1 (2022-07-18)
 
   * Remove start_period

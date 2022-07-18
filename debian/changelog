@@ -1,3 +1,9 @@
+kong-docker-compose (0.1.2) Ubuntu; urgency=medium
+
+  * Add timeout much longer
+
+ -- mariano.fresno <mariano.fresno@avature.net>  Mon, 18 Jul 2022 13:02:31 -0300
+
 kong-docker-compose (0.1.1) Ubuntu; urgency=medium
 
   * Remove start_period
