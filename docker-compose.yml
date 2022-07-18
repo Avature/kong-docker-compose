@@ -97,6 +97,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
+      start_period: 80s
     restart: on-failure
     stdin_open: true
     tty: true
