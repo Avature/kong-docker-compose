@@ -1,6 +1,10 @@
 # Changelog
 
 
+### 0.1.1 (2022-07-18)
+
+  * Remove start_period
+
 ### 0.0.21 (2022-07-12)
 
   * Fix long URL bug.
