@@ -15,4 +15,4 @@ echo "---- ---- ---- ---- konga-prepare complete ---- ---- ---- ----"
 echo "---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- "
 rm /check/finished-konga.txt
 
-/docker-entrypoint.sh $@
+/app/start.sh

@@ -13,42 +13,12 @@ services:
   #######################################
   kong-migrations:
     image: ghcr.io/avature/kong:2.1.4.04
-    #image: kong:latest
     volumes:
       - ./check/:/check/
-    #command: /check/wait-for-postgres.sh && kong migrations bootstrap && kong migrations up && kong migrations finish
     command: /check/make-kong-migrations.sh
-    container_name: kong-migrations
-    #command: kong migrations bootstrap && kong migrations up && kong migrations finish
     depends_on:
       db:
         condition: service_healthy
-    links:
-      - db:db
-
-    # Hay que probar este test.
-    # poner este healtcheck implica NO poner la ejecución del Dockerfile de kong modificado en el que
-    # invocamos al custom entry point con el que verificamos si el check/finished.txt existe.
-    # Ahora lo hace el healtcheck. 
-    #
-    # No parece que podamos hacer el healtcheck aqui ya que no es un container como tal que queda 
-    # encendido. Al terminar la operación de migración, termina con exit 0 por lo que no podemos usarlo.
-    # Pero si podemos dejar constancia en disco de que ha terminado. Pero para esto kong, debe verificar
-    # la existencia de este archivo en disco desde el custom entry point y por tanto debemos modificar 
-    # el dockerfile de kong.
-    #
-    # Del mismo modo, de konga a no ser que encontremos otro modo. command:??
-    #
-    # healthcheck:
-    #   #test: ["CMD", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
-    #   #test: ["CMD-SHELL", "pg_isready"]
-    #   #test: ["CMD-SHELL", "if [ ${KONG_PG_MIGRATION_STATUS} -eq 0 ]; then echo 0; return 0; fi;" ] 
-    #   #test: ["CMD-SHELL", "if [ -f /check/finished.txt ]; then echo 1; return 1; fi;" ] 
-    #   test: ["CMD-SHELL", "/check/test.sh || exit 1"]
-    #   interval: 1s
-    #   timeout: 1s
-    #   #start_period: 10s
-    #   retries: 10
     environment:
       KONG_DATABASE: postgres
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
@@ -56,6 +26,8 @@ services:
       KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
       KONG_PG_USER: ${KONG_PG_USER}
       KONG_PG_PORT: ${KONG_PG_PORT:-5432}
+    links:
+      - db:db
     networks:
       - kong-net
     restart: on-failure
@@ -64,8 +36,6 @@ services:
   #######################################
   kong:
     #image: ghcr.io/avature/kong:2.1.4.04
-    #image: kong:latest
-    
     build: 
       context: ./kong
       dockerfile: Dockerfile
@@ -74,21 +44,9 @@ services:
       - ./check/:/check/
       - /var/log/avature/kong/:/home/kong/log/
       - ./certs/:/home/kong/certs/
-    #command: /check/wait-for-migrations.sh
     depends_on:
       db:
         condition: service_healthy
-      # kong-migrations:
-      #   condition: service_healthy
-    links:
-      - db:db
-      #- kong-migrations:kong-migrations
-    healthcheck:
-      test: ["CMD", "kong", "health"]
-      interval: 10s
-      timeout: 10s
-      #start_period: 30s
-      retries: 10
     environment:
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ERROR_LOG: /dev/stderr
@@ -107,8 +65,12 @@ services:
     expose:
       - "8000"
       - "8001"
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 99999999
     restart: on-failure
-    #unless-stopped
   #######################################
   # PostgreSQL database
   #######################################
@@ -119,47 +81,27 @@ services:
       POSTGRES_PASSWORD: ${KONG_PG_PASSWORD}
       POSTGRES_USER: ${KONG_PG_USER}
     healthcheck:
-      #test: ["CMD", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
-      #test: ["CMD", "pg_isready", "-U", "${KONG_PG_DATABASE}"]
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
       interval: 10s
       timeout: 20s
       retries: 7
-    restart: always
+    restart: on-failure
     stdin_open: true
     tty: true
     networks:
       - kong-net
     volumes:
       - kong_data:/var/lib/postgresql/data
-  
-  # Hemos de crear la misma estrategia para konga-prepare que para el migrations.
-  # implica crear un wait-for-postgres-konga-prepare.sh que deje constancia en disco
-  # que ha terminado para poder ejecutar konga.
   #######################################
   # Konga database prepare
   #######################################
   konga-prepare:
     image: pantsel/konga:next
+    entrypoint: /check/make-konga-prepare.sh
     volumes:
       - ./check/:/check/
-    # No podemos usar command porque nos da Invalid command. 
-    # Ignoro la razón real todavía de porque no podemos usar un bash script aqui ...
-    #command: -c prepare -a postgres -u postgresql://${KONG_PG_USER}:${KONG_PG_PASSWORD}@db:5432/konga_db
-    entrypoint: /check/make-konga-prepare.sh
     networks:
       - kong-net
-    depends_on:
-      db:
-        condition: service_healthy
-      # kong-migrations:
-      #   condition: service_healthy
-      # kong:
-      #   condition: service_healthy
-    links:
-      - db:db
-      #- kong-migrations:kong-migrations
-      #- kong:kong
     environment:
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
       KONG_PG_HOST: ${KONG_PG_HOST:-db}
@@ -167,25 +109,18 @@ services:
       KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
       KONG_PG_USER: ${KONG_PG_USER}
       KONG_DATABASE: postgres
-    # healthcheck:
-    #   #test: ["CMD", "pg_isready", "-U", "kong"]
-    #   #test: ["CMD", "kong", "health"]
-    #   #test: ["CMD", "/check/wait-for-postgres.sh", "db", "python", "app.py"]
-    #   #test: ["CMD-SHELL", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
-    #   #test: ["CMD", "/check/wait-for-postgres.sh", "db", "python", "app.py"]
-    #   #test: ["CMD-SHELL", "pg_isready"]
-    #   interval: 10s
-    #   timeout: 20s
-    #   start_period: 20s
-    #   retries: 7
     restart: on-failure
-    
+    links:
+      - db:db
+    depends_on:
+      db:
+        condition: service_healthy
   #######################################
   # Konga: Kong GUI
   #######################################
   konga:
     image: pantsel/konga:next
-    restart: on-failure
+    restart: always
     networks:
       - kong-net
     volumes:
@@ -193,28 +128,6 @@ services:
       - ./konga/kong_node.data:/run/kong_node.data:ro
       - ./konga/kong_production.data:/run/kong_production.data:ro
     entrypoint: /check/wait-for-konga-prepare.sh
-    depends_on:
-      db:
-        condition: service_healthy
-      # kong:
-      #   condition: service_healthy
-      # konga-prepare:
-      #   condition: service_healthy
-    links:
-      - db:db
-      #- kong:kong
-      #- konga-prepare:konga-prepare
-    # healthcheck:
-    #   #test: ["CMD-SHELL", "/check/wait-for-postgres.sh", "db", "python", "app.py"]
-    #   #test: ["CMD", "pg_isready", "-U", "kong"]
-    #   #test: ["CMD", "/check/wait-for-postgres.sh", "db", "python", "app.py"]
-    #   #test: ["CMD-SHELL", "pg_isready"]
-    #   test: ["CMD-SHELL", "curl -f http://127.0.0.1:1337 || exit 1"]
-    #   #test: ["CMD-SHELL", "pg_isready -U kong-db-user"]
-    #   interval: 10s
-    #   timeout: 20s
-    #   #start_period: 30s
-    #   retries: 7
     environment:
       KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /run/kong_node.data
       KONGA_SEED_USER_DATA_SOURCE_FILE: /run/kong_production.data
@@ -238,12 +151,15 @@ services:
       DB_PORT: ${KONG_PG_PORT:-5432}
       DB_USER: ${KONG_PG_USER}
       DB_PASSWORD: ${KONG_PG_PASSWORD}
+      DB_URI: postgresql://$KONG_PG_USER:$KONG_PG_PASSWORD@db:5432/konga_db
       TOKEN_SECRET: km1GUr4RkcQD7DewhJPNXrCuZwcKmqjb
       DB_DATABASE: konga_db
       NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
-      - "127.0.0.1:1337:1337"
-
+      - "1337:1337"
   #######################################
   # NGINX: Webserver
   #######################################
@@ -262,14 +178,6 @@ services:
         condition: service_healthy
       kong:
         condition: service_healthy
-      # konga-prepare:
-      #   condition: service_healthy
-      # konga:
-      #   condition: service_healthy
-    links:
-      - db:db
-      - kong:kong
-      #- konga:konga
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
@@ -291,24 +199,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      # kong-migrations:
-      #   condition: service_healthy
       kong:
         condition: service_healthy
-    links:
-      - db:db
-      - kong:kong
-    # healthcheck:
-    #   #test: ["CMD-SHELL", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
-    #   #test: ["CMD-SHELL", "/check/wait-for-postgres.sh", "db", "python", "app.py"]
-    #   #test: ["CMD", "pg_isready", "-U", "kong"]
-    #   #test: ["CMD", "/check/wait-for-postgres.sh", "db", "python", "app.py"]
-    #   #test: ["CMD-SHELL", "pg_isready"]
-    #   test: ["CMD", "kong", "health"]
-    #   interval: 10s
-    #   timeout: 10s
-    #   #start_period: 30s
-    #   retries: 10
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
