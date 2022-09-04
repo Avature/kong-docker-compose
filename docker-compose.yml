@@ -35,13 +35,12 @@ services:
   # Kong service
   #######################################
   kong:
-    #image: ghcr.io/avature/kong:2.1.4.04
-    build: 
-      context: ./kong
-      dockerfile: Dockerfile
+    image: ghcr.io/avature/kong:2.1.4.04
+    entrypoint: /conf/custom-entrypoint.sh
     user: "root"
     volumes:
       - ./check/:/check/
+      - ./kong/conf/:/conf/
       - /var/log/avature/kong/:/home/kong/log/
       - ./certs/:/home/kong/certs/
     depends_on:
@@ -205,3 +204,5 @@ services:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
       CREATE_SSL_CERTS: "false"
+      KONG_PG_HOST: ${KONG_PG_HOST:-db}
+      KONG_PG_PORT: ${KONG_PG_PORT:-5432}

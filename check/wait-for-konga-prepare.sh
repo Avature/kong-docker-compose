@@ -4,15 +4,12 @@
 set -e
 
 echo "---- ---- ---- ---- wait-for-konga-prepare - starting ---- ---- ---- ---- ---- ---- "
-while [ ! -f /check/finished-konga.txt ] 
+while [ ! -f /check/finished-konga ] 
 do
   echo "---- ---- ---- ---- wait-for-konga-prepare - sleep 1 ---- ---- ---- ---- ---- ---- "
   sleep 1
 done
-
-echo "---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- "
 echo "---- ---- ---- ---- konga-prepare complete ---- ---- ---- ----"
-echo "---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- "
-rm /check/finished-konga.txt
+rm /check/finished-konga
 
 /app/start.sh
