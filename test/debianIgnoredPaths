@@ -103,3 +103,8 @@ nginx/konga.conf
 stop.sh
 nginx/build-and-push.sh
 nginx/20-custom-configs.conf
+check/wait-for-konga-prepare.sh
+check/wait-for-postgres.sh
+check/make-konga-prepare.sh
+check/wait-for-migrations.sh
+check/make-kong-migrations.sh
