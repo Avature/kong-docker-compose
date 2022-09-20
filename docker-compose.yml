@@ -13,9 +13,28 @@ services:
   #######################################
   kong-migrations:
     image: ghcr.io/avature/kong:2.1.4.04
-    volumes:
-      - ./check/:/check/
-    command: /check/make-kong-migrations.sh
+    command: kong migrations bootstrap
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_DATABASE: ${KONG_PG_DATABASE}
+      KONG_PG_HOST: ${KONG_PG_HOST:-db}
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
+      KONG_PG_USER: ${KONG_PG_USER}
+      KONG_PG_PORT: ${KONG_PG_PORT:-5432}
+    links:
+      - db:db
+    networks:
+      - kong-net
+    restart: on-failure
+  #######################################
+  # Kong migrations runner
+  #######################################
+  kong-migrations-up:
+    image: ghcr.io/avature/kong:2.1.4.04
+    command: kong migrations up
     depends_on:
       db:
         condition: service_healthy
@@ -36,11 +55,8 @@ services:
   #######################################
   kong:
     image: ghcr.io/avature/kong:2.1.4.04
-    entrypoint: /conf/custom-entrypoint.sh
     user: "root"
     volumes:
-      - ./check/:/check/
-      - ./kong/conf/:/conf/
       - /var/log/avature/kong/:/home/kong/log/
       - ./certs/:/home/kong/certs/
     depends_on:
