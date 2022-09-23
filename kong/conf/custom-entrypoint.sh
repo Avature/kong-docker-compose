@@ -1,6 +1,7 @@
 #!/bin/bash
-#/check/wait-for-migrations.sh
-/check/wait-for-postgres.sh
+
+/wait-for-postgres.sh $KONG_PG_HOST $KONG_PG_PORT
 
 chown kong:nogroup /home/kong/certs
-/docker-entrypoint.sh kong docker-start
+
+/docker-entrypoint.sh "$@"

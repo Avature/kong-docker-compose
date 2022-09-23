@@ -2,6 +2,8 @@ import requests
 import json
 import logging
 from config import Config
+import sys
+import time
 
 admin_base_url = 'http://kong:8001'
 
@@ -72,8 +74,14 @@ class Fixture:
     return response
 
   def run(self):
-    self.create_admin_service()
-    self.create_admin_route()
-    self.create_register_instance_route()
-    self.create_renew_instance_route()
-    self.add_plugins()
+    try:
+      print("Creating Kong Fixture")
+      self.create_admin_service()
+      self.create_admin_route()
+      self.create_register_instance_route()
+      self.create_renew_instance_route()
+      self.add_plugins()
+    except requests.exceptions.ConnectionError:
+      print("Failed connecting to kong. Retrying in 1 seconds...")
+      time.sleep(1)
+      self.run()
