@@ -75,12 +75,13 @@ class Fixture:
 
   def run(self):
     try:
-      print("Creating Kong Fixture")
+      print("Creating Kong Fixture...")
       self.create_admin_service()
       self.create_admin_route()
       self.create_register_instance_route()
       self.create_renew_instance_route()
       self.add_plugins()
+      print("Fixture created OK.")
     except requests.exceptions.ConnectionError:
       print("Failed connecting to kong. Retrying in 1 seconds...")
       time.sleep(1)

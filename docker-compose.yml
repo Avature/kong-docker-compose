@@ -133,7 +133,7 @@ services:
   #######################################
   konga:
     image: ghcr.io/avature/konga:0.14.9.01
-    restart: always
+    restart: on-failure
     networks:
       - kong-net
     volumes:
