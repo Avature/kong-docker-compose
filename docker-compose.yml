@@ -1,7 +1,7 @@
 version: '3.1'
 
 volumes:
-    kong_data: {}
+  kong_data: {}
 networks:
   kong-net:
     ipam:
@@ -12,7 +12,7 @@ services:
   # Kong database preparation
   #######################################
   kong-migrations:
-    image: ghcr.io/avature/kong:2.1.4.04
+    image: ghcr.io/avature/kong:2.1.4.05
     command: kong migrations bootstrap
     depends_on:
       - db
@@ -32,7 +32,7 @@ services:
   # Kong migrations runner
   #######################################
   kong-migrations-up:
-    image: ghcr.io/avature/kong:2.1.4.04
+    image: ghcr.io/avature/kong:2.1.4.05
     command: kong migrations up
     depends_on:
       - db
@@ -52,7 +52,7 @@ services:
   # Kong service
   #######################################
   kong:
-    image: ghcr.io/avature/kong:2.1.4.04
+    image: ghcr.io/avature/kong:2.1.4.05
     user: "root"
     volumes:
       - /var/log/avature/kong/:/home/kong/log/
@@ -78,7 +78,7 @@ services:
       - "8000"
       - "8001"
     healthcheck:
-      test: ["CMD", "kong", "health"]
+      test: [ "CMD", "kong", "health" ]
       interval: 10s
       timeout: 10s
       retries: 99999999
@@ -93,7 +93,15 @@ services:
       POSTGRES_PASSWORD: ${KONG_PG_PASSWORD}
       POSTGRES_USER: ${KONG_PG_USER}
     healthcheck:
-      test: ["CMD", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "--username",
+          "${KONG_PG_USER}",
+          "--dbname",
+          "${KONG_PG_DATABASE}"
+        ]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -188,8 +196,8 @@ services:
       - kong-net
     volumes:
       - ./startup/:/app/
-      - ./.env:/certs_startup/.env
-      - ./createCerts.sh:/certs_startup/createCerts.sh
+      - ./.env:/certs_startup/.env:ro
+      - ./createCerts.sh:/certs_startup/createCerts.sh:ro
       - ./certs/:/certs_startup/certs/
       - ./nginx/:/nginx_startup/
     command: /app/init.sh
