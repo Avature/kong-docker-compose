@@ -4,7 +4,7 @@ class Config:
       {"target":"services/adminApi", "payload": {
         "name": "file_log_censored",
         "config": {
-          "path":"/home/kong/log/admin-api.log",
+          "path":"/var/log/admin-api.log",
           "reopen": True,
           "censored_fields": ["request.headers.x-kong-admin-key"]
       }}},
