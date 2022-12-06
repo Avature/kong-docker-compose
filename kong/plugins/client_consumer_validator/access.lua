@@ -33,7 +33,7 @@ end
 
 function _M.consumer_id_is_unmatched(input, consumer_id, pattern)
   return pattern == nil or
-    string.match(input, pattern) ~= consumer_id
+    (input ~= nil and string.match(input, pattern) ~= consumer_id)
 end
 
 function _M.extract_data_from_payload(body, path)
@@ -42,7 +42,9 @@ function _M.extract_data_from_payload(body, path)
   table.foreach(path_parts, function (_, key)
     local number_key = tonumber(key)
     local effective_key =  number_key ~= nil and number_key or tostring(key)
-    last_part = last_part[effective_key]
+    if last_part then
+      last_part = last_part[effective_key]
+    end
   end)
   return last_part
 end

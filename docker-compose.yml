@@ -1,7 +1,7 @@
 version: '3.1'
 
 volumes:
-    kong_data: {}
+  kong_data: {}
 networks:
   kong-net:
     ipam:
@@ -78,7 +78,7 @@ services:
       - "8000"
       - "8001"
     healthcheck:
-      test: ["CMD", "kong", "health"]
+      test: [ "CMD", "kong", "health" ]
       interval: 10s
       timeout: 10s
       retries: 99999999
@@ -93,7 +93,15 @@ services:
       POSTGRES_PASSWORD: ${KONG_PG_PASSWORD}
       POSTGRES_USER: ${KONG_PG_USER}
     healthcheck:
-      test: ["CMD", "pg_isready", "--username", "${KONG_PG_USER}", "--dbname", "${KONG_PG_DATABASE}"]
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "--username",
+          "${KONG_PG_USER}",
+          "--dbname",
+          "${KONG_PG_DATABASE}"
+        ]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -183,13 +191,13 @@ services:
   # Python Startup
   #######################################
   startup:
-    image: ghcr.io/avature/kong-startup:0.0.2
+    image: ghcr.io/avature/kong-startup:0.0.3
     networks:
       - kong-net
     volumes:
       - ./startup/:/app/
-      - ./.env:/certs_startup/.env
-      - ./createCerts.sh:/certs_startup/createCerts.sh
+      - ./.env:/certs_startup/.env:ro
+      - ./createCerts.sh:/certs_startup/createCerts.sh:ro
       - ./certs/:/certs_startup/certs/
       - ./nginx/:/nginx_startup/
     command: /app/init.sh

@@ -33,7 +33,7 @@ create_ca_certs() {
 create_ssl_server_certs() {
   echo "Creating SSL certificates..."
   openssl genrsa -out $server_ssl_key 2048
-  openssl req -new -key $server_ssl_key -out $server_ssl_csr -subj "/C=GB/ST=London/L=London/O=Avature/OU=IT/CN=$server_ssl_cn"
+  openssl req -new -key $server_ssl_key -out $server_ssl_csr -subj "/C=GB/ST=London/L=London/O=Avature/OU=IT/CN=$server_ca_cn/subjectAltName=$server_ssl_cn"
   openssl x509 -req -days 365 -in $server_ssl_csr -CA $server_ca_cert -CAkey $server_ca_key -CAcreateserial -out $server_ssl_cert -sha256 -passin pass:1234
 }
 
