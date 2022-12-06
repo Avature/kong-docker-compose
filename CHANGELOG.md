@@ -1,6 +1,13 @@
 # Changelog
 
 
+### 0.1.3 (2022-12-06)
+
+  * Fix error on client consumer validator adding coverage for rate-limiting
+  * Fix test plugin executor
+  * Fix broken log
+  * Fix startup img version
+
 ### 0.1.2 (2022-07-18)
 
   * Add timeout much longer
