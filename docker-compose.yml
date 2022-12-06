@@ -55,7 +55,7 @@ services:
     image: ghcr.io/avature/kong:2.1.4.05
     user: "root"
     volumes:
-      - /var/log/avature/kong/:/home/kong/log/
+      - /var/log/avature/kong/:/var/log/
       - ./certs/:/home/kong/certs/
     depends_on:
       - db
