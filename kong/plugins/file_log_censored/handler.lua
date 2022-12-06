@@ -48,8 +48,7 @@ local function log(conf, message)
     fd = ffi.C.open(conf.path, oflags, mode)
     if fd < 0 then
       local errno = ffi.errno()
-      kong.log.err("failed to open the file: ", ffi.string(ffi.C.strerror(errno)))
-
+      kong.log.err("Error opening log file: ", ffi.string(ffi.C.strerror(errno)), " configured path: ", conf.path)
     else
       file_descriptors[conf.path] = fd
     end
