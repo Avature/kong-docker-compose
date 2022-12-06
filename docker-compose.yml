@@ -191,7 +191,7 @@ services:
   # Python Startup
   #######################################
   startup:
-    image: ghcr.io/avature/kong-startup:0.0.2
+    image: ghcr.io/avature/kong-startup:0.0.3
     networks:
       - kong-net
     volumes:
