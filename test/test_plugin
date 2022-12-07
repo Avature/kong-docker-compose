@@ -3,4 +3,4 @@
 cd $(dirname $0)/../kong/plugins/$1
 
 docker pull -q imega/busted
-docker run -t -v `pwd`:/data imega/busted
+docker run --rm -t -v `pwd`:/data imega/busted

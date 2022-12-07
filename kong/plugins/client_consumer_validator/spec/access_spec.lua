@@ -133,4 +133,34 @@ describe("client_consumer_validator access hook feature", function()
     subject.execute(conf)
     assert.spy(_G.kong.response.exit).was_not_called()
   end)
+  it("should accept rate-limiting plugin with startup config", function()
+    helper.mock_return('kong.request', 'get_body', '{name = "rate-limiting", config = {minute = 10, limit_by = "service"}}')
+    helper.mock_return('kong.request', 'get_method', '"POST"')
+    helper.mock_return('kong.request', 'get_path', '"/admin-api/services/0YRF41qFw7l_Fke86jDv1qCVsfV0q78G_iats/plugins"')
+    helper.mock_return('kong.client', 'get_consumer', '{username = "devenv.local.net"}')
+    helper.mock_return('kong.request', 'get_header', '"devenv.local.net"')
+
+    local subject = require('access')
+    local conf = {
+      consumer_identifier = "username",
+      rules = {
+        rule_1 = {
+          request_path_activation_regex = "(.*)",
+          search_in_header = "X-Certificate-CN-Header",
+          search_in_json_payload = 'config.headers.replace.1',
+          expected_consumer_identifier_regex = "(.*)",
+          methods = {"GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "TRACE", "CONNECT"}
+        },
+        rule_2 = {
+          request_path_activation_regex = "/services/(.*)/plugins",
+          search_in_json_payload = "config.replace.headers.1",
+          expected_consumer_identifier_regex = "Host:(.*)",
+          methods = {"POST", "PUT", "PATCH"}
+        }
+      }
+    }
+    spy.on(_G.kong.response, "exit")
+    subject.execute(conf)
+    assert.spy(_G.kong.response.exit).was_not_called()
+  end)
 end)
