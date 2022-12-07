@@ -1,3 +1,3 @@
 #!/bin/bash
-docker build . -t ghcr.io/avature/kong:2.1.4.06
+./build.sh
 docker push ghcr.io/avature/kong:2.1.4.06

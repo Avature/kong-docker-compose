@@ -2,4 +2,4 @@
 
 cd $(dirname $0)/../kong
 
-docker build .
+./build.sh

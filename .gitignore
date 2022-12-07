@@ -2,3 +2,6 @@
 venv
 certs/
 .vscode
+kong/wait-for-postgres.sh
+konga/wait-for-postgres.sh
+startup/wait-for-postgres.sh
