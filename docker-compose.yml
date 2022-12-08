@@ -177,6 +177,7 @@ services:
     networks:
       - kong-net
     volumes:
+      - ./.env:/etc/ssh/.env:ro
       - ./certs/:/etc/ssl/certs/
       - ./nginx/sslCertificates.conf:/etc/nginx/conf.d/sslCertificates.conf:ro
     ports:
@@ -200,8 +201,6 @@ services:
       - kong-net
     volumes:
       - ./startup/:/app/
-      - ./.env:/certs_startup/.env:ro
-      - ./certs/:/certs_startup/certs/
       - ./nginx/:/nginx_startup/
     command: /app/init.sh
     depends_on:

@@ -1,8 +1,10 @@
 FROM nginx:stable-alpine
+USER root
 
 RUN mkdir -p /app
 RUN chmod -R 777 /app
 RUN apk add bash
+RUN apk add openssl
 
 COPY ./admin.conf /etc/nginx/conf.d/admin.conf
 COPY ./gateway.conf /etc/nginx/conf.d/gateway.conf

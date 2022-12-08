@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "Starting Avature NGINX"
+echo "-> Starting Avature NGINX"
 
 /etc/ssl/createCerts.sh
 
