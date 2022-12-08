@@ -173,7 +173,7 @@ services:
   # NGINX: Webserver
   #######################################
   nginx:
-    image: ghcr.io/avature/kong-nginx:0.0.5
+    image: ghcr.io/avature/kong-nginx:0.0.6
     networks:
       - kong-net
     volumes:
@@ -187,6 +187,7 @@ services:
       - konga
       - db
     environment:
+      CREATE_SSL_CERTS: "false"
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
       TARGET_URLS_CONF_DIR: "${TARGET_URLS_CONF_DIR:-/etc/nginx/conf.d/server_hosts/}"
@@ -200,7 +201,6 @@ services:
     volumes:
       - ./startup/:/app/
       - ./.env:/certs_startup/.env:ro
-      - ./createCerts.sh:/certs_startup/createCerts.sh:ro
       - ./certs/:/certs_startup/certs/
       - ./nginx/:/nginx_startup/
     command: /app/init.sh
@@ -210,4 +210,3 @@ services:
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
-      CREATE_SSL_CERTS: "false"

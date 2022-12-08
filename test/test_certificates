@@ -20,7 +20,7 @@ assertFileNotExists() {
 
 testAllCertsExists() {
   echo -e "\nTest creating CA & SSL certs for dev env"
-  ./createDevCerts.sh
+  ./createCerts.sh -ssl
   assertFileExists "/opt/kong/certs/server-ca-cert.crt"
   assertFileExists "/opt/kong/certs/server-ca-key.key"
   assertFileExists "/opt/kong/certs/server-ssl-csr.csr"
