@@ -20,22 +20,22 @@ assertFileNotExists() {
 
 testAllCertsExists() {
   echo -e "\nTest creating CA & SSL certs for dev env"
-  ./createDevCerts.sh
-  assertFileExists "/opt/kong/certs/server-ca-cert.crt"
-  assertFileExists "/opt/kong/certs/server-ca-key.key"
-  assertFileExists "/opt/kong/certs/server-ssl-csr.csr"
-  assertFileExists "/opt/kong/certs/server-ssl-key.key"
-  assertFileExists "/opt/kong/certs/server-ssl-cert.crt"
+  ./createCerts.sh -ssl
+  assertFileExists "/etc/ssl/certs/server-ca-cert.crt"
+  assertFileExists "/etc/ssl/certs/server-ca-key.key"
+  assertFileExists "/etc/ssl/certs/server-ssl-csr.csr"
+  assertFileExists "/etc/ssl/certs/server-ssl-key.key"
+  assertFileExists "/etc/ssl/certs/server-ssl-cert.crt"
 }
 
 testOnlyCaCertsExists() {
   echo -e "\nTest creating CA certs for prod env"
   /opt/kong/createCerts.sh
-  assertFileExists "/opt/kong/certs/server-ca-cert.crt"
-  assertFileExists "/opt/kong/certs/server-ca-key.key"
-  assertFileNotExists "/opt/kong/certs/server-ssl-csr.csr"
-  assertFileNotExists "/opt/kong/certs/server-ssl-key.key"
-  assertFileNotExists "/opt/kong/certs/server-ssl-cert.crt"
+  assertFileExists "/etc/ssl/certs/server-ca-cert.crt"
+  assertFileExists "/etc/ssl/certs/server-ca-key.key"
+  assertFileNotExists "/etc/ssl/certs/server-ssl-csr.csr"
+  assertFileNotExists "/etc/ssl/certs/server-ssl-key.key"
+  assertFileNotExists "/etc/ssl/certs/server-ssl-cert.crt"
 }
 
 cd /opt/kong && rm -rf certs
