@@ -24,7 +24,6 @@ startDev.sh
 CLIENT_AUTH.md
 docker-compose.dev.yml
 .editorconfig
-dev.env
 .env
 integration-tests
 .env.example

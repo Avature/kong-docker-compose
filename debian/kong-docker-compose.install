@@ -8,6 +8,7 @@ docker-compose.yml opt/kong
 stop.sh opt/kong
 start.sh opt/kong
 startKongBash.sh opt/kong
+dev.env opt/kong
 nginx/createCerts.sh opt/kong
 kong/connectToDB.sh opt/kong/kong
 konga/connectToDB.sh opt/kong/konga

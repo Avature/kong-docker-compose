@@ -38,6 +38,7 @@ testOnlyCaCertsExists() {
   assertFileNotExists "/etc/ssl/certs/server-ssl-cert.crt"
 }
 
+cp /opt/kong/dev.env /etc/ssl/.env
 cd /opt/kong && rm -rf certs
 
 case $1 in

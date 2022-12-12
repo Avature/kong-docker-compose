@@ -4,7 +4,6 @@ readConfigFromDotEnv() {
   export $(cat .env | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | sed '/^#/d' | xargs)
 }
 
-
 initializeConfigVariables() {
   if [ -z "$BASE_HOST_DOMAIN" ]
   then
@@ -38,6 +37,7 @@ create_ssl_server_certs() {
 }
 
 setup_certs() {
+  cd /etc/ssl
   readConfigFromDotEnv
   initializeConfigVariables
 
