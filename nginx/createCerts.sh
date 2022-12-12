@@ -4,7 +4,6 @@ readConfigFromDotEnv() {
   export $(cat .env | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | sed '/^#/d' | xargs)
 }
 
-cd /etc/ssl
 
 initializeConfigVariables() {
   if [ -z "$BASE_HOST_DOMAIN" ]

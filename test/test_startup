@@ -2,7 +2,7 @@
 
 cd $(dirname $0)/../startup
 
-docker build -t test_startup_container .
+docker build . -t test_startup_container
 docker run -t \
   -v `pwd`:/app \
   -v `pwd`/../nginx:/nginx_startup \
