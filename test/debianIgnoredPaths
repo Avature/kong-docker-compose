@@ -24,7 +24,6 @@ startDev.sh
 CLIENT_AUTH.md
 docker-compose.dev.yml
 .editorconfig
-dev.env
 .env
 integration-tests
 .env.example
@@ -103,3 +102,12 @@ nginx/konga.conf
 stop.sh
 nginx/build-and-push.sh
 nginx/20-custom-configs.conf
+check/wait-for-postgres.sh
+build-and-push.sh
+nginx/createCerts.sh
+startup/build-and-push.sh
+konga/build-and-push.sh
+konga/check_konga_db.sh
+konga/custom-entrypoint.sh
+konga/Dockerfile
+kong/build.sh

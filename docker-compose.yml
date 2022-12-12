@@ -12,7 +12,7 @@ services:
   # Kong database preparation
   #######################################
   kong-migrations:
-    image: ghcr.io/avature/kong:2.1.4.05
+    image: ghcr.io/avature/kong:2.1.4.06
     command: kong migrations bootstrap
     depends_on:
       - db
@@ -32,7 +32,7 @@ services:
   # Kong migrations runner
   #######################################
   kong-migrations-up:
-    image: ghcr.io/avature/kong:2.1.4.05
+    image: ghcr.io/avature/kong:2.1.4.06
     command: kong migrations up
     depends_on:
       - db
@@ -52,7 +52,7 @@ services:
   # Kong service
   #######################################
   kong:
-    image: ghcr.io/avature/kong:2.1.4.05
+    image: ghcr.io/avature/kong:2.1.4.06
     user: "root"
     volumes:
       - /var/log/avature/kong/:/var/log/
@@ -116,7 +116,7 @@ services:
   # Konga database prepare
   #######################################
   konga-prepare:
-    image: pantsel/konga:next
+    image: ghcr.io/avature/konga:0.14.9.01
     command: "-c prepare -a postgres -u postgresql://${KONG_PG_USER}:${KONG_PG_PASSWORD}@db:5432/konga_db"
     networks:
       - kong-net
@@ -125,12 +125,15 @@ services:
       - db
     depends_on:
       - db
+    environment:
+      DB_HOST: ${KONG_PG_HOST:-db}
+      DB_PORT: ${KONG_PG_PORT:-5432}
   #######################################
   # Konga: Kong GUI
   #######################################
   konga:
-    image: pantsel/konga:next
-    restart: always
+    image: ghcr.io/avature/konga:0.14.9.01
+    restart: on-failure
     networks:
       - kong-net
     volumes:
@@ -170,10 +173,11 @@ services:
   # NGINX: Webserver
   #######################################
   nginx:
-    image: ghcr.io/avature/kong-nginx:0.0.5
+    image: ghcr.io/avature/kong-nginx:0.0.6
     networks:
       - kong-net
     volumes:
+      - ./.env:/etc/ssl/.env:ro
       - ./certs/:/etc/ssl/certs/
       - ./nginx/sslCertificates.conf:/etc/nginx/conf.d/sslCertificates.conf:ro
     ports:
@@ -184,6 +188,7 @@ services:
       - konga
       - db
     environment:
+      CREATE_SSL_CERTS: "false"
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
       TARGET_URLS_CONF_DIR: "${TARGET_URLS_CONF_DIR:-/etc/nginx/conf.d/server_hosts/}"
@@ -191,14 +196,11 @@ services:
   # Python Startup
   #######################################
   startup:
-    image: ghcr.io/avature/kong-startup:0.0.3
+    image: ghcr.io/avature/kong-startup:0.0.4
     networks:
       - kong-net
     volumes:
       - ./startup/:/app/
-      - ./.env:/certs_startup/.env:ro
-      - ./createCerts.sh:/certs_startup/createCerts.sh:ro
-      - ./certs/:/certs_startup/certs/
       - ./nginx/:/nginx_startup/
     command: /app/init.sh
     depends_on:
@@ -207,4 +209,3 @@ services:
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
-      CREATE_SSL_CERTS: "false"
