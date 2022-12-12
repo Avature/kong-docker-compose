@@ -111,6 +111,12 @@ Can't open certs/server-ca-key.key for reading, No such file or directory
 139896872256512:error:02001002:system library:fopen:No such file or directory:crypto/bio/bss_file.c:69:fopen('certs/server-ca-key.key','r')
 ```
 
+You can run the certificates creation script with sudo:
+
+```bash
+sudo ./createCerts.sh -ssl
+```
+
 ## Client Authentication with mutual TLS
 
 The connection between Kong's admin API and its clients must be done via mutual TLS client authentication using client certificates signed by the kong distribution server's CA.
