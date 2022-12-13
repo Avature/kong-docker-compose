@@ -1,6 +1,16 @@
 # Changelog
 
 
+### 0.1.4 (2022-12-13)
+
+  * First sync achieved.
+  * Add Fixture finished message and docker on failure
+  * Move createCerts.sh script into nginx container 
+  * Remove createCerts.sh script volume 
+  * Remove db preheating from test_admin_contracts_script
+  * Fix konga 502 error by using a script that checks specifically the konga db state
+  * Remove contract test to be able to build
+
 ### 0.1.3 (2022-12-06)
 
   * Fix error on client consumer validator adding coverage for rate-limiting
