@@ -53,7 +53,7 @@ spec:
             - name: NGINX_WORKER_PROCESSES
               value: '4'
           ports:
-            - containerPort: 8000
+            - containerPort: 8443
               name: gateway
             - containerPort: 8001
               name: admin
@@ -150,8 +150,8 @@ spec:
   type: ClusterIP
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
+      port: 8443
+      targetPort: 8443
       name: gateway
     - protocol: TCP
       port: 8001
