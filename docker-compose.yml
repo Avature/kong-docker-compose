@@ -3,10 +3,7 @@ version: '3.1'
 volumes:
   kong_data: {}
 networks:
-  kong-net:
-    ipam:
-      config:
-        - subnet: 192.168.143.0/24
+  kong-net: {}
 services:
   #######################################
   # Kong database preparation
@@ -187,6 +184,9 @@ services:
       - kong
       - konga
       - db
+    links:
+      - db
+      - db:pepito
     environment:
       CREATE_SSL_CERTS: "false"
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
@@ -203,9 +203,6 @@ services:
       - ./startup/:/app/
       - ./nginx/:/nginx_startup/
     command: /app/init.sh
-    depends_on:
-      - kong
-      - db
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
