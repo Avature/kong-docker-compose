@@ -8,7 +8,7 @@ This is the Avature's Kong API Gateway docker-compose distribution
 
 * kong: Kong 2.1.4 API Gateway
 * konga: Konga Kong's UI (latest version)
-* db: PostgreSQL 9.5 Databse
+* db: PostgreSQL 9.5 Database
 * nginx: Nginx (latest nginx docker image version) Proxy pass that exposes gateway, admin, and konga subdomains in a secured and unified way.
 * startup: Startup script that sets up the admin API loopback and plugins configuration in an automated way.
 
