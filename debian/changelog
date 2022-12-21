@@ -1,3 +1,12 @@
+kong-docker-compose (0.1.5) Ubuntu; urgency=medium
+
+  * Uncomment test admin * Use a network without configuration to avoid collisions and problems on ipv6
+  * Add TLSv1.3 support across all proxies
+  * Add more time for admin contracts
+  * Fix check konga db script
+
+ -- Mariano Fresno <mariano.fresno@avature.net>  Wed, 21 Dec 2022 14:23:58 -0300
+
 kong-docker-compose (0.1.4) Ubuntu; urgency=medium
 
   * First sync achieved.
