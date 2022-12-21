@@ -28,7 +28,7 @@ spec:
           service:
             name: kong-svc
             port:
-              number: 8000
+              number: 8443
   - host: admin.$CLUSTER_BASE_URL
     http:
       paths:

@@ -1,6 +1,13 @@
 # Changelog
 
 
+### 0.1.5 (2022-12-21)
+
+  * Uncomment test admin * Use a network without configuration to avoid collisions and problems on ipv6
+  * Add TLSv1.3 support across all proxies
+  * Add more time for admin contracts
+  * Fix check konga db script
+
 ### 0.1.4 (2022-12-13)
 
   * First sync achieved.

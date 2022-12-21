@@ -70,10 +70,11 @@ services:
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_NGINX_PROXY_CLIENT_MAX_BODY_SIZE: 100M
+      KONG_NGINX_PROXY_PROXY_SSL_PROTOCOLS: "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3"
     networks:
       - kong-net
     expose:
-      - "8000"
+      - "8443"
       - "8001"
     healthcheck:
       test: [ "CMD", "kong", "health" ]
