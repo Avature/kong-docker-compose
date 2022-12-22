@@ -1,9 +1,8 @@
 import sys
-from unittest import main, mock, TestCase
+from unittest import mock, TestCase
 import os
 import configparser
 import responses
-import requests
 
 from test.debugger import run_debugger
 

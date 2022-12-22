@@ -1,0 +1,11 @@
+FROM startup_container
+
+WORKDIR /app/test
+
+COPY test/. /app/test/
+
+RUN pip install -r requirements.txt
+
+WORKDIR /app
+
+ENTRYPOINT python -m unittest

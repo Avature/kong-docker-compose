@@ -2,11 +2,10 @@
 
 cd $(dirname $0)/../startup
 
-docker build . -t test_startup_container
+docker build --no-cache . -t startup_container
+docker build . -f Dockerfile.test -t test_startup_container
 docker run -t \
-  -v `pwd`:/app \
   -v `pwd`/../nginx:/nginx_startup \
   --env BASE_HOST_DOMAIN=test-host-for-testing \
   --env HOST_SERVICE_SEPARATOR=-sepa- \
-  test_startup_container \
-  /app/run_tests.sh
+  test_startup_container
