@@ -1,6 +1,12 @@
 # Changelog
 
 
+### 0.1.6 (2022-12-22)
+
+  * Add client max body size for both nginx and kong inner nginx
+  * Fix nginx image version
+  * Move startup to built in files
+
 ### 0.1.5 (2022-12-21)
 
   * Uncomment test admin * Use a network without configuration to avoid collisions and problems on ipv6

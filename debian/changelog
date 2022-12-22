@@ -1,3 +1,11 @@
+kong-docker-compose (0.1.6) Ubuntu; urgency=medium
+
+  * Add client max body size for both nginx and kong inner nginx
+  * Fix nginx image version
+  * Move startup to built in files
+
+ -- Mariano Fresno <mariano.fresno@avature.net>  Thu, 22 Dec 2022 14:59:46 -0300
+
 kong-docker-compose (0.1.5) Ubuntu; urgency=medium
 
   * Uncomment test admin * Use a network without configuration to avoid collisions and problems on ipv6
