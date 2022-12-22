@@ -188,7 +188,6 @@ services:
       - db
     links:
       - db
-      - db:pepito
     environment:
       CREATE_SSL_CERTS: "false"
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
