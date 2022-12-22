@@ -198,12 +198,9 @@ services:
   # Python Startup
   #######################################
   startup:
-    image: ghcr.io/avature/kong-startup:0.0.4
+    image: ghcr.io/avature/kong-startup:0.0.5
     networks:
       - kong-net
-    volumes:
-      - ./startup/:/app/
-    command: /app/init.sh
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"

@@ -2,8 +2,7 @@ FROM python:alpine
 
 WORKDIR /app
 
-COPY ./init.sh /app
-COPY ./requirements.txt /app
+COPY src/. /app/
 
 RUN apk add gettext
 RUN apk add bash
