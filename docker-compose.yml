@@ -203,7 +203,6 @@ services:
       - kong-net
     volumes:
       - ./startup/:/app/
-      - ./nginx/:/nginx_startup/
     command: /app/init.sh
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
