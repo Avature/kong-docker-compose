@@ -1,6 +1,11 @@
 # Changelog
 
 
+### 0.1.7 (2022-12-23)
+
+  * Delegate docker installation to buil deps 
+  * Remove debtool.toml
+
 ### 0.1.6 (2022-12-22)
 
   * Add client max body size for both nginx and kong inner nginx
