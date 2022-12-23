@@ -1,9 +1,0 @@
-[container]
-# Enabling this options allow create containers inside of
-# builder container, example docker
-# here https://stgraber.org/2016/04/13/lxd-2-0-docker-in-lxd-712/
-nesting = true
-
-
-[pre-requirements]
-shell = ["echo 'Package: kong-docker*\nPin: origin repository-cache-*.xcade.net\nPin-Priority: -1' > /etc/apt/preferences"]
