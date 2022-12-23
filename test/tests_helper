@@ -34,12 +34,3 @@ show_results_and_exit() {
   fi
   exit $result
 }
-
-install_docker() {
-  apt install -yq docker.io
-  systemctl restart docker
-}
-
-if [[ "$USER" == "root" ]]; then
-  install_docker
-fi

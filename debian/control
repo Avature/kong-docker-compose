@@ -5,6 +5,7 @@ Standards-Version: 4.0.0
 Homepage: Devops
 Build-Depends: debhelper (>= 9),
                dh-exec,
+               docker.io,
 
 Package: kong-docker-compose
 Architecture: all
