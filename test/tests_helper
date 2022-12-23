@@ -37,7 +37,6 @@ show_results_and_exit() {
 
 install_docker() {
   apt install -yq docker.io
-  echo '{"bip": "192.168.43.1/24"}' > /etc/docker/daemon.json
   systemctl restart docker
 }
 
