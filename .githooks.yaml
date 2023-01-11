@@ -1,0 +1,6 @@
+---
+gitlab:
+  merge_request:
+    enabled: true
+    branch_regex: ['.*']
+    trigger: 'new-branch'
