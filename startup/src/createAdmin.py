@@ -1,4 +1,5 @@
 from fixture import Fixture
+from config import Config
 
-fixture = Fixture()
+fixture = Fixture(Config())
 fixture.run()

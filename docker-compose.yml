@@ -203,3 +203,4 @@ services:
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
+      RETRY_ON_ERROR: 1
