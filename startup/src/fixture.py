@@ -65,9 +65,9 @@ class Fixture:
     target = plugin_config["target"]
     payload = plugin_config["payload"]
     plugin_name = payload["name"]
-    modification = False
-    if (not self.target_has_plugin(plugin_name, target) or (modification := self.is_plugin_config_changed(target, payload))):
-      if (modification):
+    has_modification = False
+    if (not self.target_has_plugin(plugin_name, target) or (has_modification := self.is_plugin_config_changed(target, payload))):
+      if (has_modification):
         payload['id'] = self._get_current_config(target, plugin_name)['id']
       print("Plugin %s config changed on target %s, updating..." % (plugin_name, target))
       self.post_or_fail(
@@ -84,12 +84,12 @@ class Fixture:
     return f"{admin_base_url}{separator}{target}{separator}plugins"
 
   def post_or_fail(self, url, data, verify):
-    if (modification := 'id' in data):
-      response = requests.patch(url=(f"{url}/{data['id']}"), json=data, verify=verify, headers={"Content-Type": "application/json"})
-    else:
-      response = requests.post(url=url, json=data, verify=verify, headers={"Content-Type": "application/json"})
-    if (not ((response.status_code == 201) or (modification and response.status_code == 200))):
-      action = 'patch' if modification else 'post'
+    is_creating = not 'id' in data
+    http_method = 'POST' if is_creating else 'PATCH'
+    resource_uri = url if is_creating else f"{url}/{data['id']}"
+    response = requests.request(http_method, url=resource_uri, json=data, verify=verify, headers={"Content-Type": "application/json"})
+    if (not ((is_creating and response.status_code == 201) or (not is_creating and response.status_code == 200))):
+      action = 'post' if is_creating else 'patch'
       logging.error(f'Error trying to {action}: {response.text}, target URL: {url}, request body: {response.request.body}')
       exit(1)
     return response

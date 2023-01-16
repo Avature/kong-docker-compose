@@ -73,7 +73,7 @@ class TestFixture(TestCase):
     responses.patch(
       "http://kong:8001/services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin",
       body='{}',
-      status=201,
+      status=200,
       content_type="application/json"
     )
     self.subject.run()
