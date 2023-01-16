@@ -1,16 +1,15 @@
 import requests
-import json
 import logging
-from config import Config
-import sys
 import time
+import os
 
 admin_base_url = 'http://kong:8001'
 
 class Fixture:
-  def __init__(self):
+  def __init__(self, config, plugins_comparator):
+    self.plugins_comparator = plugins_comparator
     self.previously_installed_plugins = {}
-    self.config = Config()
+    self.config = config
 
   def get_admin_plugins(self):
     return self.config.get_plugins_config()
@@ -39,11 +38,24 @@ class Fixture:
   def get_previous_plugins_for_target(self, target):
     if target not in self.previously_installed_plugins:
       previous_plugins = requests.get(self.get_plugins_path_for_target(target)).json()["data"]
-      self.previously_installed_plugins[target] = list(map(lambda plugin: plugin["name"], previous_plugins))
+      self.previously_installed_plugins[target] = {}
+      for plugin in previous_plugins:
+        self.previously_installed_plugins[target][plugin['name']] = plugin
     return self.previously_installed_plugins[target]
 
   def target_has_plugin(self, plugin_name, target):
     return plugin_name in self.get_previous_plugins_for_target(target)
+
+  def is_plugin_config_changed(self, target, plugin_expected_config):
+    plugin_name = plugin_expected_config['name']
+    current_config = self._get_current_config(target, plugin_name)
+    return self.plugins_comparator.plugin_has_different_config(
+      current_config,
+      plugin_expected_config
+    )
+
+  def _get_current_config(self, target, plugin_name):
+    return self.get_previous_plugins_for_target(target)[plugin_name]
 
   def add_plugins(self):
     for plugin_config in self.get_admin_plugins():
@@ -53,23 +65,32 @@ class Fixture:
     target = plugin_config["target"]
     payload = plugin_config["payload"]
     plugin_name = payload["name"]
-    if (not self.target_has_plugin(plugin_name, target)):
+    modification = False
+    if (not self.target_has_plugin(plugin_name, target) or (modification := self.is_plugin_config_changed(target, payload))):
+      if (modification):
+        payload['id'] = self._get_current_config(target, plugin_name)['id']
+      print("Plugin %s config changed on target %s, updating..." % (plugin_name, target))
       self.post_or_fail(
         url=self.get_plugins_path_for_target(target),
-        data=json.dumps(payload),
-        verify=False,
-        headers={"Content-Type": "application/json"}
+        data=payload,
+        verify=False
       )
-      self.previously_installed_plugins[target].append(plugin_name)
+      self.previously_installed_plugins[target][plugin_name] = payload
+    else:
+      print("No changes detected on target %s, plugin %s, skipping." % (target, plugin_name))
 
   def get_plugins_path_for_target(self, target):
     separator = '' if target.endswith('/') else '/'
     return f"{admin_base_url}{separator}{target}{separator}plugins"
 
-  def post_or_fail(self, url, data, verify, headers = {}):
-    response = requests.post(url=url, data=data, verify=verify, headers=headers)
-    if (response.status_code != 201):
-      logging.error(f'Error trying to post: {response.text}, target URL: {url}, request body: {response.request.body}')
+  def post_or_fail(self, url, data, verify):
+    if (modification := 'id' in data):
+      response = requests.patch(url=(f"{url}/{data['id']}"), json=data, verify=verify, headers={"Content-Type": "application/json"})
+    else:
+      response = requests.post(url=url, json=data, verify=verify, headers={"Content-Type": "application/json"})
+    if (not ((response.status_code == 201) or (modification and response.status_code == 200))):
+      action = 'patch' if modification else 'post'
+      logging.error(f'Error trying to {action}: {response.text}, target URL: {url}, request body: {response.request.body}')
       exit(1)
     return response
 
@@ -83,6 +104,10 @@ class Fixture:
       self.add_plugins()
       print("Fixture created OK.")
     except requests.exceptions.ConnectionError:
-      print("Failed connecting to kong. Retrying in 1 seconds...")
-      time.sleep(1)
-      self.run()
+      if (os.environ.get('RETRY_ON_ERROR') == "true"):
+        print("Failed connecting to kong. Retrying in 1 seconds...")
+        time.sleep(1)
+        self.run()
+      else:
+        print("Retrial is disabled, exiting")
+        exit(1)

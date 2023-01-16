@@ -197,10 +197,10 @@ services:
   # Python Startup
   #######################################
   startup:
-    image: ghcr.io/avature/kong-startup:0.0.5
+    image: ghcr.io/avature/kong-startup:0.0.6
     networks:
       - kong-net
     environment:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
-      RETRY_ON_ERROR: 1
+      RETRY_ON_ERROR: "true"
