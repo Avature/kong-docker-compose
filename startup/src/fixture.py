@@ -46,16 +46,21 @@ class Fixture:
   def target_has_plugin(self, plugin_name, target):
     return plugin_name in self.get_previous_plugins_for_target(target)
 
-  def is_plugin_config_changed(self, target, plugin_expected_config):
+  def is_plugin_config_changed_or_missing(self, target, plugin_expected_config):
     plugin_name = plugin_expected_config['name']
     current_config = self._get_current_config(target, plugin_name)
-    return self.plugins_comparator.plugin_has_different_config(
-      current_config,
-      plugin_expected_config
-    )
+    if (current_config):
+      return self.plugins_comparator.plugin_has_different_config(
+        current_config,
+        plugin_expected_config
+      )
+    return True
 
   def _get_current_config(self, target, plugin_name):
-    return self.get_previous_plugins_for_target(target)[plugin_name]
+    plugins_on_target = self.get_previous_plugins_for_target(target)
+    if (plugin_name in plugins_on_target):
+      return plugins_on_target[plugin_name]
+    return None
 
   def add_plugins(self):
     for plugin_config in self.get_admin_plugins():
@@ -65,11 +70,12 @@ class Fixture:
     target = plugin_config["target"]
     payload = plugin_config["payload"]
     plugin_name = payload["name"]
-    has_modification = self.is_plugin_config_changed(target, payload)
-    if (not self.target_has_plugin(plugin_name, target) or has_modification):
-      if (has_modification):
+    has_the_plugin = self.target_has_plugin(plugin_name, target)
+    plugin_changed_or_missing = self.is_plugin_config_changed_or_missing(target, payload)
+    if (plugin_changed_or_missing):
+      if (has_the_plugin):
         payload['id'] = self._get_current_config(target, plugin_name)['id']
-      print("Plugin %s config changed on target %s, updating..." % (plugin_name, target))
+      print("Plugin %s config %s on target %s, updating..." % (plugin_name, 'changed' if has_the_plugin else 'missing', target))
       self.post_or_fail(
         url=self.get_plugins_path_for_target(target),
         data=payload,
