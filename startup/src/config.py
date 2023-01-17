@@ -1,3 +1,6 @@
+import json
+import os
+
 class Config:
   PLUGINS_CONFIG = [
       {"target":"routes/adminApi", "payload": {"name": "key-auth", "config": {"key_names": ['X-Kong-Admin-Key']}}},
@@ -55,5 +58,9 @@ class Config:
       {"target": "/", "payload": {"name": "prometheus"}}
     ]
 
+  def _get_env_array(self):
+    env_value = os.getenv('STARTUP_PLUGINS_CONFIG_ARRAY_JSON')
+    return json.loads(env_value) if env_value else []
+
   def get_plugins_config(self):
-    return self.PLUGINS_CONFIG
+    return self.PLUGINS_CONFIG + self._get_env_array()

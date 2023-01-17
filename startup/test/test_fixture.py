@@ -1,8 +1,7 @@
-import sys
-from unittest import mock, TestCase
+from unittest import TestCase
 import os
-import configparser
 import responses
+from fixture import Fixture
 
 from test.debugger import run_debugger
 
@@ -11,13 +10,6 @@ if (os.environ.get("ENABLE_DEBUGGER")):
 
 class TestFixture(TestCase):
   def setUp(self):
-    mock_config_parser = configparser.ConfigParser()
-    mock_os = mock.Mock()
-    mock_config_parser.read = mock.MagicMock()
-    mock_config_parser.ConfigParser = mock.MagicMock(return_value=mock_config_parser)
-    sys.modules['configparser'] = mock_config_parser
-    sys.modules['os'] = mock_os
-    from fixture import Fixture
     self.subject = Fixture()
 
   @responses.activate

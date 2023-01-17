@@ -2,7 +2,6 @@ import requests
 import json
 import logging
 from config import Config
-import sys
 import time
 
 admin_base_url = 'http://kong:8001'
