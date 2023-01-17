@@ -2,10 +2,8 @@ class PluginsComparator:
   def plugin_has_different_config(self, current_config, plugin_expected_config):
     config_fields = plugin_expected_config['config'] if 'config' in plugin_expected_config else {}
     clean_current_config = self._clean_null_config_values(current_config['config'], config_fields)
-    return config_fields != clean_current_config or (
-        ("enabled" in plugin_expected_config) and
-          (plugin_expected_config['enabled'] != current_config['enabled'])
-      )
+    return config_fields != clean_current_config
+      or (("enabled" in plugin_expected_config) and (plugin_expected_config['enabled'] != current_config['enabled']))
 
   def _clean_null_config_values(self, config, mask):
     clean = {}

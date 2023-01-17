@@ -65,8 +65,8 @@ class Fixture:
     target = plugin_config["target"]
     payload = plugin_config["payload"]
     plugin_name = payload["name"]
-    has_modification = False
-    if (not self.target_has_plugin(plugin_name, target) or (has_modification := self.is_plugin_config_changed(target, payload))):
+    has_modification = self.is_plugin_config_changed(target, payload)
+    if (not self.target_has_plugin(plugin_name, target) or has_modification):
       if (has_modification):
         payload['id'] = self._get_current_config(target, plugin_name)['id']
       print("Plugin %s config changed on target %s, updating..." % (plugin_name, target))
