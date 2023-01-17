@@ -1,3 +1,15 @@
+kong-docker-compose (0.1.8) Ubuntu; urgency=medium
+
+  * Add retry on error flag config to environment of startup
+  * Add plugins comparator to handle diff in configs 
+  * Add a lot of test cases about changes in config of plugins
+  * Add network host for all involved docker builds.
+  * Modify fixture to handle modification of configs
+  * Simplify some fixture post/patch logics
+  * Add config env var to support external plugins configs
+
+ -- Mariano Fresno <mariano.fresno@avature.net>  Tue, 17 Jan 2023 18:16:48 -0300
+
 kong-docker-compose (0.1.7) Ubuntu; urgency=medium
 
   * Delegate docker installation to buil deps 

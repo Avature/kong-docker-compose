@@ -1,6 +1,16 @@
 # Changelog
 
 
+### 0.1.8 (2023-01-17)
+
+  * Add retry on error flag config to environment of startup
+  * Add plugins comparator to handle diff in configs 
+  * Add a lot of test cases about changes in config of plugins
+  * Add network host for all involved docker builds.
+  * Modify fixture to handle modification of configs
+  * Simplify some fixture post/patch logics
+  * Add config env var to support external plugins configs
+
 ### 0.1.7 (2022-12-23)
 
   * Delegate docker installation to buil deps 
