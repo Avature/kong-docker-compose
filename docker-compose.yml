@@ -204,4 +204,4 @@ services:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
       STARTUP_PLUGINS_CONFIG_ARRAY_JSON: '[{"target":"services/adminApi", "payload":{"name": "file_log_censored", "enabled": true}}]'
-
+      RETRY_ON_ERROR: "true"

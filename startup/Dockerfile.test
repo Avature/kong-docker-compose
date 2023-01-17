@@ -1,8 +1,8 @@
 FROM startup_container
 
-WORKDIR /app/test
+COPY . /app/
 
-COPY test/. /app/test/
+WORKDIR /app/test
 
 RUN pip install -r requirements.txt
 

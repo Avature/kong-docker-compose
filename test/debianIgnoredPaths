@@ -112,3 +112,4 @@ startup/src/__init__.py
 startup/src/requirements.txt
 startup/src/init.sh
 startup/src/createAdmin.py
+startup/src/pluginsComparator.py
