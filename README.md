@@ -29,9 +29,17 @@ This is the Avature's Kong API Gateway docker-compose distribution
 
 * ensure that the path ''/usr/local/bin'' exists. If not, create it with <pre>sudo mkdir -p /usr/local/bin</pre>
 * install curl if not installed <pre>sudo apt-get install curl</pre>
-* install docker -> https://docs.docker.com/install/linux/docker-ce/ubuntu/
-* configure docker to execute without sudo -> https://docs.docker.com/install/linux/linux-postinstall/
-* install docker-compose -> https://docs.docker.com/compose/install/#install-compose-on-linux-systems
+* install docker -> <pre>apt install docker.io</pre>
+
+  More info: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+* configure docker to execute without sudo -> <pre>sudo usermod -aG docker $USER</pre>
+
+  More info: https://docs.docker.com/install/linux/linux-postinstall/
+* install docker-compose -> 
+  <pre>sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  sudo chmod +x /usr/local/bin/docker-compose</pre>
+
+  More info: https://docs.docker.com/compose/install/#install-compose-on-linux-systems
 * Clone the repo to your $HOME with: <pre>git clone https://this-repo-url/CustomAPIs/kong-docker-compose</pre>
 
 # Basic usage:
