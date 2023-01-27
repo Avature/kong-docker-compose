@@ -54,7 +54,7 @@ setup_certs() {
     create_ssl_server_certs
   fi
 
-  chmod +r ./certs/*
+  chmod 400 ./certs/*
 }
 
 setup_certs $1
