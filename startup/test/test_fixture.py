@@ -5,6 +5,8 @@ import responses
 from src.fixture import Fixture
 from src.config import Config
 from src.pluginsComparator import PluginsComparator
+from test.config_preparation import ConfigPreparation
+from test.assertion_helper import AssertionHelper
 
 from test.debugger import run_debugger
 if (os.environ.get("ENABLE_DEBUGGER")):
@@ -12,8 +14,10 @@ if (os.environ.get("ENABLE_DEBUGGER")):
 
 class TestFixture(TestCase):
   def setUp(self):
-    self._admin_api_base_services_and_routes_creation_mocks()
     self.mocked_config = mock.Mock()
+    self.config_preparation = ConfigPreparation(self.mocked_config)
+    self.assertion_helper = AssertionHelper(self)
+    self.config_preparation._admin_api_base_services_and_routes_creation_mocks()
     default_read_config = Config().get_plugins_config()
     self.mocked_config.get_plugins_config = mock.MagicMock(return_value=default_read_config)
     self.subject = Fixture(self.mocked_config, PluginsComparator())
@@ -31,10 +35,10 @@ class TestFixture(TestCase):
     responses.add(responses.GET, 'http://kong:8001/plugins', status=200, json={"data":[]})
     responses.add(responses.POST, 'http://kong:8001/plugins', status=201, json={"id":"uuid-of-created-plugin5"})
     self.subject.run()
-    self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApi/plugins', 3))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApiRegisterInstance/plugins', 2))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/routes/adminApiRenewInstance/plugins', 4))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 2))
+    self.assertion_helper.assert_call_count('routes/adminApi/plugins', 3)
+    self.assertion_helper.assert_call_count('routes/adminApiRegisterInstance/plugins', 2)
+    self.assertion_helper.assert_call_count('routes/adminApiRenewInstance/plugins', 4)
+    self.assertion_helper.assert_call_count('services/adminApi/plugins', 2)
 
   def test_get_admin_plugins(self):
     result = self.subject.get_admin_plugins()
@@ -52,10 +56,10 @@ class TestFixture(TestCase):
 
   @responses.activate
   def test_plugins_are_created_because_they_not_exist(self):
-    self._mock_plugin_not_exists()
-    self._mock_plugin_expected_config('/newer/path/admin-api.log')
+    self.config_preparation._mock_plugin_not_exists()
+    self.config_preparation._mock_plugin_expected_config('/newer/path/admin-api.log')
     self.subject.run()
-    self._assert_upsert_call({
+    self.assertion_helper.assert_upsert_call({
       "name": "file_log_censored",
       "config": {
         "path": "/newer/path/admin-api.log",
@@ -63,13 +67,13 @@ class TestFixture(TestCase):
         "censored_fields": ["request.headers.x-kong-admin-key"]
       }
     })
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 2))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin', 0))
+    self.assertion_helper.assert_call_count('services/adminApi/plugins', 2)
+    self.assertion_helper.assert_call_count('services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin', 0)
 
   @responses.activate
   def test_plugin_is_created_and_after_that_config_is_changed_with_a_correction(self):
-    self._mock_plugin_not_exists()
-    self._mock_plugin_expected_config_with_correction('/newer/path/admin-api.log')
+    self.config_preparation._mock_plugin_not_exists()
+    self.config_preparation._mock_plugin_expected_config_with_correction('/newer/path/admin-api.log')
     responses.patch(
       "http://kong:8001/services/adminApi/plugins/an-id-generated-by-server",
       body='{"id":"an-id-generated-by-server"}',
@@ -77,7 +81,7 @@ class TestFixture(TestCase):
       content_type="application/json"
     )
     self.subject.run()
-    self._assert_upsert_call({
+    self.assertion_helper.assert_upsert_call({
       "name": "file_log_censored",
       "config": {
         "path": "/newer/path/admin-api.log",
@@ -85,18 +89,18 @@ class TestFixture(TestCase):
         "censored_fields": ["request.headers.x-kong-admin-key"]
       }
     })
-    self._assert_upsert_call({
+    self.assertion_helper.assert_upsert_call({
       "id": "an-id-generated-by-server",
       "name": "file_log_censored",
       "enabled": "false"
     }, 10)
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 2))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins/an-id-generated-by-server', 1))
+    self.assertion_helper.assert_call_count('services/adminApi/plugins', 2)
+    self.assertion_helper.assert_call_count('services/adminApi/plugins/an-id-generated-by-server', 1)
 
   @responses.activate
   def test_plugins_are_updated_because_no_matching_config(self):
-    self._mock_plugin_exists(file_path="/home/kong/log/admin-api.log")
-    self._mock_plugin_expected_config(file_path="/var/log/admin-api.log")
+    self.config_preparation._mock_plugin_exists(file_path="/home/kong/log/admin-api.log")
+    self.config_preparation._mock_plugin_expected_config(file_path="/var/log/admin-api.log")
     responses.patch(
       "http://kong:8001/services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin",
       body='{"id":"an-arbitrary-uuid-for-the-plugin"}',
@@ -104,7 +108,7 @@ class TestFixture(TestCase):
       content_type="application/json"
     )
     self.subject.run()
-    self._assert_upsert_call({
+    self.assertion_helper.assert_upsert_call({
       "name": "file_log_censored",
       "id": 'an-arbitrary-uuid-for-the-plugin',
       "config": {
@@ -113,117 +117,21 @@ class TestFixture(TestCase):
         "censored_fields": ["request.headers.x-kong-admin-key"]
       }
     })
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 1))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin', 1))
+    self.assertion_helper.assert_call_count('services/adminApi/plugins', 1)
+    self.assertion_helper.assert_call_count('services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin', 1)
 
   @responses.activate
   def test_plugins_exists_but_are_not_updated_because_config_matches_ok(self):
-    self._mock_plugin_exists(file_path="/other/path/already/matched/admin-api.log")
-    self._mock_plugin_expected_config(file_path="/other/path/already/matched/admin-api.log")
+    self.config_preparation._mock_plugin_exists(file_path="/other/path/already/matched/admin-api.log")
+    self.config_preparation._mock_plugin_expected_config(file_path="/other/path/already/matched/admin-api.log")
     self.subject.run()
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 1))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin', 0))
+    self.assertion_helper.assert_call_count('services/adminApi/plugins', 1)
+    self.assertion_helper.assert_call_count('services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin', 0)
 
   @responses.activate
   def test_prometheus_plugin_requires_no_config(self):
-    self._mock_plugin_exists(full_config={"name":"prometheus", "config": {}})
-    self._mock_plugin_expected_config(full_config={"target":"services/adminApi", "payload": {"name":"prometheus"}})
+    self.config_preparation._mock_plugin_exists(full_config={"name":"prometheus", "config": {}})
+    self.config_preparation._mock_plugin_expected_config(full_config={"target":"services/adminApi", "payload": {"name":"prometheus"}})
     self.subject.run()
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins', 1))
-    self.assertTrue(responses.assert_call_count('http://kong:8001/services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin', 0))
-
-  def _mock_plugin_expected_config(self, file_path = '', full_config=None):
-    expected_plugins_configs = self._get_expected_config(file_path, full_config)
-    self.mocked_config.get_plugins_config = mock.MagicMock(return_value=expected_plugins_configs)
-
-  def _get_expected_config(self, file_path = '', full_config=None):
-    return [
-      full_config if full_config is not None else {
-        "target":"services/adminApi",
-        "payload": {
-          "name": "file_log_censored",
-          "config": {
-            "path": file_path,
-            "reopen": True,
-            "censored_fields": ["request.headers.x-kong-admin-key"]
-          }
-        }
-      }
-    ]
-
-  def _mock_plugin_expected_config_with_correction(self, file_path, full_config=None):
-    expected_plugins_configs = self._get_expected_config(file_path, full_config)
-    expected_plugins_configs.append(
-      {
-        "target":"services/adminApi",
-        "payload": {"enabled": "false", "name":"file_log_censored"}
-      }
-    )
-    self.mocked_config.get_plugins_config = mock.MagicMock(return_value=expected_plugins_configs)
-
-  def _mock_plugin_not_exists(self):
-    responses.get(
-      "http://kong:8001/services/adminApi/plugins",
-      body='''{
-        "next": null,
-        "data": []
-      }''',
-      status=200,
-      content_type="application/json"
-    )
-    responses.post(
-      "http://kong:8001/services/adminApi/plugins",
-      body='{"id":"an-id-generated-by-server"}',
-      status=201,
-      content_type="application/json"
-    )
-
-  def _mock_plugin_exists(self, file_path = '', full_config=None):
-    payload = json.dumps({
-      "next": None,
-      "data": [
-        full_config if full_config is not None else {
-          "id":"an-arbitrary-uuid-for-the-plugin",
-          "service": {
-            "name": "adminApi"
-          },
-          "enabled": True,
-          "name": "file_log_censored",
-            "config": {
-              "aConfigThatIsNotImportant": None,
-              "otherConfigNotSoImportant": {
-                "subkeys": None
-              },
-              "reopen": True,
-              "path": file_path,
-              "censored_fields": [
-                "request.headers.x-kong-admin-key"
-              ]
-            }
-        }
-      ]
-    })
-    responses.get(
-      "http://kong:8001/services/adminApi/plugins",
-        body=payload,
-        status=200,
-        content_type="application/json"
-    )
-
-  def _assert_upsert_call(self, expected_body, call_number=9):
-    self.assertEqual(
-      json.loads(responses.calls[call_number].request.body),
-      expected_body
-    )
-
-  def _admin_api_base_services_and_routes_creation_mocks(self):
-    responses.add(responses.GET, 'http://kong:8001/consumers/admin/key-auth', status=404)
-    responses.add(responses.POST, 'http://kong:8001/consumers', status=201)
-    responses.add(responses.POST, 'http://kong:8001/consumers/admin/key-auth', status=201)
-    responses.add(responses.GET, 'http://kong:8001/services/adminApi', status=404)
-    responses.add(responses.POST, 'http://kong:8001/services', status=201)
-    responses.add(responses.GET, 'http://kong:8001/services/adminApi/routes/adminApi', status=404)
-    responses.add(responses.POST, 'http://kong:8001/services/adminApi/routes', status=201)
-    responses.add(responses.GET, 'http://kong:8001/services/adminApi/routes/adminApiRegisterInstance', status=404)
-    responses.add(responses.GET, 'http://kong:8001/services/adminApi/routes/adminApiRenewInstance', status=404)
-    responses.add(responses.POST, 'http://kong:8001/services/adminApi/routes', status=201)
+    self.assertion_helper.assert_call_count('services/adminApi/plugins', 1)
+    self.assertion_helper.assert_call_count('services/adminApi/plugins/an-arbitrary-uuid-for-the-plugin', 0)
