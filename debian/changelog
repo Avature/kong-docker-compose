@@ -1,3 +1,11 @@
+kong-docker-compose (0.1.9) Ubuntu; urgency=medium
+
+  * Update docker instalation and config on README.md
+  * Fix Startup failing when one plugin get configured twice
+  * Some refactors to simplify tests
+
+ -- Mariano Fresno <mariano.fresno@avature.net>  Fri, 27 Jan 2023 17:40:43 -0300
+
 kong-docker-compose (0.1.8) Ubuntu; urgency=medium
 
   * Add retry on error flag config to environment of startup

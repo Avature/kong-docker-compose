@@ -1,6 +1,12 @@
 # Changelog
 
 
+### 0.1.9 (2023-01-27)
+
+  * Update docker instalation and config on README.md
+  * Fix Startup failing when one plugin get configured twice
+  * Some refactors to simplify tests
+
 ### 0.1.8 (2023-01-17)
 
   * Add retry on error flag config to environment of startup
