@@ -9,7 +9,7 @@ services:
   # Kong database preparation
   #######################################
   kong-migrations:
-    image: ghcr.io/avature/kong:2.1.4.06
+    image: ghcr.io/avature/kong:2.1.4.07
     command: kong migrations bootstrap
     depends_on:
       - db
@@ -29,7 +29,7 @@ services:
   # Kong migrations runner
   #######################################
   kong-migrations-up:
-    image: ghcr.io/avature/kong:2.1.4.06
+    image: ghcr.io/avature/kong:2.1.4.07
     command: kong migrations up
     depends_on:
       - db
@@ -49,7 +49,7 @@ services:
   # Kong service
   #######################################
   kong:
-    image: ghcr.io/avature/kong:2.1.4.06
+    image: ghcr.io/avature/kong:2.1.4.07
     user: "root"
     volumes:
       - /var/log/avature/kong/:/var/log/
@@ -172,7 +172,7 @@ services:
   # NGINX: Webserver
   #######################################
   nginx:
-    image: ghcr.io/avature/kong-nginx:0.0.8
+    image: ghcr.io/avature/kong-nginx:0.0.9
     networks:
       - kong-net
     volumes:
@@ -197,7 +197,7 @@ services:
   # Python Startup
   #######################################
   startup:
-    image: ghcr.io/avature/kong-startup:0.0.7
+    image: ghcr.io/avature/kong-startup:0.0.8
     networks:
       - kong-net
     environment:

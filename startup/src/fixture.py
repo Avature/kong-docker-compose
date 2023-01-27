@@ -18,7 +18,7 @@ class Fixture:
     admin_api_response = requests.get(admin_base_url + '/services/adminApi')
     if admin_api_response.status_code == 404:
       admin_api_payload = {"name": "adminApi", "protocol": "http", "port": 8001, "host": "127.0.0.1"}
-      self.post_or_fail(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
+      self.save_or_fail(url=admin_base_url + '/services', data=admin_api_payload, verify=False)
 
   def create_admin_route(self):
     self.create_route('/admin-api', 'adminApi', [])
@@ -33,7 +33,7 @@ class Fixture:
     route_response = requests.get(admin_base_url + '/services/adminApi/routes/' + route_name)
     if route_response.status_code == 404:
       payload = {"name": route_name, "protocols": ["http", "https"], "paths": [route_path], "methods": methods}
-      self.post_or_fail(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
+      self.save_or_fail(admin_base_url + '/services/adminApi/routes', data=payload, verify=False)
 
   def get_previous_plugins_for_target(self, target):
     if target not in self.previously_installed_plugins:
@@ -76,11 +76,12 @@ class Fixture:
       if (has_the_plugin):
         payload['id'] = self._get_current_config(target, plugin_name)['id']
       print("Plugin %s config %s on target %s, updating..." % (plugin_name, 'changed' if has_the_plugin else 'missing', target))
-      self.post_or_fail(
+      response = self.save_or_fail(
         url=self.get_plugins_path_for_target(target),
         data=payload,
         verify=False
       )
+      payload['id'] = response.json()['id']
       self.previously_installed_plugins[target][plugin_name] = payload
     else:
       print("No changes detected on target %s, plugin %s, skipping." % (target, plugin_name))
@@ -89,7 +90,7 @@ class Fixture:
     separator = '' if target.endswith('/') else '/'
     return f"{admin_base_url}{separator}{target}{separator}plugins"
 
-  def post_or_fail(self, url, data, verify):
+  def save_or_fail(self, url, data, verify):
     is_creating = not 'id' in data
     http_method = 'POST' if is_creating else 'PATCH'
     resource_uri = url if is_creating else f"{url}/{data['id']}"
@@ -110,10 +111,13 @@ class Fixture:
       self.add_plugins()
       print("Fixture created OK.")
     except requests.exceptions.ConnectionError:
-      if (os.environ.get('RETRY_ON_ERROR') == "true"):
-        print("Failed connecting to kong. Retrying in 1 seconds...")
-        time.sleep(1)
-        self.run()
-      else:
-        print("Retrial is disabled, exiting")
-        exit(1)
+      self._retryIfNeeded()
+
+  def _retryIfNeeded(self):
+    if (os.environ.get('RETRY_ON_ERROR') == "true"):
+      print("Failed connecting to kong. Retrying in 1 seconds...")
+      time.sleep(1)
+      self.run()
+    else:
+      print("Retrial is disabled, exiting")
+      exit(1)

@@ -6,8 +6,11 @@ class PluginsComparator:
 
   def _is_enabled_defined_and_differs(self, plugin_expected_config, current_config):
     return ("enabled" in plugin_expected_config) and (
-      plugin_expected_config['enabled'] != current_config['enabled']
+      plugin_expected_config['enabled'] != self._currently_enabled(current_config)
     )
+
+  def _currently_enabled(self, current_config):
+    return current_config['enabled'] if 'enabled' in current_config else None
 
   def _clean_null_config_values(self, config, mask):
     clean = {}
