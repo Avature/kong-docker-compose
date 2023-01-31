@@ -21,6 +21,7 @@ backup_old_certs() {
 
 deploy_test_certs() {
   echo "-> Copying new certificates..."
+  mkdir -p certs
   cp $current_dir/server-ca-cert.crt certs/
   cp $current_dir/server-ca-key.key certs/
   cp $current_dir/server-ssl-key.key certs/
