@@ -62,15 +62,24 @@ restart_services() {
   sg docker "docker-compose restart kong"
 }
 
-check_user_is_root() {
+assert_user_is_root() {
   if [ "$(id -u)" -ne 0 ]; then
     echo 'This script must be run by root' >&2
     exit 1
   fi
 }
 
+assert_consumer_name_is_present() {
+  if [ -z "$1" ]
+    then
+      echo "Pass consumer name as first parameter example: $ sudo ./deploy.sh test-instance1.local"
+      exit 2
+  fi
+}
+
 run_deploy() {
-  check_user_is_root
+  assert_user_is_root
+  assert_consumer_name_is_present $1
   add_hosts_endpoints
   backup_old_certs
   deploy_test_certs
@@ -78,4 +87,4 @@ run_deploy() {
   restart_services
 }
 
-run_deploy
+run_deploy "$*"
