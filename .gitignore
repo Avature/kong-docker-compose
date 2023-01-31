@@ -5,3 +5,4 @@ certs/
 kong/wait-for-postgres.sh
 konga/wait-for-postgres.sh
 startup/wait-for-postgres.sh
+certs.backup
