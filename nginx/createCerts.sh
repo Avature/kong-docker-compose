@@ -36,6 +36,21 @@ create_ssl_server_certs() {
   openssl x509 -req -days 365 -in $server_ssl_csr -CA $server_ca_cert -CAkey $server_ca_key -CAcreateserial -out $server_ssl_cert -sha256 -passin pass:1234
 }
 
+normalize_permissions() {
+  chmod +r ./$server_ca_key
+  chmod +r ./$server_ca_cert
+  chmod +r ./$server_ssl_key
+  chmod +r ./$server_ssl_cert
+}
+
+normalize_owner() {
+  chown nginx_usr:nginx_grp certs
+  chown nginx_usr:nginx_grp ./$server_ca_key
+  chown nginx_usr:nginx_grp ./$server_ca_cert
+  chown nginx_usr:nginx_grp ./$server_ssl_key
+  chown nginx_usr:nginx_grp ./$server_ssl_cert
+}
+
 setup_certs() {
   cd /etc/ssl
   readConfigFromDotEnv
@@ -47,17 +62,15 @@ setup_certs() {
   if [[ ! -f "$server_ca_cert" ]]
   then
     create_ca_certs
+    normalize_owner
   fi
 
-  if [ "$1" == "-ssl" ] || [ "$CREATE_SSL_CERTS" = true ];
+  if [ "$CREATE_SSL_CERTS" == "true" ];
   then
     create_ssl_server_certs
+    normalize_owner
   fi
-
-  chmod +r ./$server_ca_key
-  chmod +r ./$server_ca_cert
-  chmod +r ./$server_ssl_key
-  chmod +r ./$server_ssl_cert
+  normalize_permissions
 }
 
 setup_certs $1

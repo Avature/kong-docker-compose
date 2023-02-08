@@ -1,6 +1,17 @@
 FROM nginx:stable-alpine
 USER root
 
+ARG UID
+ARG GID
+
+ENV UID=${UID:-1000}
+ENV GID=${GID:-1000}
+
+RUN addgroup -g ${GID} --system nginx_grp
+RUN adduser -G nginx_grp --system -D -s /bin/sh -u ${UID} nginx_usr
+
+
+RUN sed -i "s|user .+;|user nginx_usr nginx_grp;|g" /etc/nginx/nginx.conf
 RUN mkdir -p /app
 RUN chmod -R 777 /app
 RUN apk add bash
