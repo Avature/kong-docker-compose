@@ -21,6 +21,7 @@ initializeConfigVariables() {
   server_ssl_cert="$server_ssl_path-cert.crt"
   server_ssl_csr="$server_ssl_path-csr.csr"
   server_ssl_cn="*.$server_ca_cn"
+  server_ca_srl="$server_ca_path-cert.srl"
 }
 
 create_ca_certs() {
@@ -41,14 +42,18 @@ normalize_permissions() {
   chmod +r ./$server_ca_cert
   chmod +r ./$server_ssl_key
   chmod +r ./$server_ssl_cert
+  chmod +r ./$server_ssl_csr
+  chmod +r ./$server_ca_srl
 }
 
 normalize_owner() {
-  chown nginx_usr:nginx_grp certs
-  chown nginx_usr:nginx_grp ./$server_ca_key
-  chown nginx_usr:nginx_grp ./$server_ca_cert
-  chown nginx_usr:nginx_grp ./$server_ssl_key
-  chown nginx_usr:nginx_grp ./$server_ssl_cert
+  chown ngx_usr:ngx_grp certs
+  chown ngx_usr:ngx_grp ./$server_ca_key
+  chown ngx_usr:ngx_grp ./$server_ca_cert
+  chown ngx_usr:ngx_grp ./$server_ssl_key
+  chown ngx_usr:ngx_grp ./$server_ssl_cert
+  chown ngx_usr:ngx_grp +r ./$server_ssl_csr
+  chown ngx_usr:ngx_grp +r ./$server_ca_srl
 }
 
 setup_certs() {

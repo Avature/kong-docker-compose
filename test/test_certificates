@@ -20,7 +20,8 @@ assertFileNotExists() {
 
 testAllCertsExists() {
   echo -e "\nTest creating CA & SSL certs for dev env"
-  ./createCerts.sh -ssl
+  export CREATE_SSL_CERTS="true"
+  ./createCerts.sh
   assertFileExists "/etc/ssl/certs/server-ca-cert.crt"
   assertFileExists "/etc/ssl/certs/server-ca-key.key"
   assertFileExists "/etc/ssl/certs/server-ssl-csr.csr"
@@ -30,6 +31,7 @@ testAllCertsExists() {
 
 testOnlyCaCertsExists() {
   echo -e "\nTest creating CA certs for prod env"
+  export CREATE_SSL_CERTS="false"
   /opt/kong/createCerts.sh
   assertFileExists "/etc/ssl/certs/server-ca-cert.crt"
   assertFileExists "/etc/ssl/certs/server-ca-key.key"
