@@ -72,8 +72,8 @@ services:
       KONG_NGINX_PROXY_CLIENT_MAX_BODY_SIZE: "100m"
       KONG_NGINX_PROXY_PROXY_SSL_PROTOCOLS: "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3"
       KONG_DNS_ORDER: LAST,A,CNAME
-      KNG_UID: ${KNG_UID:-1000}
-      KNG_GID: ${KNG_GID:-1000}
+      AVATURE_KONG_UID: ${AVATURE_KONG_UID:-1000}
+      AVATURE_KONG_GID: ${AVATURE_KONG_GID:-1000}
     networks:
       - kong-net
     expose:
@@ -196,8 +196,8 @@ services:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
       TARGET_URLS_CONF_DIR: "${TARGET_URLS_CONF_DIR:-/etc/nginx/conf.d/server_hosts/}"
-      NGX_UID: ${NGX_UID:-1000}
-      NGX_GID: ${NGX_GID:-1000}
+      AVATURE_KONG_UID: ${AVATURE_KONG_UID:-1000}
+      AVATURE_KONG_GID: ${AVATURE_KONG_GID:-1000}
   #######################################
   # Python Startup
   #######################################
