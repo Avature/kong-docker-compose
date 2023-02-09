@@ -16,6 +16,7 @@ COPY ./plugins /usr/local/custom/kong/plugins
 COPY ./wait-for-postgres.sh /wait-for-postgres.sh
 
 RUN chmod +x /etc/kong/custom-entrypoint.sh
+RUN apk --no-cache add shadow
 
 ENTRYPOINT ["/etc/kong/custom-entrypoint.sh"]
 

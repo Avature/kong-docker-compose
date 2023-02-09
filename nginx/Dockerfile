@@ -16,6 +16,7 @@ RUN mkdir -p /app
 RUN chmod -R 777 /app
 RUN apk add bash
 RUN apk add openssl
+RUN apk --no-cache add shadow
 
 COPY ./admin.conf /etc/nginx/conf.d/admin.conf
 COPY ./gateway.conf /etc/nginx/conf.d/gateway.conf
