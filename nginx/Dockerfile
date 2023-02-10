@@ -1,10 +1,22 @@
 FROM nginx:stable-alpine
 USER root
 
+ARG UID
+ARG GID
+
+ENV UID=${UID:-1000}
+ENV GID=${GID:-1000}
+
+RUN addgroup -g ${GID} --system ngx_grp
+RUN adduser -G ngx_grp --system -D -s /bin/sh -u ${UID} ngx_usr
+
+
+RUN sed -i "s|user .+;|user ngx_usr ngx_grp;|g" /etc/nginx/nginx.conf
 RUN mkdir -p /app
 RUN chmod -R 777 /app
 RUN apk add bash
 RUN apk add openssl
+RUN apk --no-cache add shadow
 
 COPY ./admin.conf /etc/nginx/conf.d/admin.conf
 COPY ./gateway.conf /etc/nginx/conf.d/gateway.conf

@@ -21,6 +21,7 @@ initializeConfigVariables() {
   server_ssl_cert="$server_ssl_path-cert.crt"
   server_ssl_csr="$server_ssl_path-csr.csr"
   server_ssl_cn="*.$server_ca_cn"
+  server_ca_srl="$server_ca_path-cert.srl"
 }
 
 create_ca_certs() {
@@ -36,6 +37,25 @@ create_ssl_server_certs() {
   openssl x509 -req -days 365 -in $server_ssl_csr -CA $server_ca_cert -CAkey $server_ca_key -CAcreateserial -out $server_ssl_cert -sha256 -passin pass:1234
 }
 
+normalize_permissions() {
+  chmod +r ./$server_ca_key
+  chmod +r ./$server_ca_cert
+  chmod +r ./$server_ssl_key
+  chmod +r ./$server_ssl_cert
+  chmod +r ./$server_ssl_csr
+  chmod +r ./$server_ca_srl
+}
+
+normalize_owner() {
+  chown ngx_usr:ngx_grp certs
+  chown ngx_usr:ngx_grp ./$server_ca_key
+  chown ngx_usr:ngx_grp ./$server_ca_cert
+  chown ngx_usr:ngx_grp ./$server_ssl_key
+  chown ngx_usr:ngx_grp ./$server_ssl_cert
+  chown ngx_usr:ngx_grp +r ./$server_ssl_csr
+  chown ngx_usr:ngx_grp +r ./$server_ca_srl
+}
+
 setup_certs() {
   cd /etc/ssl
   readConfigFromDotEnv
@@ -47,17 +67,15 @@ setup_certs() {
   if [[ ! -f "$server_ca_cert" ]]
   then
     create_ca_certs
+    normalize_owner
   fi
 
-  if [ "$1" == "-ssl" ] || [ "$CREATE_SSL_CERTS" = true ];
+  if [ "$CREATE_SSL_CERTS" == "true" ];
   then
     create_ssl_server_certs
+    normalize_owner
   fi
-
-  chmod +r ./$server_ca_key
-  chmod +r ./$server_ca_cert
-  chmod +r ./$server_ssl_key
-  chmod +r ./$server_ssl_cert
+  normalize_permissions
 }
 
 setup_certs $1

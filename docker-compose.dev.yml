@@ -13,4 +13,3 @@ services:
   nginx:
     environment:
       CREATE_SSL_CERTS: "true"
-

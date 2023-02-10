@@ -9,7 +9,7 @@ services:
   # Kong database preparation
   #######################################
   kong-migrations:
-    image: ghcr.io/avature/kong:2.1.4.07
+    image: ghcr.io/avature/kong:2.1.4.08
     command: kong migrations bootstrap
     depends_on:
       - db
@@ -29,7 +29,7 @@ services:
   # Kong migrations runner
   #######################################
   kong-migrations-up:
-    image: ghcr.io/avature/kong:2.1.4.07
+    image: ghcr.io/avature/kong:2.1.4.08
     command: kong migrations up
     depends_on:
       - db
@@ -49,7 +49,7 @@ services:
   # Kong service
   #######################################
   kong:
-    image: ghcr.io/avature/kong:2.1.4.07
+    image: ghcr.io/avature/kong:2.1.4.08
     user: "root"
     volumes:
       - /var/log/avature/kong/:/var/log/
@@ -71,6 +71,9 @@ services:
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_NGINX_PROXY_CLIENT_MAX_BODY_SIZE: "100m"
       KONG_NGINX_PROXY_PROXY_SSL_PROTOCOLS: "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3"
+      KONG_DNS_ORDER: LAST,A,CNAME
+      AVATURE_KONG_UID: ${AVATURE_KONG_UID:-1000}
+      AVATURE_KONG_GID: ${AVATURE_KONG_GID:-1000}
     networks:
       - kong-net
     expose:
@@ -172,7 +175,7 @@ services:
   # NGINX: Webserver
   #######################################
   nginx:
-    image: ghcr.io/avature/kong-nginx:0.0.9
+    image: ghcr.io/avature/kong-nginx:0.1.0
     networks:
       - kong-net
     volumes:
@@ -193,6 +196,8 @@ services:
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
       HOST_SERVICE_SEPARATOR: "${HOST_SERVICE_SEPARATOR:--}"
       TARGET_URLS_CONF_DIR: "${TARGET_URLS_CONF_DIR:-/etc/nginx/conf.d/server_hosts/}"
+      AVATURE_KONG_UID: ${AVATURE_KONG_UID:-1000}
+      AVATURE_KONG_GID: ${AVATURE_KONG_GID:-1000}
   #######################################
   # Python Startup
   #######################################
