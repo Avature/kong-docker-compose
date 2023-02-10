@@ -3,14 +3,7 @@
 
 ### 0.1.10 (2023-02-10)
 
-  * [9aa695de] Add script to deploy creds
-  * [1a073738] Add assertions for user and parameter $1
-  * [08e6ac18] Fix minor details on credential deploy
-  * [9cbdbf54] Fix user permissions on nginx and kong filesystems
-  * [e1aaa9cb] :fix: Fix minor details on tests
-  * [8cf58f96] Make UID and GID dynamic by env vars and configurable via puppet
-  * [f3a050d4] Use same variables for all dynamic gid and uid
-  * [d35701a4] Fix dynamic mod of group and users
+  * Make UID and GID dynamic by env vars and configurable
 
 ### 0.1.9 (2023-01-27)
 
