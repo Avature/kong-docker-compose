@@ -84,7 +84,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 99999999
-    restart: on-failure
+    restart: always
   #######################################
   # PostgreSQL database
   #######################################
@@ -107,7 +107,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
-    restart: on-failure
+    restart: always
     stdin_open: true
     tty: true
     networks:
@@ -135,7 +135,7 @@ services:
   #######################################
   konga:
     image: ghcr.io/avature/konga:0.14.9.01
-    restart: on-failure
+    restart: always
     networks:
       - kong-net
     volumes:
@@ -191,6 +191,7 @@ services:
       - db
     links:
       - db
+    restart: always
     environment:
       CREATE_SSL_CERTS: "false"
       BASE_HOST_DOMAIN: ${BASE_HOST_DOMAIN}
